@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
+import HeroGrid from "@/components/ui/HeroGrid";
 
 const lines = ["WE BUILD", "BRANDS THAT", "OUTLAST THE", "MARKET."];
 
@@ -23,45 +24,30 @@ function LineReveal({ text, delay }: { text: string; delay: number }) {
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
+  const mouseRef = useRef({ x: -9999, y: -9999 });
   const { scrollY } = useScroll();
 
-  const circleY = useTransform(scrollY, [0, 800], [0, -100]);
-  const circleOpacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    mouseRef.current = { x: -9999, y: -9999 };
+  }, []);
+
   const headlineY = useTransform(scrollY, [0, 600], [0, -60]);
   const headlineOpacity = useTransform(scrollY, [0, 380], [1, 0]);
 
   return (
     <section
       ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="relative flex min-h-dvh flex-col justify-between overflow-hidden bg-ink grain-overlay px-8 pb-14 pt-28 md:px-16"
     >
-      {/* Outer ring */}
-      <motion.div
-        style={{ y: circleY, opacity: circleOpacity }}
-        initial={{ opacity: 0, scale: 0.85 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="pointer-events-none absolute right-[-10vw] top-[8%] h-[44vw] w-[44vw] rounded-full border border-gold/15 md:right-[-4vw]"
-      />
-
-      {/* Inner ring */}
-      <motion.div
-        style={{ y: circleY, opacity: circleOpacity }}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        className="pointer-events-none absolute right-[-6vw] top-[12%] h-[36vw] w-[36vw] rounded-full border border-gold/[0.08] md:right-0"
-      />
-
-      {/* Gold dot */}
-      <motion.div
-        style={{ opacity: circleOpacity }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 1.3 }}
-        className="pointer-events-none absolute right-[16vw] top-[34%] h-2.5 w-2.5 rounded-full bg-gold"
-      />
-
+      <HeroGrid mouseRef={mouseRef} />
       {/* Headline block */}
       <motion.div
         style={{ y: headlineY, opacity: headlineOpacity }}

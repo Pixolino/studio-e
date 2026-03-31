@@ -26,7 +26,7 @@ src/
 │   │   ├── SmoothScroll.tsx # Lenis wrapper
 │   │   └── Footer.tsx
 │   ├── sections/
-│   │   ├── Hero.tsx        # Full-viewport editorial type, parallax rings
+│   │   ├── Hero.tsx        # Full-viewport editorial type, interactive wave grid
 │   │   ├── Marquee.tsx     # Auto-scrolling ticker strip
 │   │   ├── About.tsx       # Problem statement section
 │   │   ├── Approach.tsx    # 3 pillars — Artful Precision, Technical Fluidity, Direct Partnership
@@ -35,7 +35,8 @@ src/
 │   │   ├── Work.tsx        # Portfolio grid (placeholder projects)
 │   │   └── Contact.tsx     # Discovery Call CTA
 │   └── ui/
-│       └── CustomCursor.tsx # Dot + ring cursor with data-cursor="pointer" system
+│       ├── CustomCursor.tsx # Dot + ring cursor with data-cursor="pointer" system
+│       └── HeroGrid.tsx    # Canvas wave grid — spring-physics mouse repulsion
 └── lib/
     ├── site.ts             # Single source of truth for all brand copy + config
     └── cn.ts               # clsx + tailwind-merge utility
@@ -66,3 +67,12 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Interactive Elements
 
 Add `data-cursor="pointer"` to any element to trigger the ring scale-up on the custom cursor.
+
+## Hero Grid
+
+`HeroGrid.tsx` renders a canvas-based distortion grid behind the hero. It has two behaviours:
+
+- **Wave** — two overlapping sine waves animate the grid nodes continuously for organic movement
+- **Repulsion** — moving the mouse over the hero pushes nodes away with quadratic force falloff; they spring back via damped physics
+
+Grid density is controlled by `SPACING` (currently `32px`). Repulsion radius and strength are `REPEL_RADIUS` / `REPEL_STRENGTH`.
