@@ -51,7 +51,7 @@ function FounderCard({
       className="rounded-2xl border border-gold/10 p-10"
     >
       <p className="mb-1 font-display text-3xl font-medium text-cream">{founder.name}</p>
-      <p className="mb-6 text-xs font-medium uppercase tracking-widest text-gold/60">
+      <p className="mb-6 font-mono text-[10px] uppercase tracking-widest text-gold/60">
         {founder.role}
       </p>
       <p className="text-sm leading-relaxed text-muted">{founder.bio}</p>
@@ -73,7 +73,7 @@ export default function Studio() {
           initial={{ opacity: 0, x: -12 }}
           animate={titleInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-gold/60"
+          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-gold/60"
         >
           The Studio
         </motion.p>
@@ -121,7 +121,7 @@ export default function Studio() {
             <p className="font-display text-6xl font-light tracking-tight text-gold md:text-7xl">
               <CountUp target={stat.value} suffix={stat.suffix} inView={statsInView} />
             </p>
-            <p className="mt-2 text-xs uppercase tracking-widest text-muted/60">{stat.label}</p>
+            <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-muted/60">{stat.label}</p>
           </motion.div>
         ))}
       </div>

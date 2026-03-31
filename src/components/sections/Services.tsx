@@ -23,7 +23,7 @@ function ServiceCard({
       className="group relative flex flex-col justify-between rounded-2xl border border-gold/10 bg-cream-mid p-10 transition-colors duration-500 hover:border-gold/25"
     >
       <div>
-        <p className="mb-6 text-[10px] font-medium uppercase tracking-[0.25em] text-muted">
+        <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.25em] text-muted">
           0{index + 1}
         </p>
         <h3 className="mb-4 font-display text-3xl font-medium tracking-tight text-ink">
@@ -34,7 +34,7 @@ function ServiceCard({
           {service.includes.map((item) => (
             <li
               key={item}
-              className="rounded-full border border-ink/10 px-3 py-1 text-xs text-muted"
+              className="rounded-full border border-ink/10 px-3 py-1 font-mono text-[10px] text-muted"
             >
               {item}
             </li>
@@ -44,7 +44,7 @@ function ServiceCard({
       <a
         href="#contact"
         data-cursor="pointer"
-        className="mt-10 inline-flex items-center gap-2 self-start text-sm font-medium text-ink underline decoration-gold-deep underline-offset-4 transition-colors hover:text-gold"
+        className="mt-10 inline-flex items-center gap-2 self-start font-mono text-[11px] uppercase tracking-[0.08em] text-ink underline decoration-gold-deep underline-offset-4 transition-colors hover:text-gold"
       >
         {service.cta} →
       </a>
@@ -63,7 +63,7 @@ export default function Services() {
           initial={{ opacity: 0, x: -12 }}
           animate={titleInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-muted"
+          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
         >
           Services
         </motion.p>

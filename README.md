@@ -9,7 +9,7 @@ Multi-disciplinary brand studio website for founders who have outgrown "good eno
 - **Animation:** Framer Motion v12
 - **Smooth Scroll:** Lenis v1
 - **3D:** React Three Fiber + Drei (available, not yet used)
-- **Fonts:** Inter (body) · Cormorant Garamond (display)
+- **Fonts:** Zalando Sans (display + body, variable) · Geist Mono (UI accents)
 - **Language:** TypeScript
 
 ## Structure
@@ -49,6 +49,7 @@ All copy and messaging lives in [`BRAND.md`](./BRAND.md) and is reflected in [`s
 - Primary CTA: **"Book a Discovery Call"**
 - Tone: Compassionate Authority — sharp, warm, confident
 - Palette: ink `#252420` · gold `#C4A84A` · cream `#F8F4E8`
+- Fonts: **Zalando Sans** (all headlines + body copy, variable weight 100–900) · **Geist Mono** (nav, buttons, CTAs, labels, tags, micro-copy)
 
 ## Dev
 

@@ -24,7 +24,7 @@ export default function Navbar() {
       <a
         href="/"
         data-cursor="pointer"
-        className="font-display text-xl font-medium tracking-tight text-cream"
+        className="font-sans text-xl font-medium tracking-tight text-cream"
       >
         Studio<span className="italic text-gold">&mdash;E</span>
       </a>
@@ -35,7 +35,7 @@ export default function Navbar() {
             key={item.label}
             href={item.href}
             data-cursor="pointer"
-            className="group relative text-sm tracking-wide text-muted transition-colors duration-300 hover:text-cream"
+            className="group relative font-mono text-[11px] uppercase tracking-[0.1em] text-muted transition-colors duration-300 hover:text-cream"
           >
             {item.label}
             <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
@@ -48,7 +48,7 @@ export default function Navbar() {
         data-cursor="pointer"
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.97 }}
-        className="hidden items-center gap-2 rounded-full border border-gold/40 px-5 py-2.5 text-sm font-medium text-gold transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink md:inline-flex"
+        className="hidden items-center gap-2 rounded-full border border-gold/40 px-5 py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-gold transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink md:inline-flex"
       >
         {siteConfig.cta.label}
         <span>↗</span>

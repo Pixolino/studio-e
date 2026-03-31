@@ -71,12 +71,12 @@ export default function Hero() {
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="mb-6 text-xs font-medium uppercase tracking-[0.25em] text-muted"
+          className="mb-6 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
         >
           Multi-disciplinary Brand Studio&ensp;&mdash;&ensp;South Florida
         </motion.p>
 
-        <h1 className="font-display text-[13vw] font-medium leading-[0.88] tracking-tight text-cream md:text-[10vw]">
+        <h1 className="font-display text-[13vw] font-light leading-[0.88] tracking-tight text-cream md:text-[10vw]">
           {lines.map((line, i) => (
             <LineReveal key={i} text={line} delay={0.35 + i * 0.11} />
           ))}
@@ -103,7 +103,7 @@ export default function Hero() {
           <a
             href={siteConfig.cta.href}
             data-cursor="pointer"
-            className="group inline-flex items-center gap-3 text-sm font-medium text-cream"
+            className="group inline-flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-cream"
           >
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/40 text-gold transition-all duration-300 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
               ↗
@@ -113,7 +113,7 @@ export default function Hero() {
           <a
             href="#work"
             data-cursor="pointer"
-            className="text-sm text-muted underline decoration-gold-deep underline-offset-4 transition-colors duration-300 hover:text-cream"
+            className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold-deep underline-offset-4 transition-colors duration-300 hover:text-cream"
           >
             See our work
           </a>

@@ -71,14 +71,14 @@ function WorkCard({
       <div className="relative z-10 flex h-full flex-col justify-between p-8">
         <div className="flex items-start justify-between">
           <span
-            className={`text-[10px] font-medium uppercase tracking-[0.22em] transition-colors duration-300 ${
+            className={`font-mono text-[10px] uppercase tracking-[0.22em] transition-colors duration-300 ${
               project.light ? "text-gold/50" : "text-ink/45"
             } group-hover:text-gold/50`}
           >
             {project.category}
           </span>
           <span
-            className={`font-display text-sm transition-colors duration-300 ${
+            className={`font-mono text-xs transition-colors duration-300 ${
               project.light ? "text-cream/25" : "text-ink/20"
             } group-hover:text-cream/25`}
           >
@@ -98,7 +98,7 @@ function WorkCard({
             {project.description}
           </p>
           <div className="mt-5 flex translate-y-3 items-center gap-2 opacity-0 transition-all delay-75 duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-            <span className="text-sm font-medium text-gold">View project</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold">View project</span>
             <span className="text-gold">→</span>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function Work() {
             initial={{ opacity: 0, x: -12 }}
             animate={titleInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-muted"
+            className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
           >
             Selected Work
           </motion.p>
@@ -140,7 +140,7 @@ export default function Work() {
           initial={{ opacity: 0 }}
           animate={titleInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="hidden text-sm text-muted underline decoration-gold-deep underline-offset-4 transition-colors hover:text-ink md:block"
+          className="hidden font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold-deep underline-offset-4 transition-colors hover:text-ink md:block"
         >
           All work →
         </motion.a>

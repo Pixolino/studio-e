@@ -42,7 +42,7 @@ function PillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; index: num
         transition={{ duration: 0.65, delay: index * 0.12 + 0.2, ease: [0.22, 1, 0.36, 1] }}
         className="absolute left-0 top-0 h-px w-full origin-left bg-gold/40"
       />
-      <p className="mb-5 font-display text-sm italic text-gold/50">{pillar.number}</p>
+      <p className="mb-5 font-mono text-xs text-gold/50">{pillar.number}</p>
       <h3 className="mb-3 font-display text-2xl font-medium tracking-tight text-cream">
         {pillar.title}
       </h3>
@@ -62,7 +62,7 @@ export default function Approach() {
           initial={{ opacity: 0, x: -12 }}
           animate={titleInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-3 text-xs font-medium uppercase tracking-[0.25em] text-gold/60"
+          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-gold/60"
         >
           The Approach
         </motion.p>

@@ -29,7 +29,7 @@ export default function Contact() {
           initial={{ opacity: 0, x: -12 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-8 text-xs font-medium uppercase tracking-[0.25em] text-gold/60"
+          className="mb-8 font-mono text-[11px] uppercase tracking-[0.25em] text-gold/60"
         >
           Start a conversation
         </motion.p>
@@ -71,7 +71,7 @@ export default function Contact() {
             data-cursor="pointer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-8 py-4 text-sm font-medium text-ink transition-colors hover:bg-gold-light"
+            className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-8 py-4 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-gold-light"
           >
             {siteConfig.cta.label}
             <span>↗</span>
@@ -79,7 +79,7 @@ export default function Contact() {
           <a
             href="mailto:hello@studioe.agency"
             data-cursor="pointer"
-            className="text-sm text-muted transition-colors hover:text-cream"
+            className="font-mono text-[11px] text-muted transition-colors hover:text-cream"
           >
             hello@studioe.agency
           </a>
@@ -97,7 +97,7 @@ export default function Contact() {
             key={s.platform}
             href={s.href}
             data-cursor="pointer"
-            className="text-[10px] font-medium uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
+            className="font-mono text-[10px] uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
           >
             {s.platform}
           </a>
