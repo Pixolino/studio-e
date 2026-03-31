@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import CustomCursor from "@/components/ui/CustomCursor";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,14 +10,22 @@ const inter = Inter({
   display: "swap",
 });
 
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-cormorant",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Studio E — Digital Agency",
+  title: "Studio\u2014E \u2014 Brand Studio",
   description:
-    "Studio E is a South Florida digital agency for founders who want their presence to feel as intentional as their work.",
+    "Studio\u2014E is a multi-disciplinary brand studio for founders who have outgrown \u201cgood enough.\u201d Strategy, identity, and digital infrastructure\u2014delivered as one seamless engagement.",
   openGraph: {
-    title: "Studio E — Digital Agency",
+    title: "Studio\u2014E \u2014 Brand Studio",
     description:
-      "Studio E is a South Florida digital agency for founders who want their presence to feel as intentional as their work.",
+      "Studio\u2014E is a multi-disciplinary brand studio for founders who have outgrown \u201cgood enough.\u201d Strategy, identity, and digital infrastructure\u2014delivered as one seamless engagement.",
     url: "https://studioe.agency",
     siteName: "Studio E",
     locale: "en_US",
@@ -31,9 +41,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Studio E — Digital Agency",
+    title: "Studio\u2014E \u2014 Brand Studio",
     description:
-      "Studio E is a South Florida digital agency for founders who want their presence to feel as intentional as their work.",
+      "Studio\u2014E is a multi-disciplinary brand studio for founders who have outgrown \u201cgood enough.\u201d Strategy, identity, and digital infrastructure\u2014delivered as one seamless engagement.",
     images: ["/og-image.png"],
   },
   metadataBase: new URL("https://studioe.agency"),
@@ -45,11 +55,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} antialiased`}>
+    <html lang="en" className={`${inter.variable} ${cormorant.variable} antialiased`}>
       <body className="min-h-dvh bg-cream text-ink font-sans">
-        {/* Header slot */}
-        <main>{children}</main>
-        {/* Footer slot */}
+        <SmoothScroll>
+          <CustomCursor />
+          {/* Header slot */}
+          <main>{children}</main>
+          {/* Footer slot */}
+        </SmoothScroll>
       </body>
     </html>
   );

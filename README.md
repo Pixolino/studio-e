@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Studio—E
 
-## Getting Started
+Multi-disciplinary brand studio website for founders who have outgrown "good enough." Strategy, identity, and digital infrastructure — delivered as one seamless engagement.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Framework:** Next.js 16 (App Router)
+- **Styling:** Tailwind CSS v4 (inline `@theme` tokens, no config file)
+- **Animation:** Framer Motion v12
+- **Smooth Scroll:** Lenis v1
+- **3D:** React Three Fiber + Drei (available, not yet used)
+- **Fonts:** Inter (body) · Cormorant Garamond (display)
+- **Language:** TypeScript
+
+## Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout — fonts, Lenis, CustomCursor
+│   ├── page.tsx            # Homepage composition
+│   └── globals.css         # Tailwind @theme tokens, keyframes, utilities
+├── components/
+│   ├── layout/
+│   │   ├── Navbar.tsx      # Fixed nav, scroll-reactive frosted glass
+│   │   ├── SmoothScroll.tsx # Lenis wrapper
+│   │   └── Footer.tsx
+│   ├── sections/
+│   │   ├── Hero.tsx        # Full-viewport editorial type, parallax rings
+│   │   ├── Marquee.tsx     # Auto-scrolling ticker strip
+│   │   ├── About.tsx       # Problem statement section
+│   │   ├── Approach.tsx    # 3 pillars — Artful Precision, Technical Fluidity, Direct Partnership
+│   │   ├── Services.tsx    # Identity Systems, Digital Presence, Growth Assets
+│   │   ├── Studio.tsx      # Founders (Grace + Ilay) + stats
+│   │   ├── Work.tsx        # Portfolio grid (placeholder projects)
+│   │   └── Contact.tsx     # Discovery Call CTA
+│   └── ui/
+│       └── CustomCursor.tsx # Dot + ring cursor with data-cursor="pointer" system
+└── lib/
+    ├── site.ts             # Single source of truth for all brand copy + config
+    └── cn.ts               # clsx + tailwind-merge utility
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Brand
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+All copy and messaging lives in [`BRAND.md`](./BRAND.md) and is reflected in [`src/lib/site.ts`](./src/lib/site.ts).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Brand name: **Studio—E** (em dash, always)
+- Primary CTA: **"Book a Discovery Call"**
+- Tone: Compassionate Authority — sharp, warm, confident
+- Palette: ink `#252420` · gold `#C4A84A` · cream `#F8F4E8`
 
-## Learn More
+## Dev
 
-To learn more about Next.js, take a look at the following resources:
+Requires Node.js ≥ 20.9.0.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+nvm use 20
+npm install
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000).
 
-## Deploy on Vercel
+## Interactive Elements
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Add `data-cursor="pointer"` to any element to trigger the ring scale-up on the custom cursor.
