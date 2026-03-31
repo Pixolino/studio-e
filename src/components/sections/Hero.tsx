@@ -3,7 +3,7 @@
 import { useRef, useCallback } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
-import HeroGrid from "@/components/ui/HeroGrid";
+import AsciiGlitch from "@/components/ui/AsciiGlitch";
 
 const lines = ["WE BUILD", "BRANDS THAT", "OUTLAST THE", "MARKET."];
 
@@ -45,9 +45,10 @@ export default function Hero() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      id="hero"
       className="relative flex min-h-dvh flex-col justify-between overflow-hidden bg-ink grain-overlay px-8 pb-14 pt-28 md:px-16"
     >
-      <HeroGrid mouseRef={mouseRef} />
+      <AsciiGlitch mouseRef={mouseRef} />
       {/* Headline block */}
       <motion.div
         style={{ y: headlineY, opacity: headlineOpacity }}

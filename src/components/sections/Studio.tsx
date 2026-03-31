@@ -67,7 +67,7 @@ export default function Studio() {
   const statsInView = useInView(statsRef, { once: true, margin: "-80px" });
 
   return (
-    <section id="studio" className="bg-ink grain-overlay px-8 py-32 md:px-16">
+    <section id="studio" className="relative bg-ink grain-overlay px-8 py-32 md:px-16">
       <div ref={titleRef} className="mb-20">
         <motion.p
           initial={{ opacity: 0, x: -12 }}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import SmoothScroll from "@/components/layout/SmoothScroll";
 import CustomCursor from "@/components/ui/CustomCursor";
+import AnchorInterceptor from "@/components/layout/AnchorInterceptor";
 
 export const metadata: Metadata = {
   title: "Studio\u2014E \u2014 Brand Studio",
@@ -44,6 +45,7 @@ export default function RootLayout({
       <body className="min-h-dvh bg-cream text-ink font-sans">
         <SmoothScroll>
           <CustomCursor />
+          <AnchorInterceptor />
           {/* Header slot */}
           <main>{children}</main>
           {/* Footer slot */}

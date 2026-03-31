@@ -56,7 +56,7 @@ export default function Approach() {
   const titleInView = useInView(titleRef, { once: true, margin: "-80px" });
 
   return (
-    <section id="approach" className="bg-ink grain-overlay px-8 py-32 md:px-16">
+    <section id="approach" className="relative bg-ink grain-overlay px-8 py-32 md:px-16">
       <div ref={titleRef} className="mb-20 max-w-2xl">
         <motion.p
           initial={{ opacity: 0, x: -12 }}

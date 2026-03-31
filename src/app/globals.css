@@ -177,7 +177,6 @@ html.lenis body {
 
 /* Noise / grain texture overlay */
 .grain-overlay {
-  position: relative;
   isolation: isolate;
 }
 .grain-overlay::after {
