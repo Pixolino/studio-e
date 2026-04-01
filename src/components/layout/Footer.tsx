@@ -7,14 +7,14 @@ export default function Footer() {
         <p className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted/40">
           © {new Date().getFullYear()} Studio E. All rights reserved.
         </p>
-        <p className="font-mono text-[10px] tracking-[0.08em] text-gold/30">South Florida</p>
+        <p className="font-mono text-[10px] tracking-[0.08em] text-periwinkle/50">South Florida</p>
         <div className="flex gap-6">
           {siteConfig.social.map((s) => (
             <a
               key={s.platform}
               href={s.href}
               data-cursor="pointer"
-              className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted/40 transition-colors hover:text-gold"
+              className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted/40 transition-colors hover:text-periwinkle"
             >
               {s.platform}
             </a>

@@ -119,7 +119,7 @@ export default function Work() {
             initial={{ opacity: 0, x: -12 }}
             animate={titleInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
+            className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-violet"
           >
             Selected Work
           </motion.p>
@@ -140,7 +140,7 @@ export default function Work() {
           initial={{ opacity: 0 }}
           animate={titleInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="hidden font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors hover:text-ink md:block"
+          className="hidden font-mono text-[11px] uppercase tracking-[0.08em] text-violet underline decoration-violet underline-offset-4 transition-colors hover:text-ink md:block"
         >
           All work →
         </motion.a>

@@ -58,7 +58,7 @@ export default function Hero() {
           initial={{ opacity: 0, x: -12 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-          className="mb-6 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
+          className="mb-6 font-mono text-[11px] uppercase tracking-[0.25em] text-periwinkle/80"
         >
           Multi-disciplinary Brand Studio&ensp;&mdash;&ensp;South Florida
         </motion.p>
@@ -117,7 +117,7 @@ export default function Hero() {
         <motion.div
           animate={{ scaleY: [1, 1.4, 1], opacity: [0.4, 0.8, 0.4] }}
           transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          className="h-10 w-px origin-top bg-gradient-to-b from-gold/50 to-transparent"
+          className="h-10 w-px origin-top bg-gradient-to-b from-periwinkle/60 to-transparent"
         />
       </motion.div>
     </section>

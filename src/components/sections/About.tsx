@@ -14,7 +14,7 @@ export default function About() {
           initial={{ opacity: 0, x: -12 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-8 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
+          className="mb-8 font-mono text-[11px] uppercase tracking-[0.25em] text-violet"
         >
           The Problem We Solve
         </motion.p>
