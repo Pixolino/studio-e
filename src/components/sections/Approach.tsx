@@ -371,7 +371,7 @@ function DesktopApproach() {
             initial={{ opacity: 0, x: -12 }}
             animate={containerInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-gold/60"
+            className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-periwinkle/60"
           >
             The Approach
           </motion.p>

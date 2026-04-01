@@ -23,7 +23,7 @@ function ServiceCard({
       className="group relative flex flex-col justify-between rounded-2xl border border-gold/10 bg-cream-mid p-10 transition-colors duration-500 hover:border-gold/25"
     >
       <div>
-        <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.25em] text-muted">
+        <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.25em] text-violet">
           0{index + 1}
         </p>
         <h3 className="mb-4 font-display text-3xl font-medium tracking-tight text-ink">
@@ -34,7 +34,7 @@ function ServiceCard({
           {service.includes.map((item) => (
             <li
               key={item}
-              className="rounded-full border border-ink/10 px-3 py-1 font-mono text-[10px] text-muted"
+              className="rounded-full bg-periwinkle/20 border border-periwinkle/60 px-3 py-1 font-mono text-[10px] text-violet"
             >
               {item}
             </li>
@@ -63,7 +63,7 @@ export default function Services() {
           initial={{ opacity: 0, x: -12 }}
           animate={titleInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-muted"
+          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-violet"
         >
           Services
         </motion.p>

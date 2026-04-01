@@ -64,7 +64,7 @@ export default function Navbar() {
               className="group relative font-mono text-[11px] uppercase tracking-[0.1em] text-muted transition-colors duration-300 hover:text-cream"
             >
               {item.label}
-              <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-gold transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-periwinkle transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
