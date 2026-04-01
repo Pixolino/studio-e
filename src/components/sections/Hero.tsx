@@ -3,7 +3,8 @@
 import { useRef, useCallback } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
-import AsciiGlitch from "@/components/ui/AsciiGlitch";
+import AsciiGlitch, { type AsciiGlitchHandle } from "@/components/ui/AsciiGlitch";
+import AsciiTree from "@/components/ui/AsciiTree";
 
 const lines = ["WE BUILD", "BRANDS THAT", "OUTLAST THE", "MARKET."];
 
@@ -24,8 +25,13 @@ function LineReveal({ text, delay }: { text: string; delay: number }) {
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
-  const { scrollY } = useScroll();
+  const mouseRef     = useRef({ x: -9999, y: -9999 });
+  const glitchRef    = useRef<AsciiGlitchHandle>(null);
+  const { scrollY }  = useScroll();
+
+  const handleBudClick = useCallback((heroX: number, heroY: number) => {
+    glitchRef.current?.triggerBurst(heroX, heroY);
+  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -48,7 +54,8 @@ export default function Hero() {
       id="hero"
       className="relative flex h-[72dvh] flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:h-[80dvh] md:px-16 md:pt-28 lg:h-[85dvh] lg:pb-14 xl:h-dvh"
     >
-      <AsciiGlitch mouseRef={mouseRef} />
+      <AsciiGlitch ref={glitchRef} mouseRef={mouseRef} />
+      <AsciiTree onBudClick={handleBudClick} />
       {/* Headline block */}
       <motion.div
         style={{ y: headlineY, opacity: headlineOpacity }}

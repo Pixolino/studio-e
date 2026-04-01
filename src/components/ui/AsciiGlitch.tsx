@@ -1,9 +1,13 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 
 interface AsciiGlitchProps {
   mouseRef: React.MutableRefObject<{ x: number; y: number }>;
+}
+
+export interface AsciiGlitchHandle {
+  triggerBurst: (x: number, y: number) => void;
 }
 
 const CHARS = Array.from(new Set("01001101<>{}[]|/\\!#@%*+=~^?;:アイウエカキ0xDEAD".split("")));
@@ -55,8 +59,16 @@ function blobRadius(angle: number, t: number): number {
   );
 }
 
-export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const AsciiGlitch = forwardRef<AsciiGlitchHandle, AsciiGlitchProps>(
+function AsciiGlitch({ mouseRef }, ref) {
+  const canvasRef      = useRef<HTMLCanvasElement>(null);
+  const pendingBurst   = useRef<{ x: number; y: number } | null>(null);
+
+  useImperativeHandle(ref, () => ({
+    triggerBurst(x: number, y: number) {
+      pendingBurst.current = { x, y };
+    },
+  }));
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -160,6 +172,13 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
       const t  = ts * 0.0007;
+
+      // ── External burst trigger (e.g. from bud click) ───────────────
+      if (pendingBurst.current) {
+        const { x, y } = pendingBurst.current;
+        pendingBurst.current = null;
+        bursts.push({ x, y, startTs: ts, maxRadius: Math.sqrt(cw * cw + ch * ch) + 50 });
+      }
 
       // ── Phase 1: decay all trails ──────────────────────────────────
       for (const cell of cells) {
@@ -313,4 +332,7 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
       className="pointer-events-none absolute inset-0 h-full w-full"
     />
   );
-}
+});
+
+AsciiGlitch.displayName = "AsciiGlitch";
+export default AsciiGlitch;
