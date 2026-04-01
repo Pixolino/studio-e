@@ -13,15 +13,20 @@ export default function Home() {
   return (
     <>
       <Navbar />
-      <Hero />
-      <Marquee />
-      <About />
-      <Approach />
-      <Services />
-      <Studio />
-      <Work />
-      <Contact />
-      <Footer />
+      {/* Hero pins to top; subsequent sections slide over it */}
+      <div className="sticky top-0 z-0">
+        <Hero />
+      </div>
+      <div className="relative z-10">
+        <Marquee />
+        <About />
+        <Approach />
+        <Services />
+        <Studio />
+        <Work />
+        <Contact />
+        <Footer />
+      </div>
     </>
   );
 }
