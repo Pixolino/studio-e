@@ -37,8 +37,8 @@ export default function Hero() {
     mouseRef.current = { x: -9999, y: -9999 };
   }, []);
 
-  const headlineY = useTransform(scrollY, [0, 600], [0, -60]);
-  const headlineOpacity = useTransform(scrollY, [0, 380], [1, 0]);
+  const headlineY = useTransform(scrollY, [0, 900], [0, -60]);
+  const headlineOpacity = useTransform(scrollY, [0, 700], [1, 0]);
 
   return (
     <section
@@ -46,13 +46,13 @@ export default function Hero() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       id="hero"
-      className="relative flex min-h-dvh flex-col justify-between overflow-hidden bg-ink grain-overlay px-8 pb-14 pt-28 md:px-16"
+      className="relative flex h-[72dvh] flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:h-[80dvh] md:px-16 md:pt-28 lg:h-[85dvh] lg:pb-14 xl:h-dvh"
     >
       <AsciiGlitch mouseRef={mouseRef} />
       {/* Headline block */}
       <motion.div
         style={{ y: headlineY, opacity: headlineOpacity }}
-        className="relative z-10 mt-auto"
+        className="relative z-10 mt-[6vh] xl:mt-auto"
       >
         <motion.p
           initial={{ opacity: 0, x: -12 }}
@@ -63,7 +63,7 @@ export default function Hero() {
           Multi-disciplinary Brand Studio&ensp;&mdash;&ensp;South Florida
         </motion.p>
 
-        <h1 className="font-display text-[13vw] font-light leading-[0.88] tracking-tight text-cream md:text-[10vw]">
+        <h1 className="font-display text-[10vw] font-light leading-[0.88] tracking-tight text-cream md:text-[7.5vw] xl:text-[clamp(4rem,7.5vw,8.5rem)]">
           {lines.map((line, i) => (
             <LineReveal key={i} text={line} delay={0.35 + i * 0.11} />
           ))}
@@ -71,7 +71,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Bottom bar */}
-      <div className="relative z-10 mt-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="relative z-10 mt-8 flex flex-col gap-6 md:mt-14 md:flex-row md:items-end md:justify-between">
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

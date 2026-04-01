@@ -1,78 +1,63 @@
 # Studio—E
 
-Multi-disciplinary brand studio website for founders who have outgrown "good enough." Strategy, identity, and digital infrastructure — delivered as one seamless engagement.
+Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in South Florida.
 
 ## Stack
 
-- **Framework:** Next.js 16 (App Router)
-- **Styling:** Tailwind CSS v4 (inline `@theme` tokens, no config file)
-- **Animation:** Framer Motion v12
-- **Smooth Scroll:** Lenis v1
-- **3D:** React Three Fiber + Drei (available, not yet used)
-- **Fonts:** Zalando Sans (display + body, variable) · Geist Mono (UI accents)
-- **Language:** TypeScript
+- **Framework**: Next.js 16 (App Router)
+- **Styling**: Tailwind CSS v4
+- **Animation**: Framer Motion v12
+- **Smooth Scroll**: Lenis
+- **3D**: React Three Fiber (available, not yet used)
 
-## Structure
+## Brand Palette
 
-```
-src/
-├── app/
-│   ├── layout.tsx          # Root layout — fonts, Lenis, CustomCursor
-│   ├── page.tsx            # Homepage composition
-│   └── globals.css         # Tailwind @theme tokens, keyframes, utilities
-├── components/
-│   ├── layout/
-│   │   ├── Navbar.tsx      # Fixed nav, scroll-reactive frosted glass
-│   │   ├── SmoothScroll.tsx # Lenis wrapper
-│   │   └── Footer.tsx
-│   ├── sections/
-│   │   ├── Hero.tsx        # Full-viewport editorial type, interactive wave grid
-│   │   ├── Marquee.tsx     # Auto-scrolling ticker strip
-│   │   ├── About.tsx       # Problem statement section
-│   │   ├── Approach.tsx    # 3 pillars — Artful Precision, Technical Fluidity, Direct Partnership
-│   │   ├── Services.tsx    # Identity Systems, Digital Presence, Growth Assets
-│   │   ├── Studio.tsx      # Founders (Grace + Ilay) + stats
-│   │   ├── Work.tsx        # Portfolio grid (placeholder projects)
-│   │   └── Contact.tsx     # Discovery Call CTA
-│   └── ui/
-│       ├── CustomCursor.tsx # Dot + ring cursor with data-cursor="pointer" system
-│       └── HeroGrid.tsx    # Canvas wave grid — spring-physics mouse repulsion
-└── lib/
-    ├── site.ts             # Single source of truth for all brand copy + config
-    └── cn.ts               # clsx + tailwind-merge utility
-```
+| Token | Hex | Use |
+|---|---|---|
+| `--se-ink` | `#252420` | Background / text on light |
+| `--se-gold` | `#C4A84A` | Primary accent |
+| `--se-gold-light` | `#E2D098` | Hover / highlight |
+| `--se-gold-deep` | `#7D6B1A` | Subtle gold |
+| `--se-cream` | `#F8F4E8` | Headline text |
+| `--se-cream-mid` | `#EDE8D6` | Secondary light |
+| `--se-muted` | `#8A856E` | Body / supporting text |
 
-## Brand
+## Sections
 
-All copy and messaging lives in [`BRAND.md`](./BRAND.md) and is reflected in [`src/lib/site.ts`](./src/lib/site.ts).
+| Section | File | Notes |
+|---|---|---|
+| Navbar | `src/components/layout/Navbar.tsx` | Fixed, scrolled state, mobile overlay |
+| Hero | `src/components/sections/Hero.tsx` | Sticky, ASCII glitch bg, line reveals, parallax |
+| Marquee | `src/components/sections/Marquee.tsx` | CSS auto-scroll strip |
+| About | `src/components/sections/About.tsx` | |
+| Approach | `src/components/sections/Approach.tsx` | 500vh scroll-driven, 3 animated pillars |
+| Services | `src/components/sections/Services.tsx` | |
+| Studio | `src/components/sections/Studio.tsx` | Founder cards, count-up stats |
+| Work | `src/components/sections/Work.tsx` | Hover-overlay cards |
+| Contact | `src/components/sections/Contact.tsx` | |
+| Footer | `src/components/layout/Footer.tsx` | |
 
-- Brand name: **Studio—E** (em dash, always)
-- Primary CTA: **"Book a Discovery Call"**
-- Tone: Compassionate Authority — sharp, warm, confident
-- Palette: ink `#252420` · gold `#C4A84A` · cream `#F8F4E8`
-- Fonts: **Zalando Sans** (all headlines + body copy, variable weight 100–900) · **Geist Mono** (nav, buttons, CTAs, labels, tags, micro-copy)
+## The Approach Section
 
-## Dev
+Three scroll-driven animated pillars in a 500vh sticky container:
 
-Requires Node.js ≥ 20.9.0.
+- **01 Artful Precision** — SVG diamond + orbit ring, draws on scroll then loops (pulsating diamond, dual-direction ring rotation)
+- **02 Technical Fluidity** — Canvas wave animation, active during scroll window
+- **03 Direct Partnership** — SVG constellation + orbit, draws then loops (brightness pulse, traveling dots, center burst)
+
+Pillar indicators on the left are clickable anchors that scroll to the correct section position. Descriptions fold in after drawing begins.
+
+## Development
 
 ```bash
-nvm use 20
-npm install
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Interactive Elements
+## Key Files
 
-Add `data-cursor="pointer"` to any element to trigger the ring scale-up on the custom cursor.
-
-## Hero Grid
-
-`HeroGrid.tsx` renders a canvas-based distortion grid behind the hero. It has two behaviours:
-
-- **Wave** — two overlapping sine waves animate the grid nodes continuously for organic movement
-- **Repulsion** — moving the mouse over the hero pushes nodes away with quadratic force falloff; they spring back via damped physics
-
-Grid density is controlled by `SPACING` (currently `32px`). Repulsion radius and strength are `REPEL_RADIUS` / `REPEL_STRENGTH`.
+- `src/lib/site.ts` — All copy, nav, founders, stats, social links
+- `src/lib/lenis-store.ts` — Lenis singleton store
+- `BRAND.md` — Brand voice, tone, messaging guidelines
+- `CLAUDE.md` — AI assistant instructions and learned patterns
