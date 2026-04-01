@@ -64,8 +64,8 @@ function PrecisionVisual({ progress }: { progress: MotionValue<number> }) {
   return (
     <svg viewBox="0 0 140 90" className="h-full w-full" fill="none">
       {/* Crosshair axes — static */}
-      <motion.line x1="26"  y1="45" x2="114" y2="45" stroke="rgba(196,168,74,0.2)" strokeWidth="0.5" style={{ pathLength: hAxis }} />
-      <motion.line x1="70"  y1="7"  x2="70"  y2="83" stroke="rgba(196,168,74,0.2)" strokeWidth="0.5" style={{ pathLength: vAxis }} />
+      <motion.line x1="26"  y1="45" x2="114" y2="45" stroke="rgba(178,180,31,0.2)" strokeWidth="0.5" style={{ pathLength: hAxis }} />
+      <motion.line x1="70"  y1="7"  x2="70"  y2="83" stroke="rgba(178,180,31,0.2)" strokeWidth="0.5" style={{ pathLength: vAxis }} />
 
       {/* Outer circle + cardinal ticks — rotate clockwise when finished */}
       <motion.g
@@ -73,11 +73,11 @@ function PrecisionVisual({ progress }: { progress: MotionValue<number> }) {
         animate={finished ? { rotate: 360 } : {}}
         transition={finished ? { duration: 20, ease: "linear", repeat: Infinity } : {}}
       >
-        <motion.circle cx="70" cy="45" r="30" stroke="rgba(196,168,74,0.45)" strokeWidth="0.65" style={{ pathLength: outerCircle }} />
-        <motion.line x1="66.5" y1="15"   x2="73.5" y2="15"   stroke="rgba(196,168,74,0.55)" strokeWidth="0.85" style={{ pathLength: tickT }} />
-        <motion.line x1="100"  y1="41.5" x2="100"  y2="48.5" stroke="rgba(196,168,74,0.55)" strokeWidth="0.85" style={{ pathLength: tickR }} />
-        <motion.line x1="66.5" y1="75"   x2="73.5" y2="75"   stroke="rgba(196,168,74,0.55)" strokeWidth="0.85" style={{ pathLength: tickB }} />
-        <motion.line x1="40"   y1="41.5" x2="40"   y2="48.5" stroke="rgba(196,168,74,0.55)" strokeWidth="0.85" style={{ pathLength: tickL }} />
+        <motion.circle cx="70" cy="45" r="30" stroke="rgba(178,180,31,0.45)" strokeWidth="0.65" style={{ pathLength: outerCircle }} />
+        <motion.line x1="66.5" y1="15"   x2="73.5" y2="15"   stroke="rgba(178,180,31,0.55)" strokeWidth="0.85" style={{ pathLength: tickT }} />
+        <motion.line x1="100"  y1="41.5" x2="100"  y2="48.5" stroke="rgba(178,180,31,0.55)" strokeWidth="0.85" style={{ pathLength: tickR }} />
+        <motion.line x1="66.5" y1="75"   x2="73.5" y2="75"   stroke="rgba(178,180,31,0.55)" strokeWidth="0.85" style={{ pathLength: tickB }} />
+        <motion.line x1="40"   y1="41.5" x2="40"   y2="48.5" stroke="rgba(178,180,31,0.55)" strokeWidth="0.85" style={{ pathLength: tickL }} />
       </motion.g>
 
       {/* Inner circle + arc — rotate counterclockwise when finished */}
@@ -89,14 +89,14 @@ function PrecisionVisual({ progress }: { progress: MotionValue<number> }) {
         {/* Invisible r=18 circle anchors the bounding box symmetrically around (70,45)
             so transform-origin:"center" lands exactly on the visual center */}
         <circle cx="70" cy="45" r="18" fill="none" stroke="none" />
-        <motion.circle cx="70" cy="45" r="15" stroke="rgba(196,168,74,0.18)" strokeWidth="0.5" style={{ pathLength: innerCircle }} />
-        <motion.path d="M88 45 A18 18 0 0 0 70 27" stroke="rgba(196,168,74,0.22)" strokeWidth="0.5" style={{ pathLength: arc }} />
+        <motion.circle cx="70" cy="45" r="15" stroke="rgba(178,180,31,0.18)" strokeWidth="0.5" style={{ pathLength: innerCircle }} />
+        <motion.path d="M88 45 A18 18 0 0 0 70 27" stroke="rgba(178,180,31,0.22)" strokeWidth="0.5" style={{ pathLength: arc }} />
       </motion.g>
 
       {/* Diamond center — pulsate when finished */}
       <motion.path
         d="M70 41 L74 45 L70 49 L66 45 Z"
-        fill="rgba(196,168,74,0.72)"
+        fill="rgba(178,180,31,0.72)"
         style={{ opacity: finished ? undefined : diamond }}
         animate={finished ? { opacity: [0.15, 0.9, 0.15] } : {}}
         transition={finished ? { duration: 2.2, ease: "easeInOut", repeat: Infinity } : {}}
@@ -139,7 +139,7 @@ function FluidityVisual({ active }: { active: boolean }) {
       const cy = h / 2;
       for (const wave of waves) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(196,168,74,${wave.alpha})`;
+        ctx.strokeStyle = `rgba(178,180,31,${wave.alpha})`;
         ctx.lineWidth   = wave.lw;
         for (let x = 0; x <= w; x++) {
           const y = cy + Math.sin(x * wave.freq + t * wave.speed) * wave.amp;
@@ -191,17 +191,17 @@ function PartnershipVisual({ progress }: { progress: MotionValue<number> }) {
   return (
     <svg viewBox="0 0 140 90" className="h-full w-full" fill="none">
       {/* Orbit rings */}
-      <motion.circle cx="35"  cy="45" r="15" stroke="rgba(196,168,74,0.1)" strokeWidth="0.5" style={{ pathLength: orbitL }} />
-      <motion.circle cx="105" cy="45" r="15" stroke="rgba(196,168,74,0.1)" strokeWidth="0.5" style={{ pathLength: orbitR }} />
+      <motion.circle cx="35"  cy="45" r="15" stroke="rgba(178,180,31,0.1)" strokeWidth="0.5" style={{ pathLength: orbitL }} />
+      <motion.circle cx="105" cy="45" r="15" stroke="rgba(178,180,31,0.1)" strokeWidth="0.5" style={{ pathLength: orbitR }} />
 
       {/* Orbit ring pulse overlays — brighten both sides simultaneously */}
       {finished && (
         <>
-          <motion.circle cx="35"  cy="45" r="15" stroke="rgba(196,168,74,0.7)" strokeWidth="0.65" fill="none"
+          <motion.circle cx="35"  cy="45" r="15" stroke="rgba(178,180,31,0.7)" strokeWidth="0.65" fill="none"
             animate={{ opacity: [0, 0.55, 0] }}
             transition={{ duration: ORB_DUR, ease: "easeInOut", repeat: Infinity, repeatDelay: CYCLE - ORB_DUR }}
           />
-          <motion.circle cx="105" cy="45" r="15" stroke="rgba(196,168,74,0.7)" strokeWidth="0.65" fill="none"
+          <motion.circle cx="105" cy="45" r="15" stroke="rgba(178,180,31,0.7)" strokeWidth="0.65" fill="none"
             animate={{ opacity: [0, 0.55, 0] }}
             transition={{ duration: ORB_DUR, ease: "easeInOut", repeat: Infinity, repeatDelay: CYCLE - ORB_DUR }}
           />
@@ -209,23 +209,23 @@ function PartnershipVisual({ progress }: { progress: MotionValue<number> }) {
       )}
 
       {/* Node circles + dots */}
-      <motion.circle cx="35"  cy="45" r="6.5" stroke="rgba(196,168,74,0.6)" strokeWidth="0.7" fill="rgba(196,168,74,0.07)" style={{ pathLength: nodeL }} />
-      <motion.circle cx="105" cy="45" r="6.5" stroke="rgba(196,168,74,0.6)" strokeWidth="0.7" fill="rgba(196,168,74,0.07)" style={{ pathLength: nodeR }} />
-      <motion.circle cx="35"  cy="45" r="2"   fill="rgba(196,168,74,0.75)" style={{ opacity: dotL }} />
-      <motion.circle cx="105" cy="45" r="2"   fill="rgba(196,168,74,0.75)" style={{ opacity: dotR }} />
+      <motion.circle cx="35"  cy="45" r="6.5" stroke="rgba(178,180,31,0.6)" strokeWidth="0.7" fill="rgba(178,180,31,0.07)" style={{ pathLength: nodeL }} />
+      <motion.circle cx="105" cy="45" r="6.5" stroke="rgba(178,180,31,0.6)" strokeWidth="0.7" fill="rgba(178,180,31,0.07)" style={{ pathLength: nodeR }} />
+      <motion.circle cx="35"  cy="45" r="2"   fill="rgba(178,180,31,0.75)" style={{ opacity: dotL }} />
+      <motion.circle cx="105" cy="45" r="2"   fill="rgba(178,180,31,0.75)" style={{ opacity: dotR }} />
 
       {/* Connecting lines */}
-      <motion.line x1="41.5" y1="45" x2="70"  y2="45" stroke="rgba(196,168,74,0.4)" strokeWidth="0.7" style={{ pathLength: lineL }} />
-      <motion.line x1="98.5" y1="45" x2="70"  y2="45" stroke="rgba(196,168,74,0.4)" strokeWidth="0.7" style={{ pathLength: lineR }} />
+      <motion.line x1="41.5" y1="45" x2="70"  y2="45" stroke="rgba(178,180,31,0.4)" strokeWidth="0.7" style={{ pathLength: lineL }} />
+      <motion.line x1="98.5" y1="45" x2="70"  y2="45" stroke="rgba(178,180,31,0.4)" strokeWidth="0.7" style={{ pathLength: lineR }} />
 
       {/* Traveling pulse dots — move from outer nodes to center */}
       {finished && (
         <>
-          <motion.circle cx="41.5" cy="45" r="1.5" fill="rgba(196,168,74,0.85)"
+          <motion.circle cx="41.5" cy="45" r="1.5" fill="rgba(178,180,31,0.85)"
             animate={{ x: [0, 28.5], opacity: [0, 0.85, 0] }}
             transition={{ duration: DOT_DUR, ease: "easeIn", delay: DOT_DLY, repeat: Infinity, repeatDelay: CYCLE - DOT_DLY - DOT_DUR }}
           />
-          <motion.circle cx="98.5" cy="45" r="1.5" fill="rgba(196,168,74,0.85)"
+          <motion.circle cx="98.5" cy="45" r="1.5" fill="rgba(178,180,31,0.85)"
             animate={{ x: [0, -28.5], opacity: [0, 0.85, 0] }}
             transition={{ duration: DOT_DUR, ease: "easeIn", delay: DOT_DLY, repeat: Infinity, repeatDelay: CYCLE - DOT_DLY - DOT_DUR }}
           />
@@ -233,11 +233,11 @@ function PartnershipVisual({ progress }: { progress: MotionValue<number> }) {
       )}
 
       {/* Center point */}
-      <motion.circle cx="70" cy="45" r="3" fill="rgba(196,168,74,0.65)" style={{ opacity: centerO }} />
+      <motion.circle cx="70" cy="45" r="3" fill="rgba(178,180,31,0.65)" style={{ opacity: centerO }} />
 
       {/* Center burst when pulses arrive */}
       {finished && (
-        <motion.circle cx="70" cy="45" r="5" fill="rgba(196,168,74,0.9)"
+        <motion.circle cx="70" cy="45" r="5" fill="rgba(178,180,31,0.9)"
           style={{ transformOrigin: "70px 45px" }}
           animate={{ opacity: [0, 1, 0], scale: [0.4, 1.3, 0.4] }}
           transition={{ duration: CTR_DUR, ease: "easeOut", delay: CTR_DLY, repeat: Infinity, repeatDelay: CYCLE - CTR_DLY - CTR_DUR }}

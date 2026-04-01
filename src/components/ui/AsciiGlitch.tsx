@@ -10,7 +10,7 @@ const CHARS = Array.from(new Set("01001101<>{}[]|/\\!#@%*+=~^?;:アイウエカ�
 
 const CELL        = 22;
 const FONT_SIZE   = 12;
-const RADIUS      = 78;    // cursor hover base radius
+const RADIUS      = 120;   // cursor hover base radius
 const SPEED_MIN   = 180;   // ms – fastest char cycle
 const SPEED_MAX   = 650;   // ms – slowest char cycle
 const TRAIL_DECAY = 0.972;
@@ -257,9 +257,9 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
           cell.next = ts + cell.interval * (1 + (1 - cell.trailAlpha) * 2.5);
         }
 
-        ctx.shadowColor = `rgba(196, 168, 74, ${cell.trailAlpha * 0.55})`;
+        ctx.shadowColor = `rgba(178, 180, 31, ${cell.trailAlpha * 0.55})`;
         ctx.shadowBlur  = 5;
-        ctx.fillStyle   = `rgba(196, 168, 74, ${cell.trailAlpha})`;
+        ctx.fillStyle   = `rgba(178, 180, 31, ${cell.trailAlpha})`;
         ctx.fillText(cell.char, x, y);
       }
 

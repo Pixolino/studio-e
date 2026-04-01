@@ -105,7 +105,7 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
       }
 
       // Draw horizontal lines
-      ctx.strokeStyle = "rgba(196, 168, 74, 0.075)";
+      ctx.strokeStyle = "rgba(178, 180, 31, 0.075)";
       ctx.lineWidth = 0.6;
       for (let r = 0; r < rows; r++) {
         ctx.beginPath();
@@ -138,7 +138,7 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
         const radius = 0.9 + proximity * 1.4;
         ctx.beginPath();
         ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(196, 168, 74, ${alpha})`;
+        ctx.fillStyle = `rgba(178, 180, 31, ${alpha})`;
         ctx.fill();
       }
     }

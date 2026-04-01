@@ -96,7 +96,7 @@ export default function CustomCursor() {
         }}
         animate={{
           scale: hovered ? 1.5 : 1,
-          borderColor: hovered ? "var(--se-gold-light)" : "var(--se-gold)",
+          borderColor: hovered ? "var(--se-periwinkle)" : "var(--se-gold)",
         }}
         transition={{ duration: 0.2, ease: "easeOut" }}
       />

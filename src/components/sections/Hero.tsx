@@ -100,7 +100,7 @@ export default function Hero() {
           <a
             href="#work"
             data-cursor="pointer"
-            className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold-deep underline-offset-4 transition-colors duration-300 hover:text-cream"
+            className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors duration-300 hover:text-cream"
           >
             See our work
           </a>

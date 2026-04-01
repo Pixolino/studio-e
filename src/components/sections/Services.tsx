@@ -44,7 +44,7 @@ function ServiceCard({
       <a
         href="#contact"
         data-cursor="pointer"
-        className="mt-10 inline-flex items-center gap-2 self-start font-mono text-[11px] uppercase tracking-[0.08em] text-ink underline decoration-gold-deep underline-offset-4 transition-colors hover:text-gold"
+        className="mt-10 inline-flex items-center gap-2 self-start font-mono text-[11px] uppercase tracking-[0.08em] text-ink underline decoration-violet underline-offset-4 transition-colors hover:text-gold"
       >
         {service.cta} →
       </a>

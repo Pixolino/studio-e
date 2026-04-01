@@ -2,6 +2,7 @@
 
 ## Brand & Messaging
 Always follow the tone, voice, and messaging guidelines in BRAND.md before writing any copy.
+Always follow the color system in COLORS.md for all UI and frontend work.
 
 ## Frontend Design
 When building any frontend, UI component, or webpage:
@@ -18,6 +19,16 @@ When building any frontend, UI component, or webpage:
 When I say "ship it" — update CLAUDE.md with new project learnings, 
 update README.md to reflect current state, then stage, commit with a 
 descriptive conventional commit message, and push to main.
+
+## Color System
+The canonical color reference is COLORS.md. When updating colors:
+- Tailwind v4 tokens live in `@theme inline` in `globals.css` as `--color-*`
+- CSS custom properties mirror them in `:root` as `--se-*`
+- Canvas-drawn elements (AsciiGlitch, HeroGrid, Approach SVGs) use hardcoded `rgba()` — update manually when palette changes
+- Current gold/olive = `rgba(178, 180, 31, ...)` (#B2B41F)
+
+## Logo
+SVG wordmark at `public/logo.svg`. Inline React component at `src/components/ui/Logo.tsx` using `currentColor`. Default render: 108px wide in Navbar.
 
 ## Learned Patterns
 

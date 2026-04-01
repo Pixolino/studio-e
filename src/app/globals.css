@@ -32,15 +32,16 @@
    ============================================================ */
 @theme inline {
   /* Brand palette */
-  --color-ink: #252420;
-  --color-gold-deep: #7D6B1A;
-  --color-gold: #C4A84A;
-  --color-gold-light: #E2D098;
-  --color-cream: #F8F4E8;
-  --color-cream-mid: #EDE8D6;
-  --color-muted: #8A856E;
-  --color-border: rgba(37, 36, 32, 0.12);
-  --color-border-strong: rgba(37, 36, 32, 0.22);
+  --color-ink: #151514;
+  --color-charcoal: #3A3A37;
+  --color-cream: #F7F5F2;
+  --color-cream-mid: #E6E6DB;
+  --color-periwinkle: #D0D1FF;
+  --color-gold: #B2B41F;
+  --color-violet: #422DA2;
+  --color-muted: #888888;
+  --color-border: rgba(21, 21, 20, 0.12);
+  --color-border-strong: rgba(21, 21, 20, 0.22);
 
   /* Typography */
   --font-sans: "Zalando Sans", ui-sans-serif, sans-serif;
@@ -90,15 +91,16 @@
    CSS Custom Properties (mirrors for JS / non-Tailwind usage)
    ============================================================ */
 :root {
-  --se-ink: #252420;
-  --se-gold-deep: #7D6B1A;
-  --se-gold: #C4A84A;
-  --se-gold-light: #E2D098;
-  --se-cream: #F8F4E8;
-  --se-cream-mid: #EDE8D6;
-  --se-muted: #8A856E;
-  --se-border: rgba(37, 36, 32, 0.12);
-  --se-border-strong: rgba(37, 36, 32, 0.22);
+  --se-ink: #151514;
+  --se-charcoal: #3A3A37;
+  --se-cream: #F7F5F2;
+  --se-cream-mid: #E6E6DB;
+  --se-periwinkle: #D0D1FF;
+  --se-gold: #B2B41F;
+  --se-violet: #422DA2;
+  --se-muted: #888888;
+  --se-border: rgba(21, 21, 20, 0.12);
+  --se-border-strong: rgba(21, 21, 20, 0.22);
 }
 
 /* ============================================================
@@ -154,7 +156,7 @@ html.lenis body {
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--se-gold-light);
+  background: var(--se-periwinkle);
 }
 
 /* Firefox */
@@ -169,7 +171,7 @@ html.lenis body {
 
 /* Gold gradient text */
 .text-gold-gradient {
-  background: linear-gradient(135deg, var(--se-gold) 0%, var(--se-gold-light) 50%, var(--se-gold) 100%);
+  background: linear-gradient(135deg, var(--se-gold) 0%, var(--se-cream) 50%, var(--se-gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -193,7 +195,7 @@ html.lenis body {
 
 /* Glass-morphism on cream-mid surfaces */
 .glass-cream {
-  background: rgba(237, 232, 214, 0.6);
+  background: rgba(230, 230, 219, 0.6);
   backdrop-filter: blur(12px) saturate(1.2);
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   border: 1px solid var(--se-border);

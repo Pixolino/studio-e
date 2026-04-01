@@ -71,7 +71,7 @@ export default function Contact() {
             data-cursor="pointer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-8 py-4 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-gold-light"
+            className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-8 py-4 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
           >
             {siteConfig.cta.label}
             <span>↗</span>

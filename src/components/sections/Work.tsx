@@ -10,7 +10,7 @@ const projects = [
     category: "Brand & Web",
     description:
       "Full brand identity and digital presence for a specialty single-origin roaster.",
-    bg: "bg-gradient-to-br from-[#7D6B1A] via-[#3a3218] to-[#252420]",
+    bg: "bg-gradient-to-br from-[#422DA2] via-[#2d1f6e] to-[#151514]",
     light: true,
   },
   {
@@ -19,7 +19,7 @@ const projects = [
     category: "Web Design",
     description:
       "Marketing site and client portal for a boutique investment firm.",
-    bg: "bg-gradient-to-br from-[#EDE8D6] to-[#C4A84A]",
+    bg: "bg-gradient-to-br from-[#E6E6DB] to-[#B2B41F]",
     light: false,
   },
   {
@@ -28,7 +28,7 @@ const projects = [
     category: "Brand Identity",
     description:
       "Minimal luxury branding for a clean beauty startup targeting Gen Z.",
-    bg: "bg-gradient-to-br from-[#C4A84A] to-[#E2D098]",
+    bg: "bg-gradient-to-br from-[#B2B41F] to-[#D0D1FF]",
     light: false,
   },
   {
@@ -37,7 +37,7 @@ const projects = [
     category: "Digital Experience",
     description:
       "Immersive portfolio site for a Miami-based motion design collective.",
-    bg: "bg-gradient-to-br from-[#1a1915] to-[#252420]",
+    bg: "bg-gradient-to-br from-[#151514] to-[#0e0e0d]",
     light: true,
   },
 ];
@@ -140,7 +140,7 @@ export default function Work() {
           initial={{ opacity: 0 }}
           animate={titleInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="hidden font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold-deep underline-offset-4 transition-colors hover:text-ink md:block"
+          className="hidden font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors hover:text-ink md:block"
         >
           All work →
         </motion.a>

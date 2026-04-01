@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/lib/site";
 import { lenisStore } from "@/lib/lenis-store";
+import Logo from "@/components/ui/Logo";
 
 export default function Navbar() {
   const [scrolled,  setScrolled]  = useState(false);
@@ -48,9 +49,9 @@ export default function Navbar() {
         <a
           href="/"
           data-cursor="pointer"
-          className="shrink-0 whitespace-nowrap font-sans text-lg font-medium tracking-tight text-cream"
+          className="shrink-0"
         >
-          Studio<span className="italic text-gold">&mdash;E</span>
+          <Logo width={108} className="text-cream transition-colors duration-300 hover:text-gold" />
         </a>
 
         {/* Desktop nav */}
@@ -159,7 +160,7 @@ export default function Navbar() {
                 href={siteConfig.cta.href}
                 onClick={closeMenu}
                 data-cursor="pointer"
-                className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-7 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-gold-light"
+                className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-7 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
               >
                 {siteConfig.cta.label}
                 <span>↗</span>

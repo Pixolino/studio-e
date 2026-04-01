@@ -14,13 +14,14 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 
 | Token | Hex | Use |
 |---|---|---|
-| `--se-ink` | `#252420` | Background / text on light |
-| `--se-gold` | `#C4A84A` | Primary accent |
-| `--se-gold-light` | `#E2D098` | Hover / highlight |
-| `--se-gold-deep` | `#7D6B1A` | Subtle gold |
-| `--se-cream` | `#F8F4E8` | Headline text |
-| `--se-cream-mid` | `#EDE8D6` | Secondary light |
-| `--se-muted` | `#8A856E` | Body / supporting text |
+| `--se-ink` | `#151514` | Dark background |
+| `--se-charcoal` | `#3A3A37` | Secondary UI / dark surfaces |
+| `--se-cream` | `#F7F5F2` | Primary text on dark bg |
+| `--se-cream-mid` | `#E6E6DB` | Light background (Parchment) |
+| `--se-periwinkle` | `#D0D1FF` | Soft accent, hover states, tags |
+| `--se-gold` | `#B2B41F` | CTA & accent (Olive) |
+| `--se-violet` | `#422DA2` | Eyebrow / label text (light bg only) |
+| `--se-muted` | `#888888` | Body / supporting text |
 
 ## Sections
 
