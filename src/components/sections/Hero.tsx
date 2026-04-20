@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
-import MagnoliaScroll from "@/components/ui/MagnoliaScroll";
+import MagnoliaScroll, { MagnoliaScrollHandle } from "@/components/ui/MagnoliaScroll";
 
 const lines = ["WE BUILD", "BRANDS THAT", "OUTLAST THE", "MARKET."];
 
@@ -23,7 +23,8 @@ function LineReveal({ text, delay }: { text: string; delay: number }) {
 }
 
 export default function Hero() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef   = useRef<HTMLDivElement>(null);
+  const magnoliaRef  = useRef<MagnoliaScrollHandle>(null);
 
   // Single source of truth: 0→1 over the wrapper's scrollable range
   const { scrollY } = useScroll();
@@ -50,9 +51,15 @@ export default function Hero() {
       <section
         id="hero"
         className="sticky top-0 flex h-[72dvh] flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:h-[80dvh] md:px-16 md:pt-28 lg:h-[85dvh] lg:pb-14 xl:h-dvh"
+        onClick={(e) => {
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          if (e.clientX > rect.left + rect.width * 0.56 && !(e.target as Element).closest("a, button")) {
+            magnoliaRef.current?.triggerClick();
+          }
+        }}
       >
         {/* Magnolia ASCII scroll art */}
-        <MagnoliaScroll progress={magnoliaProgress} />
+        <MagnoliaScroll ref={magnoliaRef} progress={magnoliaProgress} />
 
         {/* Headline block */}
         <motion.div
