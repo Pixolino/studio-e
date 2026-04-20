@@ -40,7 +40,16 @@ To rotate an SVG group around its visual center, always use both:
 If the group's content is asymmetric (e.g. only an arc in one quadrant), add an invisible `<circle fill="none" stroke="none"/>` centered on the desired pivot to symmetrize the bbox so "center" lands on the right point.
 
 ### Sticky Hero / Sections Overlay Effect
-Wrap Hero in `<div className="sticky top-0 z-0">` and everything after in `<div className="relative z-10">`. Subsequent sections need opaque `bg-ink` backgrounds — they paint over the pinned hero as they scroll up.
+Hero owns its own scroll-lock wrapper internally (`<div ref={wrapperRef} className="relative h-[150dvh]">`). The section inside is `sticky top-0`. In `page.tsx`, wrap Hero in `<div className="relative z-0">` and subsequent sections in `<div className="relative z-10">` — they paint over the pinned hero as they scroll up. Do NOT add a sticky wrapper in `page.tsx`; Hero handles it.
+
+### Hero Scroll-Progress Tracking
+Use `useMotionValue` + `useMotionValueEvent(scrollY, "change")` to build a single `scrollProgress` MotionValue (0→1) that all hero effects share. Compute `maxScroll` as `el.offsetHeight - window.innerHeight * 0.5` so progress reaches 1 exactly when the next section is halfway up the viewport — not when the wrapper bottom first appears. Drive all effects (headline opacity/y, bottom bar, pulse, canvas animation) from this single value so they all complete in sync.
+
+### ASCII Art Canvas Centering (MagnoliaScroll)
+To align two different ASCII art files so they morph in-place on the same canvas:
+- Compute **visual centroid** (mean col / mean row of all non-space chars) for each art — NOT the bounding-box midpoint. Sparse outlier chars at the edges skew the bbox far from the visual center.
+- Use `ox = cw / 2 - art.centroidC * charW` and `oy = ch / 2 - art.centroidR * charH` to pin each art's center-of-mass to the canvas center.
+- Use a **shared font size** derived from the larger of the two arts' visual spans so both render at the same scale.
 
 ### Scroll-Driven Approach Section
 - 500vh container + `sticky top-0 h-screen` inner
