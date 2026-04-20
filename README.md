@@ -28,7 +28,7 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 | Section | File | Notes |
 |---|---|---|
 | Navbar | `src/components/layout/Navbar.tsx` | Fixed, scrolled state, mobile overlay |
-| Hero | `src/components/sections/Hero.tsx` | Sticky, ASCII glitch bg, line reveals, parallax |
+| Hero | `src/components/sections/Hero.tsx` | Scroll-locked (150dvh wrapper), line reveals, MagnoliaScroll ASCII art transition |
 | Marquee | `src/components/sections/Marquee.tsx` | CSS auto-scroll strip |
 | About | `src/components/sections/About.tsx` | |
 | Approach | `src/components/sections/Approach.tsx` | 500vh scroll-driven, 3 animated pillars |
@@ -55,6 +55,15 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## Hero Section
+
+The hero is a scroll-locked experience: a `150dvh` wrapper with `sticky top-0` section inside. A single `scrollProgress` MotionValue (0→1, reaching 1 when the next section is halfway up the viewport) drives all effects in sync:
+
+- **Left**: headline line-reveals on load; headline + bottom bar fade/lift in the final third of scroll
+- **Right**: `MagnoliaScroll` canvas — ASCII art magnolia bud glitch-sweeps into a bloom as you scroll. Clicking anywhere on the right side of the hero toggles bud↔bloom with the same sweep effect. Art files at `public/ascii-bud.txt` and `public/ascii-bloom.txt`.
+
+`MagnoliaScroll` (`src/components/ui/MagnoliaScroll.tsx`) — canvas component that parses two ASCII art files, aligns them via union bounding-box so identical `(row, col)` coordinates map to the same canvas pixel. Scroll drives a top-to-bottom glitch-sweep via a Framer Motion `MotionValue`. Click interaction is exposed via `forwardRef` + `useImperativeHandle` (`triggerClick()`), animated with Framer Motion `animate()` on a MotionValue so the bloom state persists after the animation ends. Bloom→bud sweeps bottom-to-top naturally from the same math.
 
 ## Key Files
 
