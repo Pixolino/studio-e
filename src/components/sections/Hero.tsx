@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
-import AsciiGlitch from "@/components/ui/AsciiGlitch";
 
 const lines = ["WE BUILD", "BRANDS THAT", "OUTLAST THE", "MARKET."];
 
@@ -24,18 +23,7 @@ function LineReveal({ text, delay }: { text: string; delay: number }) {
 
 export default function Hero() {
   const containerRef = useRef<HTMLElement>(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
   const { scrollY } = useScroll();
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    const rect = containerRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    mouseRef.current = { x: -9999, y: -9999 };
-  }, []);
 
   const headlineY = useTransform(scrollY, [0, 900], [0, -60]);
   const headlineOpacity = useTransform(scrollY, [0, 700], [1, 0]);
@@ -43,12 +31,9 @@ export default function Hero() {
   return (
     <section
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
       id="hero"
       className="relative flex h-[72dvh] flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:h-[80dvh] md:px-16 md:pt-28 lg:h-[85dvh] lg:pb-14 xl:h-dvh"
     >
-      <AsciiGlitch mouseRef={mouseRef} />
       {/* Headline block */}
       <motion.div
         style={{ y: headlineY, opacity: headlineOpacity }}
