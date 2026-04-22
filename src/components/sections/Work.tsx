@@ -71,7 +71,7 @@ function WorkCard({
       <div className="relative z-10 flex h-full flex-col justify-between p-8">
         <div className="flex items-start justify-between">
           <span
-            className={`font-mono text-[10px] uppercase tracking-[0.22em] transition-colors duration-300 ${
+            className={`font-mono text-[10px] md:text-xs uppercase tracking-[0.22em] transition-colors duration-300 ${
               project.light ? "text-gold/50" : "text-ink/45"
             } group-hover:text-gold/50`}
           >
@@ -98,7 +98,7 @@ function WorkCard({
             {project.description}
           </p>
           <div className="mt-5 flex translate-y-3 items-center gap-2 opacity-0 transition-all delay-75 duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-gold">View project</span>
+            <span className="font-mono text-[11px] md:text-xs uppercase tracking-[0.08em] text-gold">View project</span>
             <span className="text-gold">→</span>
           </div>
         </div>
@@ -119,16 +119,16 @@ export default function Work() {
             initial={{ opacity: 0, x: -12 }}
             animate={titleInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-violet"
+            className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-violet"
           >
-            Selected Work
+            /Selected Work/
           </motion.p>
           <div className="overflow-hidden">
             <motion.h2
               initial={{ y: "100%" }}
               animate={titleInView ? { y: 0 } : {}}
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-5xl font-medium tracking-tight text-ink md:text-6xl"
+              className="font-display text-5xl font-medium tracking-tight text-ink md:text-6xl lg:text-7xl"
             >
               Our projects.
             </motion.h2>
@@ -140,7 +140,7 @@ export default function Work() {
           initial={{ opacity: 0 }}
           animate={titleInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="hidden font-mono text-[11px] uppercase tracking-[0.08em] text-violet underline decoration-violet underline-offset-4 transition-colors hover:text-ink md:block"
+          className="hidden font-mono text-[11px] md:text-xs uppercase tracking-[0.08em] text-violet underline decoration-violet underline-offset-4 transition-colors hover:text-ink md:block"
         >
           All work →
         </motion.a>

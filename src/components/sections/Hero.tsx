@@ -1,9 +1,42 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
 import MagnoliaScroll, { MagnoliaScrollHandle } from "@/components/ui/MagnoliaScroll";
+
+const DECODE_CHARS = "01<>{}[]|/\\!#@%*+=~^?";
+
+function DecodeText({ text }: { text: string }) {
+  const [display, setDisplay] = useState(text);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const start = useCallback(() => {
+    let iteration = 0;
+    clearInterval(timerRef.current!);
+    timerRef.current = setInterval(() => {
+      setDisplay(
+        text.split("").map((ch, i) => {
+          if (ch === " ") return " ";
+          if (i < iteration) return ch;
+          return DECODE_CHARS[Math.floor(Math.random() * DECODE_CHARS.length)];
+        }).join("")
+      );
+      iteration += 1.2;
+      if (iteration > text.length) {
+        clearInterval(timerRef.current!);
+        setDisplay(text);
+      }
+    }, 25);
+  }, [text]);
+
+  const reset = useCallback(() => {
+    clearInterval(timerRef.current!);
+    setDisplay(text);
+  }, [text]);
+
+  return <span onMouseEnter={start} onMouseLeave={reset}>{display}</span>;
+}
 
 const lines = ["WE BUILD", "BRANDS THAT", "OUTLAST THE", "MARKET."];
 
@@ -34,7 +67,7 @@ export default function Hero() {
     const el = wrapperRef.current;
     if (!el) return;
     // Progress reaches 1 when the next section is halfway up the viewport
-    const maxScroll = Math.max(1, el.offsetHeight - window.innerHeight * 0.5);
+    const maxScroll = Math.max(1, el.offsetHeight);
     scrollProgress.set(Math.max(0, Math.min(1, y / maxScroll)));
   });
 
@@ -70,7 +103,7 @@ export default function Hero() {
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="mb-6 font-mono text-[11px] uppercase tracking-[0.25em] text-periwinkle/80"
+            className="mb-6 font-mono text-[11px] md:text-xs uppercase tracking-[0.25em] text-periwinkle/80"
           >
             Multi-disciplinary Brand Studio&ensp;&mdash;&ensp;South Florida
           </motion.p>
@@ -83,12 +116,12 @@ export default function Hero() {
         </motion.div>
 
         {/* Bottom bar */}
-        <motion.div style={{ opacity: bottomBarOpacity }} className="relative z-10 mt-8 flex flex-col gap-6 md:mt-14 md:flex-row md:items-end md:justify-between">
+        <motion.div style={{ opacity: bottomBarOpacity }} className="relative z-10 mt-8 flex flex-col gap-6 md:mt-14 md:flex-row md:items-end">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1.05, ease: "easeOut" }}
-            className="max-w-xs text-sm leading-relaxed text-muted"
+            className="max-w-xs text-sm leading-relaxed text-muted md:text-base"
           >
             {siteConfig.description}
           </motion.p>
@@ -102,19 +135,19 @@ export default function Hero() {
             <a
               href={siteConfig.cta.href}
               data-cursor="pointer"
-              className="group inline-flex items-center gap-3 font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-cream"
+              className="group inline-flex items-center gap-3 font-mono text-[11px] md:text-xs font-medium uppercase tracking-[0.08em] text-cream"
             >
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold/40 text-gold transition-all duration-300 group-hover:border-gold group-hover:bg-gold group-hover:text-ink">
-                ↗
+                <span className="inline-block transition-transform duration-300 group-hover:rotate-45">↗</span>
               </span>
               {siteConfig.cta.label}
             </a>
             <a
               href="#work"
               data-cursor="pointer"
-              className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors duration-300 hover:text-cream"
+              className="font-mono text-[11px] md:text-xs uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors duration-300 hover:text-periwinkle"
             >
-              See our work
+              <DecodeText text="See our work" />
             </a>
           </motion.div>
         </motion.div>

@@ -17,24 +17,25 @@ function ServiceCard({
   return (
     <motion.div
       ref={ref}
+      id={`service-${service.name.toLowerCase().replace(/\s+/g, "-")}`}
       initial={{ opacity: 0, y: 36 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.85, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
       className="group relative flex flex-col justify-between rounded-2xl border border-gold/10 bg-cream-mid p-10 transition-colors duration-500 hover:border-gold/25"
     >
       <div>
-        <p className="mb-6 font-mono text-[10px] uppercase tracking-[0.25em] text-violet">
+        <p className="mb-6 font-mono text-[10px] md:text-xs uppercase tracking-[0.25em] text-violet">
           0{index + 1}
         </p>
         <h3 className="mb-4 font-display text-3xl font-medium tracking-tight text-ink">
           {service.name}
         </h3>
-        <p className="mb-8 text-sm leading-relaxed text-muted">{service.description}</p>
+        <p className="mb-8 text-sm leading-relaxed text-muted md:text-base">{service.description}</p>
         <ul className="flex flex-wrap gap-2">
           {service.includes.map((item) => (
             <li
               key={item}
-              className="rounded-full bg-periwinkle/20 border border-periwinkle/60 px-3 py-1 font-mono text-[10px] text-violet"
+              className="rounded-full bg-periwinkle/20 border border-periwinkle/60 px-3 py-1 font-mono text-[10px] md:text-xs text-violet"
             >
               {item}
             </li>
@@ -44,7 +45,7 @@ function ServiceCard({
       <a
         href="#contact"
         data-cursor="pointer"
-        className="mt-10 inline-flex items-center gap-2 self-start font-mono text-[11px] uppercase tracking-[0.08em] text-ink underline decoration-violet underline-offset-4 transition-colors hover:text-gold"
+        className="mt-10 inline-flex items-center gap-2 self-start font-mono text-[11px] md:text-xs uppercase tracking-[0.08em] text-ink underline decoration-violet underline-offset-4 transition-colors hover:text-gold"
       >
         {service.cta} →
       </a>
@@ -63,16 +64,16 @@ export default function Services() {
           initial={{ opacity: 0, x: -12 }}
           animate={titleInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-violet"
+          className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-violet"
         >
-          Services
+          /Services/
         </motion.p>
         <div className="overflow-hidden">
           <motion.h2
             initial={{ y: "100%" }}
             animate={titleInView ? { y: 0 } : {}}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl font-medium tracking-tight text-ink md:text-6xl"
+            className="font-display text-5xl font-medium tracking-tight text-ink md:text-6xl lg:text-7xl"
           >
             Everything your brand needs{" "}
             <span className="italic">to command the room.</span>

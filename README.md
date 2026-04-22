@@ -65,6 +65,8 @@ The hero is a scroll-locked experience: a `150dvh` wrapper with `sticky top-0` s
 
 `MagnoliaScroll` (`src/components/ui/MagnoliaScroll.tsx`) — canvas component that parses two ASCII art files, aligns them via union bounding-box so identical `(row, col)` coordinates map to the same canvas pixel. Scroll drives a top-to-bottom glitch-sweep via a Framer Motion `MotionValue`. Click interaction is exposed via `forwardRef` + `useImperativeHandle` (`triggerClick()`), animated with Framer Motion `animate()` on a MotionValue so the bloom state persists after the animation ends. Bloom→bud sweeps bottom-to-top naturally from the same math.
 
+Hero text and animations complete when the Marquee is ~90% up the viewport (`maxScroll = el.offsetHeight`, fade ranges end at 0.93).
+
 ## Key Files
 
 - `src/lib/site.ts` — All copy, nav, founders, stats, social links

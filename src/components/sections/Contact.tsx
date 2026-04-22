@@ -29,9 +29,9 @@ export default function Contact() {
           initial={{ opacity: 0, x: -12 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-8 font-mono text-[11px] uppercase tracking-[0.25em] text-gold/60"
+          className="mb-8 font-mono text-sm uppercase tracking-[0.25em] text-gold/60"
         >
-          Start a conversation
+          /Start a conversation/
         </motion.p>
 
         <h2 className="font-display text-[9vw] font-medium leading-[0.88] tracking-tight text-cream md:text-[7.5vw]">
@@ -53,7 +53,7 @@ export default function Contact() {
           initial={{ opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.45 }}
-          className="mt-8 max-w-sm text-sm leading-relaxed text-muted"
+          className="mt-8 max-w-sm text-sm leading-relaxed text-muted md:text-base"
         >
           Every Studio&mdash;E engagement begins with a Discovery Call&mdash;a focused conversation
           to understand where you are, where you&rsquo;re headed, and whether we&rsquo;re the right
@@ -71,7 +71,7 @@ export default function Contact() {
             data-cursor="pointer"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-8 py-4 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
+            className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-8 py-4 font-mono text-[11px] md:text-xs font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
           >
             {siteConfig.cta.label}
             <span>↗</span>
@@ -79,7 +79,7 @@ export default function Contact() {
           <a
             href="mailto:hello@studioe.agency"
             data-cursor="pointer"
-            className="font-mono text-[11px] text-muted transition-colors hover:text-cream"
+            className="font-mono text-[11px] md:text-xs text-muted transition-colors hover:text-cream"
           >
             hello@studioe.agency
           </a>
@@ -97,7 +97,7 @@ export default function Contact() {
             key={s.platform}
             href={s.href}
             data-cursor="pointer"
-            className="font-mono text-[10px] uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
+            className="font-mono text-[10px] md:text-xs uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
           >
             {s.platform}
           </a>

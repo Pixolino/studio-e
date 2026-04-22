@@ -61,7 +61,7 @@ export default function Navbar() {
               key={item.label}
               href={item.href}
               data-cursor="pointer"
-              className="group relative font-mono text-[11px] uppercase tracking-[0.1em] text-muted transition-colors duration-300 hover:text-cream"
+              className="group relative font-mono text-[11px] md:text-xs uppercase tracking-[0.1em] text-muted transition-colors duration-300 hover:text-cream"
             >
               {item.label}
               <span className="absolute -bottom-0.5 left-0 h-px w-0 bg-periwinkle transition-all duration-300 group-hover:w-full" />
@@ -75,10 +75,10 @@ export default function Navbar() {
           data-cursor="pointer"
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.97 }}
-          className="hidden shrink-0 items-center gap-2 rounded-full border border-gold/40 px-5 py-2.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-gold transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink md:inline-flex"
+          className="group hidden shrink-0 items-center gap-2 rounded-full border border-gold/40 px-5 py-2.5 font-mono text-[11px] md:text-xs font-medium uppercase tracking-[0.1em] text-gold transition-all duration-300 hover:border-gold hover:bg-gold hover:text-ink md:inline-flex"
         >
           {siteConfig.cta.label}
-          <span>↗</span>
+          <span className="inline-block transition-transform duration-300 group-hover:rotate-45">↗</span>
         </motion.a>
 
         {/* Hamburger — mobile only */}
@@ -140,7 +140,7 @@ export default function Navbar() {
                     <span className="font-display text-[11.5vw] font-light leading-none tracking-tight text-cream">
                       {item.label}
                     </span>
-                    <span className="font-mono text-[10px] text-gold/40">
+                    <span className="font-mono text-[10px] md:text-xs text-gold/40">
                       0{i + 1}
                     </span>
                   </motion.a>
@@ -160,10 +160,10 @@ export default function Navbar() {
                 href={siteConfig.cta.href}
                 onClick={closeMenu}
                 data-cursor="pointer"
-                className="inline-flex items-center gap-3 self-start rounded-full bg-gold px-7 py-3.5 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
+                className="group inline-flex items-center gap-3 self-start rounded-full bg-gold px-7 py-3.5 font-mono text-[11px] md:text-xs font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
               >
                 {siteConfig.cta.label}
-                <span>↗</span>
+                <span className="inline-block transition-transform duration-300 group-hover:rotate-45">↗</span>
               </a>
 
               <div className="flex gap-6">
@@ -172,7 +172,7 @@ export default function Navbar() {
                     key={s.platform}
                     href={s.href}
                     data-cursor="pointer"
-                    className="font-mono text-[10px] uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
+                    className="font-mono text-[10px] md:text-xs uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
                   >
                     {s.platform}
                   </a>

@@ -43,13 +43,16 @@ If the group's content is asymmetric (e.g. only an arc in one quadrant), add an 
 Hero owns its own scroll-lock wrapper internally (`<div ref={wrapperRef} className="relative h-[150dvh]">`). The section inside is `sticky top-0`. In `page.tsx`, wrap Hero in `<div className="relative z-0">` and subsequent sections in `<div className="relative z-10">` — they paint over the pinned hero as they scroll up. Do NOT add a sticky wrapper in `page.tsx`; Hero handles it.
 
 ### Hero Scroll-Progress Tracking
-Use `useMotionValue` + `useMotionValueEvent(scrollY, "change")` to build a single `scrollProgress` MotionValue (0→1) that all hero effects share. Compute `maxScroll` as `el.offsetHeight - window.innerHeight * 0.5` so progress reaches 1 exactly when the next section is halfway up the viewport — not when the wrapper bottom first appears. Drive all effects (headline opacity/y, bottom bar, pulse, canvas animation) from this single value so they all complete in sync.
+Use `useMotionValue` + `useMotionValueEvent(scrollY, "change")` to build a single `scrollProgress` MotionValue (0→1) that all hero effects share. Compute `maxScroll` as `el.offsetHeight` (full wrapper height) so progress reaches 1 when the next section's top hits the top of the viewport. With fade ranges ending at ~0.93, text/animation completes when the marquee is ~90% up the viewport. Drive all effects from this single value so they complete in sync.
 
 ### ASCII Art Canvas Centering (MagnoliaScroll)
-To align two different ASCII art files so they morph in-place on the same canvas:
-- Compute **visual centroid** (mean col / mean row of all non-space chars) for each art — NOT the bounding-box midpoint. Sparse outlier chars at the edges skew the bbox far from the visual center.
-- Use `ox = cw / 2 - art.centroidC * charW` and `oy = ch / 2 - art.centroidR * charH` to pin each art's center-of-mass to the canvas center.
-- Use a **shared font size** derived from the larger of the two arts' visual spans so both render at the same scale.
+To align two ASCII art files so they morph in-place on the same canvas, use **union bounding box** (not centroid):
+- `unionMinC/MaxC/MinR/MaxR` across both arts → shared `ox/oy` so identical `(r,c)` maps to the same canvas pixel.
+- `sweepFrac = (p.r - unionMinR) / rowSpan` — shared sweep timeline for both arts.
+- Top→bottom sweep (bud→bloom): `prog` increases 0→1. Bottom→top (bloom→bud): `prog` decreases 1→0, same math naturally reverses direction.
+- Click animation uses Framer Motion `animate()` on a `useMotionValue(0)` — MotionValue holds its last animated-to value so bloom state persists at rest without snapping back to scroll progress.
+- `clickStateRef.current` set immediately in `triggerClick()` (not at animation end) so toggle logic is always correct.
+- `transitioning = prog > 0.01 && prog < 0.99` gates glitch chars — prevents glitch showing at rest states.
 
 ### Scroll-Driven Approach Section
 - 500vh container + `sticky top-0 h-screen` inner
@@ -59,3 +62,20 @@ To align two different ASCII art files so they morph in-place on the same canvas
 
 ### Hero Responsive Height
 Use `h-[72dvh] md:h-[80dvh] lg:h-[85dvh] xl:h-dvh` with `mt-[6vh] xl:mt-auto` on the headline block. Avoid `min-h-dvh` (allows overflow) and `justify-between` (spreads elements too far on short viewports).
+
+### Type Scale
+- **Section overlines** (`/Label/`, `font-mono uppercase tracking-[0.25em]`): `text-sm` (14px). Always all-caps via CSS, always wrapped in `/forward slashes/`.
+- **Nav, buttons, UI labels** (`font-mono uppercase`): `text-[10px] md:text-xs` — 10–11px mobile, 12px desktop minimum.
+- **Body paragraphs**: `text-sm md:text-base` — 14px mobile, 16px desktop.
+- **H2 section headings**: `text-5xl md:text-6xl lg:text-7xl` or viewport-relative for hero/contact.
+- **H1 hero**: `text-[10vw] md:text-[7.5vw] xl:text-[clamp(4rem,7.5vw,8.5rem)]`.
+
+### Decode / Glitch Text Effects
+- **On-hover decode** (`DecodeText`): `setInterval` at 25ms, `iteration += 1.2` per tick, resolves left-to-right in ~250ms. Used on "See our work" in Hero.
+- **Periodic glitch** (`PeriodicGlitch`): fires on first `inView`, then every 6s. Used on section overlines (currently About). Fires immediately on scroll-into-view via `useEffect([inView])`.
+
+### Arrow Rotation on CTA Hover
+For `↗` arrows that should rotate to point right on hover: wrap the character in `<span className="inline-block transition-transform duration-300 group-hover:rotate-45">↗</span>`. The parent needs `group` class. `rotate-45` (clockwise) takes `↗` (45°) to `→` (90°). Do NOT use `-rotate-45` (that goes to `↑`).
+
+### Marquee Interactivity
+Marquee items are `<a>` tags linking to `#service-{slug}` anchors on service cards. The outer container has `group` and the inner track has `group-hover:[animation-play-state:paused]` to freeze scrolling on hover. Items have `hover:scale-110 hover:text-gold`. Service card IDs are set via `id={\`service-\${service.name.toLowerCase().replace(/\\s+/g, "-")}\`}`.

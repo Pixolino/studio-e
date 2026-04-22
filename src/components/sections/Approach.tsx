@@ -274,7 +274,7 @@ function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; inde
       </div>
       <p className="mb-5 font-mono text-xs text-gold/50">{pillar.number}</p>
       <h3 className="mb-3 font-display text-2xl font-medium tracking-tight text-cream">{pillar.title}</h3>
-      <p className="text-sm leading-relaxed text-muted">{pillar.description}</p>
+      <p className="text-sm leading-relaxed text-muted md:text-base">{pillar.description}</p>
     </motion.div>
   );
 }
@@ -371,16 +371,16 @@ function DesktopApproach() {
             initial={{ opacity: 0, x: -12 }}
             animate={containerInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.5 }}
-            className="mb-4 font-mono text-[11px] uppercase tracking-[0.25em] text-periwinkle/60"
+            className="mb-4 font-mono text-sm uppercase tracking-[0.25em] text-periwinkle/60"
           >
-            The Approach
+            /The Approach/
           </motion.p>
           <div className="overflow-hidden">
             <motion.h2
               initial={{ y: "100%" }}
               animate={containerInView ? { y: 0 } : {}}
               transition={{ duration: 0.9, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-              className="font-display text-5xl font-medium tracking-tight text-cream lg:text-6xl"
+              className="font-display text-5xl font-medium tracking-tight text-cream md:text-5xl lg:text-6xl"
             >
               Intelligence,{" "}
               <span className="italic text-gold">meet instinct.</span>
@@ -390,7 +390,7 @@ function DesktopApproach() {
             initial={{ opacity: 0, y: 12 }}
             animate={containerInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-6 max-w-[280px] text-sm leading-relaxed text-muted"
+            className="mt-6 max-w-[280px] text-sm leading-relaxed text-muted md:text-base"
           >
             Every engagement at Studio&mdash;E is governed by three commitments.
           </motion.p>
@@ -412,7 +412,7 @@ function DesktopApproach() {
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 />
                 <div className="min-w-0">
-                  <p className="mb-1 font-mono text-[10px] uppercase tracking-widest text-gold/60">
+                  <p className="mb-1 font-mono text-[10px] md:text-xs uppercase tracking-widest text-gold/60">
                     {p.number}
                   </p>
                   <p className="font-display text-3xl font-medium tracking-tight text-cream transition-colors duration-300 group-hover:text-gold lg:text-4xl">
@@ -428,7 +428,7 @@ function DesktopApproach() {
                         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                         className="overflow-hidden"
                       >
-                        <p className="mt-3 max-w-[520px] text-sm leading-relaxed text-muted">
+                        <p className="mt-3 max-w-[520px] text-sm leading-relaxed text-muted md:text-base">
                           {p.description}
                         </p>
                       </motion.div>
@@ -472,16 +472,16 @@ export default function Approach() {
 
       {/* Mobile: stacked */}
       <div className="md:hidden px-8 py-32">
-        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-gold/60">
-          The Approach
+        <p className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-gold/60">
+          /The Approach/
         </p>
         <div className="overflow-hidden mb-6">
-          <h2 className="font-display text-5xl font-medium tracking-tight text-cream">
+          <h2 className="font-display text-5xl font-medium tracking-tight text-cream lg:text-6xl">
             Intelligence,{" "}
             <span className="italic text-gold">meet instinct.</span>
           </h2>
         </div>
-        <p className="mb-20 text-sm leading-relaxed text-muted">
+        <p className="mb-20 text-sm leading-relaxed text-muted md:text-base">
           Every engagement at Studio&mdash;E is governed by three commitments.
         </p>
         <div className="grid grid-cols-1 gap-0">

@@ -51,10 +51,10 @@ function FounderCard({
       className="rounded-2xl border border-gold/10 p-10"
     >
       <p className="mb-1 font-display text-3xl font-medium text-cream">{founder.name}</p>
-      <p className="mb-6 font-mono text-[10px] uppercase tracking-widest text-gold/60">
+      <p className="mb-6 font-mono text-[10px] md:text-xs uppercase tracking-widest text-gold/60">
         {founder.role}
       </p>
-      <p className="text-sm leading-relaxed text-muted">{founder.bio}</p>
+      <p className="text-sm leading-relaxed text-muted md:text-base">{founder.bio}</p>
     </motion.div>
   );
 }
@@ -73,16 +73,16 @@ export default function Studio() {
           initial={{ opacity: 0, x: -12 }}
           animate={titleInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-periwinkle/70"
+          className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-periwinkle/70"
         >
-          The Studio
+          /The Studio/
         </motion.p>
         <div className="overflow-hidden">
           <motion.h2
             initial={{ y: "100%" }}
             animate={titleInView ? { y: 0 } : {}}
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-4xl font-medium tracking-tight text-cream md:text-5xl"
+            className="font-display text-4xl font-medium tracking-tight text-cream md:text-5xl lg:text-6xl"
           >
             Two principals. 23 years of combined expertise.{" "}
             <span className="italic text-gold">Zero layers.</span>
@@ -92,7 +92,7 @@ export default function Studio() {
           initial={{ opacity: 0, y: 16 }}
           animate={titleInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.35 }}
-          className="mt-6 max-w-2xl text-sm leading-relaxed text-muted"
+          className="mt-6 max-w-2xl text-sm leading-relaxed text-muted md:text-base"
         >
           Studio&mdash;E was founded to end the creative-technical divide. When you hire us,
           you aren&rsquo;t getting a design team and a dev team learning to talk to each other.
@@ -121,7 +121,7 @@ export default function Studio() {
             <p className="font-display text-6xl font-light tracking-tight text-gold md:text-7xl">
               <CountUp target={stat.value} suffix={stat.suffix} inView={statsInView} />
             </p>
-            <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-periwinkle/50">{stat.label}</p>
+            <p className="mt-2 font-mono text-[10px] md:text-xs uppercase tracking-widest text-periwinkle/50">{stat.label}</p>
           </motion.div>
         ))}
       </div>
