@@ -144,14 +144,16 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
       if (!ctx) return;
 
       let cw = 0, ch = 0, dpr = 1;
+      const cv = canvas;
+      const cx = ctx;
 
       function resize() {
         dpr = Math.min(window.devicePixelRatio || 1, 2);
-        cw  = canvas.offsetWidth;
-        ch  = canvas.offsetHeight;
-        canvas.width  = cw * dpr;
-        canvas.height = ch * dpr;
-        ctx.scale(dpr, dpr);
+        cw  = cv.offsetWidth;
+        ch  = cv.offsetHeight;
+        cv.width  = cw * dpr;
+        cv.height = ch * dpr;
+        cx.scale(dpr, dpr);
         cacheRef.current = null;
       }
 
@@ -180,10 +182,10 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
         // Only show glitch while actively transitioning — not at rest states
         const transitioning = prog > 0.01 && prog < 0.99;
 
-        ctx.clearRect(0, 0, cw, ch);
-        ctx.font         = `${fontSize}px "Geist Mono", ui-monospace, monospace`;
-        ctx.textBaseline = "middle";
-        ctx.textAlign    = "center";
+        cx.clearRect(0, 0, cw, ch);
+        cx.font         = `${fontSize}px "Geist Mono", ui-monospace, monospace`;
+        cx.textBaseline = "middle";
+        cx.textAlign    = "center";
 
         const [R, G, B] = PERIWINKLE;
         const gi = Math.floor(ts / GLITCH_MS);
@@ -199,10 +201,10 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
           if (alpha < 0.004) continue;
 
           const inGlitch = transitioning && Math.abs(dist) < GLITCH_BAND;
-          ctx.shadowColor = `rgba(${R},${G},${B},${alpha * 0.35})`;
-          ctx.shadowBlur  = inGlitch ? 7 : 3;
-          ctx.fillStyle   = `rgba(${R},${G},${B},${alpha})`;
-          ctx.fillText(inGlitch ? GLITCH_CHARS[gi % GLITCH_CHARS.length] : p.ch, p.x, p.y);
+          cx.shadowColor = `rgba(${R},${G},${B},${alpha * 0.35})`;
+          cx.shadowBlur  = inGlitch ? 7 : 3;
+          cx.fillStyle   = `rgba(${R},${G},${B},${alpha})`;
+          cx.fillText(inGlitch ? GLITCH_CHARS[gi % GLITCH_CHARS.length] : p.ch, p.x, p.y);
         }
 
         // ── Bloom: fades in as wave passes ───────────────────────────────
@@ -216,19 +218,19 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
           if (alpha < 0.004) continue;
 
           const inGlitch = transitioning && Math.abs(dist) < GLITCH_BAND;
-          ctx.shadowColor = `rgba(${R},${G},${B},${alpha * 0.35})`;
-          ctx.shadowBlur  = inGlitch ? 7 : 3;
-          ctx.fillStyle   = `rgba(${R},${G},${B},${alpha})`;
-          ctx.fillText(inGlitch ? GLITCH_CHARS[(gi + 7) % GLITCH_CHARS.length] : p.ch, p.x, p.y);
+          cx.shadowColor = `rgba(${R},${G},${B},${alpha * 0.35})`;
+          cx.shadowBlur  = inGlitch ? 7 : 3;
+          cx.fillStyle   = `rgba(${R},${G},${B},${alpha})`;
+          cx.fillText(inGlitch ? GLITCH_CHARS[(gi + 7) % GLITCH_CHARS.length] : p.ch, p.x, p.y);
         }
 
-        ctx.shadowBlur = 0;
+        cx.shadowBlur = 0;
       }
 
       resize();
       rafRef.current = requestAnimationFrame(draw);
       const ro = new ResizeObserver(resize);
-      ro.observe(canvas);
+      ro.observe(cv);
 
       return () => {
         cancelAnimationFrame(rafRef.current);

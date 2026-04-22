@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 
 const projects = [
   {
@@ -121,7 +122,7 @@ export default function Work() {
             transition={{ duration: 0.5 }}
             className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-violet"
           >
-            /Selected Work/
+            <PeriodicGlitch text="/Selected Work/" inView={titleInView} />
           </motion.p>
           <div className="overflow-hidden">
             <motion.h2

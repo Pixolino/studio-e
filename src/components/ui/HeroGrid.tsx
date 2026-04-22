@@ -37,14 +37,16 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
     let rows = 0;
     let raf = 0;
     let dpr = 1;
+    const c = canvas;
+    const cx = ctx;
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = canvas.offsetWidth;
-      const h = canvas.offsetHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
-      ctx.scale(dpr, dpr);
+      const w = c.offsetWidth;
+      const h = c.offsetHeight;
+      c.width = w * dpr;
+      c.height = h * dpr;
+      cx.scale(dpr, dpr);
       buildGrid(w, h);
     }
 
@@ -64,9 +66,9 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
     function draw(ts: number) {
       raf = requestAnimationFrame(draw);
       const t = ts * WAVE_SPEED;
-      const w = canvas.width / dpr;
-      const h = canvas.height / dpr;
-      ctx.clearRect(0, 0, w, h);
+      const w = c.width / dpr;
+      const h = c.height / dpr;
+      cx.clearRect(0, 0, w, h);
 
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -105,27 +107,27 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
       }
 
       // Draw horizontal lines
-      ctx.strokeStyle = "rgba(178, 180, 31, 0.075)";
-      ctx.lineWidth = 0.6;
+      cx.strokeStyle = "rgba(178, 180, 31, 0.075)";
+      cx.lineWidth = 0.6;
       for (let r = 0; r < rows; r++) {
-        ctx.beginPath();
-        for (let c = 0; c < cols; c++) {
-          const p = points[r * cols + c];
-          if (c === 0) ctx.moveTo(p.x, p.y);
-          else ctx.lineTo(p.x, p.y);
+        cx.beginPath();
+        for (let col = 0; col < cols; col++) {
+          const p = points[r * cols + col];
+          if (col === 0) cx.moveTo(p.x, p.y);
+          else cx.lineTo(p.x, p.y);
         }
-        ctx.stroke();
+        cx.stroke();
       }
 
       // Draw vertical lines
-      for (let c = 0; c < cols; c++) {
-        ctx.beginPath();
+      for (let col = 0; col < cols; col++) {
+        cx.beginPath();
         for (let r = 0; r < rows; r++) {
-          const p = points[r * cols + c];
-          if (r === 0) ctx.moveTo(p.x, p.y);
-          else ctx.lineTo(p.x, p.y);
+          const p = points[r * cols + col];
+          if (r === 0) cx.moveTo(p.x, p.y);
+          else cx.lineTo(p.x, p.y);
         }
-        ctx.stroke();
+        cx.stroke();
       }
 
       // Draw intersection dots — brighter near the mouse
@@ -136,10 +138,10 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
         const proximity = Math.max(0, 1 - dist / (REPEL_RADIUS * 1.4));
         const alpha = 0.12 + proximity * 0.5;
         const radius = 0.9 + proximity * 1.4;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(178, 180, 31, ${alpha})`;
-        ctx.fill();
+        cx.beginPath();
+        cx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+        cx.fillStyle = `rgba(178, 180, 31, ${alpha})`;
+        cx.fill();
       }
     }
 
@@ -147,7 +149,7 @@ export default function HeroGrid({ mouseRef }: HeroGridProps) {
     raf = requestAnimationFrame(draw);
 
     const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
+    ro.observe(c);
 
     return () => {
       cancelAnimationFrame(raf);

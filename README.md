@@ -40,13 +40,15 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 
 ## The Approach Section
 
-Three scroll-driven animated pillars in a 500vh sticky container:
+Three scroll-driven ASCII art pillars in a 500vh sticky container. Desktop layout: left text panel + ASCII canvas + narrow right label strip.
 
-- **01 Artful Precision** — SVG diamond + orbit ring, draws on scroll then loops (pulsating diamond, dual-direction ring rotation)
-- **02 Technical Fluidity** — Canvas wave animation, active during scroll window
-- **03 Direct Partnership** — SVG constellation + orbit, draws then loops (brightness pulse, traveling dots, center burst)
+- **01 Artful Precision** — `approach-precision.txt` canvas, center-outward reveal
+- **02 Technical Fluidity** — `approach-fluidity.txt` canvas, top-to-bottom reveal
+- **03 Direct Partnership** — `approach-partnership.txt` canvas, outside-in reveal
 
-Pillar indicators on the left are clickable anchors that scroll to the correct section position. Descriptions fold in after drawing begins.
+Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-60`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
+
+Fluid nebula background: 5 animated radial-gradient blobs at `z-0` with `blur(90px)`, staggered via negative `delay` values so motion is always out of phase. Content at `z-10`.
 
 ## Development
 

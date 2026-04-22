@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { siteConfig } from "@/lib/site";
+import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 
 const lines = ["READY TO BUILD", "SOMETHING", "THAT LASTS?"];
 
@@ -31,7 +32,7 @@ export default function Contact() {
           transition={{ duration: 0.5 }}
           className="mb-8 font-mono text-sm uppercase tracking-[0.25em] text-gold/60"
         >
-          /Start a conversation/
+          <PeriodicGlitch text="/Start a conversation/" inView={inView} />
         </motion.p>
 
         <h2 className="font-display text-[9vw] font-medium leading-[0.88] tracking-tight text-cream md:text-[7.5vw]">

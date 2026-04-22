@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { siteConfig } from "@/lib/site";
+import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 
 function ServiceCard({
   service,
@@ -66,7 +67,7 @@ export default function Services() {
           transition={{ duration: 0.5 }}
           className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-violet"
         >
-          /Services/
+          <PeriodicGlitch text="/Services/" inView={titleInView} />
         </motion.p>
         <div className="overflow-hidden">
           <motion.h2

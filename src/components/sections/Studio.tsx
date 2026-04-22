@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { motion, useInView, useMotionValue, animate } from "framer-motion";
 import { siteConfig } from "@/lib/site";
+import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 
 function CountUp({
   target,
@@ -75,7 +76,7 @@ export default function Studio() {
           transition={{ duration: 0.5 }}
           className="mb-3 font-mono text-sm uppercase tracking-[0.25em] text-periwinkle/70"
         >
-          /The Studio/
+          <PeriodicGlitch text="/The Studio/" inView={titleInView} />
         </motion.p>
         <div className="overflow-hidden">
           <motion.h2

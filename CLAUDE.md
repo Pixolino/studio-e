@@ -79,3 +79,22 @@ For `↗` arrows that should rotate to point right on hover: wrap the character 
 
 ### Marquee Interactivity
 Marquee items are `<a>` tags linking to `#service-{slug}` anchors on service cards. The outer container has `group` and the inner track has `group-hover:[animation-play-state:paused]` to freeze scrolling on hover. Items have `hover:scale-110 hover:text-gold`. Service card IDs are set via `id={\`service-\${service.name.toLowerCase().replace(/\\s+/g, "-")}\`}`.
+
+### PeriodicGlitch Shared Component
+Shared `src/components/ui/PeriodicGlitch.tsx` — fires on first `inView`, then every 6s. Used on all section overlines (`/The Approach/`, `/Services/`, `/Selected Work/`, `/The Studio/`, `/Start a conversation/`). Always pass both `text` and `inView` props.
+
+### Approach Section Layout
+- Left panel: padding removed from container, applied per-row (`px-16 lg:px-24` on buttons) so `border-t` lines run edge-to-edge and touch the vertical separator
+- Single active-only divider: `border-t` conditionally applied only to the active pillar button — one line tracks above the current pillar
+- Right label strip: `w-60`, `pt-[18vh]` clears the fixed navbar and aligns the number with the `/The Approach/` overline; name uses `w-fit mx-auto` with words split into `<span className="block text-right">` for reliable two-line right-aligned centering
+- Fluid nebula background: 5 radial-gradient blobs at `z-0`, content panels at `z-10`. Blobs use negative `delay` values to stagger phase so they never pulse in sync. `filter: blur(90px)` on the container.
+
+### Approach Section Color Conventions
+- Overline `/The Approach/`: `text-gold/80` (olive)
+- Pillar titles (Artful Precision, etc.): `text-gold` (olive)
+- Pillar numbers (01/02/03) left panel: `text-periwinkle/60`
+- Pillar dash `—`: `bg-periwinkle`
+- Divider lines: `border-violet/40`
+- Right strip number: `text-periwinkle`
+- Right strip name: `text-periwinkle`
+- Body/description text: `text-cream`

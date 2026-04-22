@@ -77,14 +77,16 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
     let nextAmbient  = performance.now() + 300 + Math.random() * 400;
     // Re-evaluated on every resize: ambient mode = touch device OR narrow viewport
     let isAmbientMode = false;
+    const c = canvas;
+    const cx = ctx;
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cw = canvas.offsetWidth;
-      ch = canvas.offsetHeight;
-      canvas.width  = cw * dpr;
-      canvas.height = ch * dpr;
-      ctx.scale(dpr, dpr);
+      cw = c.offsetWidth;
+      ch = c.offsetHeight;
+      c.width  = cw * dpr;
+      c.height = ch * dpr;
+      cx.scale(dpr, dpr);
       const wasAmbient = isAmbientMode;
       isAmbientMode = window.matchMedia("(pointer: coarse)").matches || cw < 1024;
       // Clear orphaned ambient sources when switching back to desktop mode
@@ -155,7 +157,7 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
 
     function draw(ts: number) {
       raf = requestAnimationFrame(draw);
-      ctx.clearRect(0, 0, cw, ch);
+      cx.clearRect(0, 0, cw, ch);
 
       const mx = mouseRef.current.x;
       const my = mouseRef.current.y;
@@ -238,9 +240,9 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
       }
 
       // ── Phase 5: draw all visible cells ────────────────────────────
-      ctx.font         = `${FONT_SIZE}px "Geist Mono", ui-monospace, monospace`;
-      ctx.textBaseline = "middle";
-      ctx.textAlign    = "center";
+      cx.font         = `${FONT_SIZE}px "Geist Mono", ui-monospace, monospace`;
+      cx.textBaseline = "middle";
+      cx.textAlign    = "center";
 
       for (let i = 0; i < cells.length; i++) {
         const cell = cells[i];
@@ -257,26 +259,26 @@ export default function AsciiGlitch({ mouseRef }: AsciiGlitchProps) {
           cell.next = ts + cell.interval * (1 + (1 - cell.trailAlpha) * 2.5);
         }
 
-        ctx.shadowColor = `rgba(178, 180, 31, ${cell.trailAlpha * 0.55})`;
-        ctx.shadowBlur  = 5;
-        ctx.fillStyle   = `rgba(178, 180, 31, ${cell.trailAlpha})`;
-        ctx.fillText(cell.char, x, y);
+        cx.shadowColor = `rgba(178, 180, 31, ${cell.trailAlpha * 0.55})`;
+        cx.shadowBlur  = 5;
+        cx.fillStyle   = `rgba(178, 180, 31, ${cell.trailAlpha})`;
+        cx.fillText(cell.char, x, y);
       }
 
-      ctx.shadowBlur = 0;
+      cx.shadowBlur = 0;
     }
 
     resize();
     raf = requestAnimationFrame(draw);
 
     const ro = new ResizeObserver(resize);
-    ro.observe(canvas);
+    ro.observe(c);
 
     // Burst on click/tap — on parent section since canvas is pointer-events-none
-    const section = canvas.parentElement;
+    const section = c.parentElement;
 
     function onInteract(e: Event) {
-      const rect = canvas.getBoundingClientRect();
+      const rect = c.getBoundingClientRect();
       let clientX: number, clientY: number;
 
       if (e instanceof TouchEvent) {
