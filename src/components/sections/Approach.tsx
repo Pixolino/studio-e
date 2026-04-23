@@ -38,13 +38,6 @@ const pillars = [
 ];
 
 /* ─── helper: timed MotionValue for mobile inView trigger ───── */
-function useTimedProgress(active: boolean): MotionValue<number> {
-  const p = useMotionValue(0);
-  useEffect(() => {
-    if (active) animate(p, 1, { duration: 1.8, ease: [0.22, 1, 0.36, 1] });
-  }, [active, p]);
-  return p;
-}
 
 /* ─── ASCII canvas types ─────────────────────────────────────── */
 interface Pt { x: number; y: number; ch: string; dist: number }
@@ -55,8 +48,6 @@ interface ApproachAsciiProps {
   progress: MotionValue<number>;
   /** "center" = center-outward | "outside" = outside-in | "top" = top-to-bottom */
   revealOrder?: "center" | "outside" | "top";
-  /** progress threshold at which idle animation begins */
-  doneAt?: number;
 }
 
 // Chars that render in gold; everything else renders in periwinkle
@@ -66,7 +57,6 @@ function ApproachAscii({
   src,
   progress,
   revealOrder = "center",
-  doneAt = 0.87,
 }: ApproachAsciiProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef    = useRef(0);
@@ -97,27 +87,36 @@ function ApproachAscii({
       c.height = ch * dpr;
       cx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const ROWS = artLines.length;
-      const COLS = artLines[0].length;
-      const RW = 0.62, RH = 1.35;
-      const fs = Math.min(cw / (COLS * RW), ch / (ROWS * RH), 16);
+      // Use actual content bounding box so spaces don't shrink the font
+      let minC = Infinity, maxC = -Infinity, minR = Infinity, maxR = -Infinity;
+      for (let r = 0; r < artLines.length; r++)
+        for (let ci = 0; ci < artLines[r].length; ci++)
+          if (artLines[r][ci] !== " " && artLines[r][ci] !== "\r") {
+            if (ci < minC) minC = ci; if (ci > maxC) maxC = ci;
+            if (r  < minR) minR = r;  if (r  > maxR) maxR = r;
+          }
+
+      const RW = 0.52, RH = 1.0;
+      const COLS = maxC - minC + 1;
+      const ROWS = maxR - minR + 1;
+      const fs = Math.min(cw / (COLS * RW), ch / (ROWS * RH), 20);
       const CW = fs * RW, CH = fs * RH;
-      const ox = cw / 2 - (COLS * CW) / 2;
-      const oy = ch / 2 - (ROWS * CH) / 2;
+      const ox = cw / 2 - ((minC + maxC) / 2) * CW;
+      const oy = ch / 2 - ((minR + maxR) / 2) * CH;
       fontSize = fs;
 
       const raw: Pt[] = [];
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < artLines[r].length; c++) {
-          const char = artLines[r][c];
-          if (char === " ") continue;
-          const x = ox + c * CW + CW / 2;
-          const y = oy + r * CH + CH / 2;
+      for (let r = 0; r < artLines.length; r++) {
+        for (let ci = 0; ci < artLines[r].length; ci++) {
+          const char = artLines[r][ci];
+          if (char === " " || char === "\r") continue;
+          const x = ox + ci * CW + CW / 2;
+          const y = oy + r  * CH + CH / 2;
           raw.push({ x, y, ch: char, dist: Math.hypot(x - cw / 2, y - ch / 2) });
         }
       }
 
-      if (revealOrder === "center")  pts = raw.sort((a, b) => a.dist - b.dist);
+      if (revealOrder === "center")   pts = raw.sort((a, b) => a.dist - b.dist);
       else if (revealOrder === "outside") pts = raw.sort((a, b) => b.dist - a.dist);
       else pts = raw.sort((a, b) => a.y - b.y || a.x - b.x);
     }
@@ -126,15 +125,12 @@ function ApproachAscii({
     const ro = new ResizeObserver(reparse);
     ro.observe(canvas);
 
-    let t = 0;
-
     function draw() {
       rafRef.current = requestAnimationFrame(draw);
       if (!pts.length) return;
 
-      const prog  = progress.get();
-      const nVis  = Math.min(pts.length, Math.ceil(prog * pts.length + 0.5));
-      const done  = prog >= doneAt;
+      const prog = progress.get();
+      const nVis = Math.min(pts.length, Math.ceil(prog * pts.length + 0.5));
 
       cx.clearRect(0, 0, cw, ch);
       cx.font         = `${fontSize}px "Geist Mono", monospace`;
@@ -144,32 +140,22 @@ function ApproachAscii({
       for (let i = 0; i < nVis; i++) {
         const p = pts[i];
         const isAccent = ACCENT.has(p.ch);
-
-        let rr: number, gg: number, bb: number, alpha: number, blur: number;
-
-        if (isAccent) {
-          rr = 178; gg = 180; bb = 31;
-          alpha = done ? 0.5 + 0.45 * Math.sin(t * 2.2 + p.dist * 0.01) : 0.85;
-          blur  = done ? 6 + 5 * Math.abs(Math.sin(t * 2.2)) : 6;
-        } else {
-          rr = 208; gg = 209; bb = 255;
-          alpha = done ? 0.18 + 0.2 * Math.sin(t * 1.1 + p.dist * 0.02) : 0.45;
-          blur  = done ? 3 : 2;
-        }
-
-        cx.shadowColor = `rgba(${rr},${gg},${bb},${alpha * 0.4})`;
-        cx.shadowBlur  = blur;
+        const rr = isAccent ? 178 : 208;
+        const gg = isAccent ? 180 : 209;
+        const bb = isAccent ? 31  : 255;
+        const alpha = isAccent ? 0.92 : 0.85;
+        cx.shadowColor = `rgba(${rr},${gg},${bb},0.5)`;
+        cx.shadowBlur  = isAccent ? 6 : 4;
         cx.fillStyle   = `rgba(${rr},${gg},${bb},${alpha})`;
         cx.fillText(p.ch, p.x, p.y);
       }
 
       cx.shadowBlur = 0;
-      t += 0.016;
     }
 
     rafRef.current = requestAnimationFrame(draw);
     return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
-  }, [artLines, progress, revealOrder, doneAt]);
+  }, [artLines, progress, revealOrder]);
 
   return <canvas ref={canvasRef} aria-hidden className="h-full w-full" />;
 }
@@ -375,9 +361,14 @@ ButterflyMorph.displayName = "ButterflyMorph";
 
 /* ─── Mobile: stacked pillar cards ──────────────────────────── */
 function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; index: number }) {
-  const ref      = useRef<HTMLDivElement>(null);
-  const inView   = useInView(ref, { once: true, margin: "-60px" });
-  const progress = useTimedProgress(inView);
+  const ref    = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-60px" });
+
+  // Scroll-driven reveal: starts when card title (~card top) hits 65% viewport, completes at 15%
+  const { scrollYProgress: progress } = useScroll({
+    target: ref,
+    offset: ["start 0.65", "start 0.15"],
+  });
 
   return (
     <motion.div
@@ -393,15 +384,15 @@ function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; inde
         transition={{ duration: 0.65, delay: index * 0.12 + 0.2, ease: [0.22, 1, 0.36, 1] }}
         className="absolute left-0 top-0 h-px w-full origin-left bg-gold/40"
       />
-      <div className="mb-7 h-[180px] w-full overflow-hidden">
+      <div className="mb-7 h-[55vw] w-full overflow-hidden">
         {index === 0 && (
-          <ApproachAscii src="/approach-precision.txt"   progress={progress} />
+          <ApproachAscii src="/approach-precision.txt"   progress={progress} revealOrder="top" />
         )}
         {index === 1 && (
-          <ApproachAscii src="/approach-fluidity.txt"    progress={progress} />
+          <ApproachAscii src="/approach-fluidity.txt"    progress={progress} revealOrder="top" />
         )}
         {index === 2 && (
-          <ApproachAscii src="/approach-partnership.txt" progress={progress} />
+          <ApproachAscii src="/approach-partnership.txt" progress={progress} revealOrder="top" />
         )}
       </div>
       <p className="mb-5 font-mono text-[10px] md:text-xs text-gold/50">{pillar.number}</p>
@@ -668,39 +659,49 @@ const blobs = [
 
 function GradientBg() {
   return (
-    <div
-      className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-      aria-hidden
-      style={{ filter: "blur(90px)" }}
-    >
-      {blobs.map((b, i) => (
-        <motion.div
-          key={i}
-          className="absolute"
-          style={{
-            background: b.color,
-            width: b.size,
-            height: b.size,
-            borderRadius: "50%",
-            translateX: "-50%",
-            translateY: "-50%",
-            opacity: b.opacity,
-          }}
-          animate={{
-            left: b.x,
-            top: b.y,
-            scale: b.scale,
-          }}
-          transition={{
-            duration: b.duration,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatDelay: 0,
-            delay: b.delay,
-            times: [0, 0.2, 0.4, 0.6, 0.8, 1],
-          }}
-        />
-      ))}
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+      {/* Animated blobs */}
+      <div className="absolute inset-0" style={{ filter: "blur(90px)" }}>
+        {blobs.map((b, i) => (
+          <motion.div
+            key={i}
+            className="absolute"
+            style={{
+              background: b.color,
+              width: b.size,
+              height: b.size,
+              borderRadius: "50%",
+              translateX: "-50%",
+              translateY: "-50%",
+              opacity: b.opacity,
+            }}
+            animate={{
+              left: b.x,
+              top: b.y,
+              scale: b.scale,
+            }}
+            transition={{
+              duration: b.duration,
+              ease: "easeInOut",
+              repeat: Infinity,
+              repeatDelay: 0,
+              delay: b.delay,
+              times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Mobile-only: two extra static blobs to fill the dark center */}
+      <div
+        className="md:hidden absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at 40% 30%, rgba(74,61,176,0.28) 0%, rgba(42,26,122,0.18) 50%, transparent 72%)," +
+            "radial-gradient(ellipse at 68% 72%, rgba(58,47,158,0.22) 0%, rgba(30,18,96,0.14) 48%, transparent 70%)",
+          filter: "blur(70px)",
+        }}
+      />
     </div>
   );
 }
