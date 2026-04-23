@@ -40,11 +40,13 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 
 ## The Approach Section
 
-Three scroll-driven ASCII art pillars in a 500vh sticky container. Desktop layout: left text panel + ASCII canvas + narrow right label strip.
+Three scroll-driven ASCII art pillars in a 500vh sticky container. Desktop layout: left text panel + `ButterflyMorph` canvas + narrow right label strip.
 
-- **01 Artful Precision** — `approach-precision.txt` canvas, center-outward reveal
-- **02 Technical Fluidity** — `approach-fluidity.txt` canvas, top-to-bottom reveal
-- **03 Direct Partnership** — `approach-partnership.txt` canvas, outside-in reveal
+The three txt files are frames of a butterfly landing on a hand. `ButterflyMorph` morphs between them as you scroll via a top-down sweep that stops at row ~73 (just below the butterfly, above the hand — hand is identical across all frames so it never gets swept). Clicking a pillar on the left calls `jumpTo(frame)` which animates directly to the target frame without passing through intermediate frames.
+
+- **01 Artful Precision** — `approach-precision.txt` (butterfly far)
+- **02 Technical Fluidity** — `approach-fluidity.txt` (butterfly approaching)
+- **03 Direct Partnership** — `approach-partnership.txt` (butterfly landed)
 
 Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-60`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
 

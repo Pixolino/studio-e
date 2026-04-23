@@ -56,9 +56,21 @@ To align two ASCII art files so they morph in-place on the same canvas, use **un
 
 ### Scroll-Driven Approach Section
 - 500vh container + `sticky top-0 h-screen` inner
-- Pillar windows: P1=0.26, P2=0.72 in `scrollYProgress` space
+- Pillar boundaries P1/P2 align with transition END points (T1E/T2E) so `active` flips exactly when the sweep completes
 - `getBoundingClientRect().top + window.scrollY` for correct absolute scroll targets (not `offsetTop`, which is parent-relative)
 - `useState(() => motionValue.get() >= threshold)` to initialize state on mount when MotionValue may already be past the threshold — prevents "animation won't replay" regression after remount
+
+### ButterflyMorph (Approach ASCII animation)
+Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity.txt` → `approach-partnership.txt`) rendered on a canvas using union bounding box so all frames share the same coordinate space.
+
+**Key patterns:**
+- `getBlend(s)` maps `scrollYProgress` 0→1 to a blend value 0→2 with two transition windows (T1S/T1E, T2S/T2E). Pillar targets land just past T1E/T2E so the image is complete on arrival.
+- `sweepPos = frac * SWEEP_TOP` — sweep wave travels from row 0 to `SWEEP_TOP` (currently `0.638`) as `frac` goes 0→1, so the animation completes at exactly `frac=1` (not earlier). This makes scroll-driven and click-driven timings stay in sync.
+- `SWEEP_TOP` is a spatial cutoff: rows below it (the hand) skip the source frame entirely and show the destination immediately at full opacity — hand never gets swept since it's identical across all frames.
+- Exposed via `forwardRef` + `useImperativeHandle` (`jumpTo(frame)`). Clicking a pillar calls `jumpTo(index)` which animates `overrideBlend` directly to the target frame (duration `1.45s` ≈ Lenis `1.4s`), bypassing scroll so non-adjacent jumps (e.g. pillar 0 → pillar 2) don't flash through the intermediate frame.
+- `overrideActive` ref gates whether draw loop uses override or scroll-driven blend. Cleared in `onComplete` — by then Lenis has arrived and `getBlend(target)` matches the override value, so handoff is seamless.
+- Stable state (not transitioning): full constant alpha, no breathing animation.
+- `SWEEP_TOP` formula: `(cutoff_row - unionMinR) / rowSpan`. Current value covers up to row 73.5 (butterfly bottom in frame 3), leaving the hand rows (86+) untouched.
 
 ### Hero Responsive Height
 Use `h-[72dvh] md:h-[80dvh] lg:h-[85dvh] xl:h-dvh` with `mt-[6vh] xl:mt-auto` on the headline block. Avoid `min-h-dvh` (allows overflow) and `justify-between` (spreads elements too far on short viewports).

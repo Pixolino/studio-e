@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import {
   motion,
   useInView,
@@ -174,6 +174,205 @@ function ApproachAscii({
   return <canvas ref={canvasRef} aria-hidden className="h-full w-full" />;
 }
 
+/* ─── ButterflyMorph: three-frame scroll-driven morph ───────── */
+const MORPH_BAND = 0.07;
+
+function smoothstep(e0: number, e1: number, x: number) {
+  const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
+  return t * t * (3 - 2 * t);
+}
+
+function getBlend(s: number): number {
+  // Transitions: 0.12→0.28 (sweep ends at 0.20) and 0.32→0.48 (sweep ends at 0.40)
+  const T1S = 0.12, T1E = 0.28, T2S = 0.32, T2E = 0.48;
+  if (s < T1S) return 0;
+  if (s < T1E) return (s - T1S) / (T1E - T1S);
+  if (s < T2S) return 1;
+  if (s < T2E) return 1 + (s - T2S) / (T2E - T2S);
+  return 2;
+}
+
+export interface ButterflyMorphHandle {
+  jumpTo: (frame: number) => void;
+}
+
+interface MorphPt { x: number; y: number; ch: string; sweepFrac: number; seed: number }
+
+function parseRawArt(text: string): { c: number; r: number; ch: string }[] {
+  const lines = text.split("\n");
+  const pts: { c: number; r: number; ch: string }[] = [];
+  for (let r = 0; r < lines.length; r++)
+    for (let c = 0; c < lines[r].length; c++) {
+      const ch = lines[r][c];
+      if (ch !== " " && ch !== "\r") pts.push({ c, r, ch });
+    }
+  return pts;
+}
+
+function buildMorphFrames(
+  raws: { c: number; r: number; ch: string }[][],
+  cw: number, ch: number,
+): { frames: MorphPt[][]; fontSize: number } {
+  let minC = Infinity, maxC = -Infinity, minR = Infinity, maxR = -Infinity;
+  for (const art of raws)
+    for (const p of art) {
+      if (p.c < minC) minC = p.c; if (p.c > maxC) maxC = p.c;
+      if (p.r < minR) minR = p.r; if (p.r > maxR) maxR = p.r;
+    }
+  const RW = 0.62, RH = 1.35;
+  const fontSize = Math.min(cw / ((maxC - minC + 1) * RW), ch / ((maxR - minR + 1) * RH), 16);
+  const CW = fontSize * RW, CH = fontSize * RH;
+  const ox = cw / 2 - ((minC + maxC) / 2) * CW;
+  const oy = ch / 2 - ((minR + maxR) / 2) * CH;
+  const rowSpan = Math.max(1, maxR - minR);
+  const frames = raws.map(art => art.map(p => ({
+    x: ox + p.c * CW + CW * 0.5,
+    y: oy + p.r * CH + CH * 0.5,
+    ch: p.ch,
+    sweepFrac: (p.r - minR) / rowSpan,
+    seed: ((p.c * 374761393 + p.r * 1234567891) >>> 0) / 0xffffffff,
+  })));
+  return { frames, fontSize };
+}
+
+const ButterflyMorph = forwardRef<ButterflyMorphHandle, { scrollYProgress: MotionValue<number> }>(
+function ButterflyMorph({ scrollYProgress }, ref) {
+  const canvasRef      = useRef<HTMLCanvasElement>(null);
+  const rawRef         = useRef<ReturnType<typeof parseRawArt>[] | null>(null);
+  const cacheRef       = useRef<{ frames: MorphPt[][]; fontSize: number; cw: number; ch: number } | null>(null);
+  const rafRef         = useRef(0);
+  const overrideBlend  = useMotionValue(-1);
+  const overrideActive = useRef(false);
+
+  useImperativeHandle(ref, () => ({
+    jumpTo(frame: number) {
+      const current = overrideActive.current
+        ? overrideBlend.get()
+        : getBlend(Math.max(0, Math.min(1, scrollYProgress.get())));
+      overrideBlend.set(current);
+      overrideActive.current = true;
+      animate(overrideBlend, frame, {
+        duration: 1.45,
+        ease: [0.22, 1, 0.36, 1],
+        onComplete: () => { overrideActive.current = false; },
+      });
+    },
+  }));
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/approach-precision.txt").then(r => r.text()),
+      fetch("/approach-fluidity.txt").then(r => r.text()),
+      fetch("/approach-partnership.txt").then(r => r.text()),
+    ]).then(texts => {
+      rawRef.current = texts.map(parseRawArt);
+      cacheRef.current = null;
+    });
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const cv = canvas, cx = ctx;
+    let cw = 0, cvh = 0, dpr = 1;
+
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cw = cv.offsetWidth; cvh = cv.offsetHeight;
+      cv.width = cw * dpr; cv.height = cvh * dpr;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cacheRef.current = null;
+    }
+
+    function draw() {
+      rafRef.current = requestAnimationFrame(draw);
+      if (!rawRef.current) return;
+
+      if (!cacheRef.current || cacheRef.current.cw !== cw || cacheRef.current.ch !== cvh) {
+        const built = buildMorphFrames(rawRef.current, cw, cvh);
+        cacheRef.current = { ...built, cw, ch: cvh };
+      }
+
+      const { frames, fontSize } = cacheRef.current;
+      const blend = overrideActive.current
+        ? Math.max(0, Math.min(2, overrideBlend.get()))
+        : getBlend(Math.max(0, Math.min(1, scrollYProgress.get())));
+      const phase = Math.min(1, Math.floor(blend));
+      const frac  = blend - phase;
+      const transitioning = frac > 0.01 && frac < 0.99;
+      // Sweep only covers the top half — hand rows (sweepFrac >= 0.5) show destination immediately
+      const SWEEP_TOP = 0.638;
+
+      cx.clearRect(0, 0, cw, cvh);
+      cx.font = `${fontSize}px "Geist Mono", monospace`;
+      cx.textBaseline = "middle";
+      cx.textAlign    = "center";
+
+      if (!transitioning) {
+        for (const p of frames[Math.round(blend)]) {
+          const isAccent = ACCENT.has(p.ch);
+          const [rr, gg, bb] = isAccent ? [178, 180, 31] : [208, 209, 255];
+          const alpha = isAccent ? 0.92 : 0.82;
+          cx.shadowColor = `rgba(${rr},${gg},${bb},0.3)`;
+          cx.shadowBlur  = isAccent ? 4 : 2;
+          cx.fillStyle   = `rgba(${rr},${gg},${bb},${alpha})`;
+          cx.fillText(p.ch, p.x, p.y);
+        }
+      } else {
+        // sweepPos: 0→SWEEP_TOP as frac goes 0→1 — wave reaches cutoff exactly at frac=1
+        const sweepPos = frac * SWEEP_TOP;
+        // Top half of source fades out; bottom half (hand) skipped — dest shows there immediately
+        for (const p of frames[phase]) {
+          if (p.sweepFrac >= SWEEP_TOP) continue;
+          const dist = p.sweepFrac - sweepPos;
+          if (dist < -MORPH_BAND) continue;
+          const env   = dist > MORPH_BAND ? 1 : smoothstep(-MORPH_BAND, MORPH_BAND, dist);
+          const isAccent = ACCENT.has(p.ch);
+          const [rr, gg, bb] = isAccent ? [178, 180, 31] : [208, 209, 255];
+          const alpha = (isAccent ? 0.92 : 0.82) * env;
+          if (alpha < 0.004) continue;
+          cx.shadowColor = `rgba(${rr},${gg},${bb},0.3)`;
+          cx.shadowBlur  = 2;
+          cx.fillStyle   = `rgba(${rr},${gg},${bb},${alpha})`;
+          cx.fillText(p.ch, p.x, p.y);
+        }
+        // Top half of dest fades in; bottom half shows at full opacity immediately
+        for (const p of frames[phase + 1]) {
+          let env: number;
+          if (p.sweepFrac >= SWEEP_TOP) {
+            env = 1;
+          } else {
+            const dist = sweepPos - p.sweepFrac;
+            if (dist < -MORPH_BAND) continue;
+            env = dist > MORPH_BAND ? 1 : smoothstep(-MORPH_BAND, MORPH_BAND, dist);
+          }
+          const isAccent = ACCENT.has(p.ch);
+          const [rr, gg, bb] = isAccent ? [178, 180, 31] : [208, 209, 255];
+          const alpha = (isAccent ? 0.92 : 0.82) * env;
+          if (alpha < 0.004) continue;
+          cx.shadowColor = `rgba(${rr},${gg},${bb},0.3)`;
+          cx.shadowBlur  = 2;
+          cx.fillStyle   = `rgba(${rr},${gg},${bb},${alpha})`;
+          cx.fillText(p.ch, p.x, p.y);
+        }
+      }
+
+      cx.shadowBlur = 0;
+    }
+
+    resize();
+    rafRef.current = requestAnimationFrame(draw);
+    const ro = new ResizeObserver(resize);
+    ro.observe(cv);
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
+  }, [scrollYProgress, overrideBlend]);
+
+  return <canvas ref={canvasRef} aria-hidden className="h-full w-full" />;
+});
+ButterflyMorph.displayName = "ButterflyMorph";
+
 /* ─── Mobile: stacked pillar cards ──────────────────────────── */
 function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; index: number }) {
   const ref      = useRef<HTMLDivElement>(null);
@@ -196,13 +395,13 @@ function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; inde
       />
       <div className="mb-7 h-[180px] w-full overflow-hidden">
         {index === 0 && (
-          <ApproachAscii src="/approach-precision.txt"   progress={progress} revealOrder="center"  />
+          <ApproachAscii src="/approach-precision.txt"   progress={progress} />
         )}
         {index === 1 && (
-          <ApproachAscii src="/approach-fluidity.txt"    progress={progress} revealOrder="top"     doneAt={0.75} />
+          <ApproachAscii src="/approach-fluidity.txt"    progress={progress} />
         )}
         {index === 2 && (
-          <ApproachAscii src="/approach-partnership.txt" progress={progress} revealOrder="outside" />
+          <ApproachAscii src="/approach-partnership.txt" progress={progress} />
         )}
       </div>
       <p className="mb-5 font-mono text-[10px] md:text-xs text-gold/50">{pillar.number}</p>
@@ -214,7 +413,8 @@ function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; inde
 
 /* ─── Desktop: sticky scroll ────────────────────────────────── */
 function DesktopApproach() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef  = useRef<HTMLDivElement>(null);
+  const butterflyRef  = useRef<ButterflyMorphHandle>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -224,14 +424,14 @@ function DesktopApproach() {
   const containerInView = useInView(containerRef, { once: true });
 
   const [active, setActive] = useState(0);
-  const [dir,    setDir   ] = useState<1 | -1>(1);
 
   const [finished0, setFinished0] = useState(false);
   const [finished1, setFinished1] = useState(false);
   const [finished2, setFinished2] = useState(false);
 
-  const P1 = 0.26;
-  const P2 = 0.72;
+  // P1/P2 match transition end points (T1E=0.28, T2E=0.48) — active flips when sweep completes
+  const P1 = 0.28;
+  const P2 = 0.48;
 
   useEffect(() => {
     const v = scrollYProgress.get();
@@ -241,15 +441,12 @@ function DesktopApproach() {
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const next = v < P1 ? 0 : v < P2 ? 1 : 2;
-    if (next !== active) {
-      setDir(next > active ? 1 : -1);
-      setActive(next);
-    }
+    if (next !== active) setActive(next);
   });
 
-  const p0 = useTransform(scrollYProgress, [0,  0.20], [0, 1]);
-  const p1 = useTransform(scrollYProgress, [P1, P1 + 0.18], [0, 1]);
-  const p2 = useTransform(scrollYProgress, [P2, 0.93], [0, 1]);
+  const p0 = useTransform(scrollYProgress, [0,    0.25], [0, 1]);
+  const p1 = useTransform(scrollYProgress, [0.24, 0.46], [0, 1]);
+  const p2 = useTransform(scrollYProgress, [0.44, 0.66], [0, 1]);
 
   useMotionValueEvent(p0, "change", (v) => setFinished0(v >= 0.12));
   useMotionValueEvent(p1, "change", (v) => setFinished1(v >= 0.12));
@@ -257,7 +454,8 @@ function DesktopApproach() {
 
   const descVisible = [finished0, finished1, finished2];
 
-  const PILLAR_TARGETS = [0.22, 0.49, 0.90];
+  // Land just past T1E / T2E so sweep is already complete on arrival
+  const PILLAR_TARGETS = [0.05, 0.29, 0.50];
 
   function scrollToPillar(index: number) {
     const container = containerRef.current;
@@ -266,6 +464,7 @@ function DesktopApproach() {
     const targetScrollY =
       containerTop + PILLAR_TARGETS[index] * (container.offsetHeight - window.innerHeight);
     const lenis = lenisStore.get();
+    butterflyRef.current?.jumpTo(index);
     if (lenis) {
       lenis.scrollTo(targetScrollY, { duration: 1.4, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
     } else {
@@ -273,19 +472,6 @@ function DesktopApproach() {
     }
   }
 
-  const variants = {
-    enter:  (d: number) => ({ y: d > 0 ? 48 : -48, opacity: 0 }),
-    center: { y: 0, opacity: 1 },
-    exit:   (d: number) => ({ y: d > 0 ? -48 : 48, opacity: 0 }),
-  };
-
-  const progByPillar = [p0, p1, p2];
-  const revealOrders: ApproachAsciiProps["revealOrder"][] = ["center", "top", "outside"];
-  const srcByPillar = [
-    "/approach-precision.txt",
-    "/approach-fluidity.txt",
-    "/approach-partnership.txt",
-  ];
 
   return (
     <div ref={containerRef} style={{ height: "500vh" }} className="relative">
@@ -380,26 +566,11 @@ function DesktopApproach() {
         {/* ── Right panel: ASCII art + right label strip ── */}
         <div className="relative z-10 flex w-1/2 border-l border-violet/40">
 
-          {/* ASCII area */}
+          {/* ASCII area — butterfly morph across all three frames */}
           <div className="relative flex flex-1 items-center justify-center px-14 lg:px-20">
-            <AnimatePresence mode="wait" custom={dir}>
-              <motion.div
-                key={active}
-                custom={dir}
-                variants={variants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-                className="h-[58vh] w-full"
-              >
-                <ApproachAscii
-                  src={srcByPillar[active]}
-                  progress={progByPillar[active]}
-                  revealOrder={revealOrders[active]}
-                />
-              </motion.div>
-            </AnimatePresence>
+            <div className="h-[58vh] w-full">
+              <ButterflyMorph ref={butterflyRef} scrollYProgress={scrollYProgress} />
+            </div>
           </div>
 
           {/* Right label strip */}
