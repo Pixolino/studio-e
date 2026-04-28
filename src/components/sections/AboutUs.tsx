@@ -114,12 +114,15 @@ export default function AboutUs() {
             Replace src with your portrait image (light-on-dark or white PNG).
             filter + mix-blend-mode make the white background disappear on ink.
           */}
-          <img
-            src=""
-            alt="Studio—E founders"
-            className="absolute inset-0 h-full w-full object-cover object-top"
-            style={{ filter: "invert(1)", mixBlendMode: "screen", opacity: 0.85 }}
-          />
+          {/* Replace src with your portrait image path once available */}
+          {false && (
+            <img
+              src=""
+              alt="Studio—E founders"
+              className="absolute inset-0 h-full w-full object-cover object-top"
+              style={{ filter: "invert(1)", mixBlendMode: "screen", opacity: 0.85 }}
+            />
+          )}
         </div>
 
         {/* ── Right: text ──────────────────────────────────────── */}

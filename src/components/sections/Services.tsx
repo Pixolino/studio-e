@@ -68,7 +68,15 @@ function ServicesAscii() {
         });
         ro.observe(cv);
 
+        let visible = true;
+        const io = new IntersectionObserver(([e]) => {
+          visible = e.isIntersecting;
+          if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
+        }, { rootMargin: "200px" });
+        io.observe(cv);
+
         function draw() {
+          if (!visible) { rafRef.current = 0; return; }
           rafRef.current = requestAnimationFrame(draw);
           cx.clearRect(0, 0, cw, cvh);
           cx.font         = `${fontSize}px "Geist Mono", monospace`;
@@ -80,7 +88,7 @@ function ServicesAscii() {
         }
         rafRef.current = requestAnimationFrame(draw);
 
-        return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
+        return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); };
       });
 
     return () => cancelAnimationFrame(rafRef.current);

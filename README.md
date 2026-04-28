@@ -50,6 +50,8 @@ The three txt files are frames of a butterfly landing on a hand. `ButterflyMorph
 
 Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-60`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
 
+Active state uses `activeRef` + `isJumpingRef` refs alongside state to avoid stale-closure bugs. Click-jumps set `active` immediately, freeze scroll-driven updates via `isJumpingRef`, and release via Lenis `onComplete`. Small hysteresis (0.01) on natural scroll absorbs trackpad micro-bounces at pillar thresholds.
+
 ## The About Us Section
 
 Dark `bg-ink` section with the same animated nebula blob background as Approach. Inset border lines (top + left). Split layout: left 40% portrait image column + right text column. Portrait uses `filter: invert(1) + mix-blend-mode: screen` so a white-background PNG disappears against the dark background. Replace `src=""` in `AboutUs.tsx` with your portrait image path in `/public/`.

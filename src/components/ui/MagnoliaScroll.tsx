@@ -157,7 +157,15 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
         cacheRef.current = null;
       }
 
+      let visible = true;
+      const io = new IntersectionObserver(([e]) => {
+        visible = e.isIntersecting;
+        if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
+      }, { rootMargin: "200px" });
+      io.observe(cv);
+
       function draw(ts: number) {
+        if (!visible) { rafRef.current = 0; return; }
         rafRef.current = requestAnimationFrame(draw);
         if (!budRef.current || !bloomRef.current) return;
 
@@ -235,6 +243,7 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
       return () => {
         cancelAnimationFrame(rafRef.current);
         ro.disconnect();
+        io.disconnect();
       };
     }, [progress, clickProg]);
 

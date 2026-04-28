@@ -85,7 +85,26 @@ Form fades in (`opacity 0→1`) after all lines finish drawing — delay set to 
 Full-height `bg-ink` section with `min-h-[55vh]`. Giant `STUDIO—E` wordmark in `text-gold` at the bottom (`leading-none`, `font-size: clamp(3.5rem, 16.5vw, 22rem)`). Hand ASCII art (`/hand-ascii.png`) positioned `absolute bottom-0 right-0 h-full w-auto` — `h-full w-auto` on the `<img>` (not object-fit) ensures the hand fills the full section height with natural proportions and wrist touches the bottom edge. `filter: invert(1)` + `mix-blend-mode: screen` makes the white PNG background disappear on the dark section.
 
 ### About Us Section
-Dark `bg-ink` section with Approach-style nebula `GradientBg` (copy the blob array + component). Same inset border lines as Services (`top-8 left-8` → `top-14 left-14`). Split layout: left 40% image column + right `flex-1` text column, both inside the `ml-10 md:ml-16` content wrapper (so both are right of the left inset line). Portrait image uses `filter: invert(1) + mix-blend-mode: screen` treatment. Body text: `text-cream`. Tagline: `text-gold`.
+Dark `bg-ink` section with Approach-style nebula `GradientBg` (copy the blob array + component). Same inset border lines as Services (`top-8 left-8` → `top-14 left-14`). Split layout: left 40% image column + right `flex-1` text column, both inside the `ml-10 md:ml-16` content wrapper (so both are right of the left inset line). Portrait image uses `filter: invert(1) + mix-blend-mode: screen` treatment. Body text: `text-cream`. Tagline: `text-gold`. Portrait `src=""` is wrapped in `{false && (...)}` to suppress the browser empty-src warning until a real image path is provided.
+
+### Canvas RAF Performance — IntersectionObserver Pause Pattern
+All canvas draw loops (`MagnoliaScroll`, `ApproachAscii`, `ButterflyMorph`, `ServicesAscii`) use this pattern to pause when off-screen:
+```ts
+let visible = true;
+const io = new IntersectionObserver(([e]) => {
+  visible = e.isIntersecting;
+  if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
+}, { rootMargin: "200px" });
+io.observe(cv);
+
+function draw() {
+  if (!visible) { rafRef.current = 0; return; }
+  rafRef.current = requestAnimationFrame(draw);
+  // ... draw code
+}
+// cleanup: io.disconnect()
+```
+`rootMargin: "200px"` starts the loop 200px before the canvas enters view so it's ready on arrival. `rafRef.current = 0` in the early-return signals the IO callback to restart the loop.
 
 ### ButterflyMorph (Approach ASCII animation)
 Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity.txt` → `approach-partnership.txt`) rendered on a canvas using union bounding box so all frames share the same coordinate space.
@@ -103,8 +122,11 @@ Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity
 - `SWEEP_TOP` is a spatial cutoff: rows below it (the hand) skip the source frame entirely and show the destination immediately at full opacity — hand never gets swept since it's identical across all frames.
 - Exposed via `forwardRef` + `useImperativeHandle` (`jumpTo(frame)`). Clicking a pillar calls `jumpTo(index)` which animates `overrideBlend` directly to the target frame, bypassing scroll so non-adjacent jumps (e.g. pillar 0 → pillar 2) don't flash through the intermediate frame.
 - `overrideActive` ref gates whether draw loop uses override or scroll-driven blend. Cleared in `onComplete` — by then Lenis has arrived and `getBlend(target)` matches the override value, so handoff is seamless.
-- `isJumping` state (cleared after 350ms) gates the description `AnimatePresence` — prevents description from briefly flashing open mid-jump before butterfly finishes.
-- `finished0/1/2` state driven directly from `scrollYProgress >= PILLAR_TARGETS[i]` in `useMotionValueEvent`. Do NOT use `useTransform` + threshold — the transform output can land just below threshold at the target scroll position, causing `finished` to never fire on click.
+- `isJumping` / `isJumpingRef` — state + matching ref for stale-closure safety. Cleared via Lenis `onComplete` callback (not a fixed timeout) so descriptions unlock exactly when scroll settles.
+- `finished0` initialized `true` (pillar 0 is the default; butterfly frame 0 is always ready). `finished1/2` set immediately in `scrollToPillar` for the target index — do NOT rely solely on scroll events crossing `PILLAR_TARGETS` thresholds, which can fail due to floating-point imprecision.
+- `activeRef` keeps a ref-mirrored copy of `active` state. `useMotionValueEvent` reads `activeRef.current` (always fresh) to avoid stale-closure double-flip bugs where React render timing causes `active` 0→1→0→1 on threshold crossing.
+- During a click-jump (`isJumpingRef.current === true`): event handler skips all active updates — `active` is already set to the target index and must not be overridden by Lenis scrolling through intermediate thresholds.
+- Small hysteresis (`HYSTERESIS = 0.01`): on natural scroll, `active` only flips backward if `v` retreats more than 0.01 below the threshold — absorbs trackpad momentum micro-bounces without perceptible label delay. Hysteresis is bypassed during jumps (`isJumpingRef`).
 - Stable state (not transitioning): full constant alpha, no breathing animation.
 - `SWEEP_TOP` formula: `(cutoff_row - unionMinR) / rowSpan`. Current value covers up to row 73.5 (butterfly bottom in frame 3), leaving the hand rows (86+) untouched.
 

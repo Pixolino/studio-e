@@ -124,7 +124,15 @@ function ApproachAscii({
     const ro = new ResizeObserver(reparse);
     ro.observe(canvas);
 
+    let visible = true;
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
+    }, { rootMargin: "200px" });
+    io.observe(canvas);
+
     function draw() {
+      if (!visible) { rafRef.current = 0; return; }
       rafRef.current = requestAnimationFrame(draw);
       if (!pts.length) return;
 
@@ -153,7 +161,7 @@ function ApproachAscii({
     }
 
     rafRef.current = requestAnimationFrame(draw);
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); };
   }, [artLines, progress, revealOrder]);
 
   return <canvas ref={canvasRef} aria-hidden className="h-full w-full" />;
@@ -271,6 +279,7 @@ function ButterflyMorph({ scrollYProgress }, ref) {
     }
 
     function draw() {
+      if (!visible) { rafRef.current = 0; return; }
       rafRef.current = requestAnimationFrame(draw);
       if (!rawRef.current) return;
 
@@ -346,11 +355,18 @@ function ButterflyMorph({ scrollYProgress }, ref) {
       cx.shadowBlur = 0;
     }
 
+    let visible = true;
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
+    }, { rootMargin: "200px" });
+    io.observe(cv);
+
     resize();
     rafRef.current = requestAnimationFrame(draw);
     const ro = new ResizeObserver(resize);
     ro.observe(cv);
-    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); };
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); };
   }, [scrollYProgress, overrideBlend]);
 
   return <canvas ref={canvasRef} aria-hidden className="h-full w-full" />;
@@ -413,33 +429,50 @@ function DesktopApproach() {
   const containerInView = useInView(containerRef, { once: true });
 
   const [active, setActive] = useState(0);
-  const [finished0, setFinished0] = useState(false);
+  // finished0 is always true — pillar 0 (AP) is the default state; butterfly frame 0 is always ready.
+  // This ensures the description shows immediately when arriving via nav link (v=0).
+  const [finished0] = useState(true);
   const [finished1, setFinished1] = useState(false);
   const [finished2, setFinished2] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
   const jumpTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Refs stay current across renders — no stale-closure issues in the event handler.
+  const activeRef    = useRef(0);
+  const isJumpingRef = useRef(false);
 
   // P1 = T1E: label flips to Technical Fluidity when butterfly arrives at frame 1
   // P2 = T2S: label flips to Direct Partnership when butterfly starts leaving frame 1
   const P1 = 0.37;
   const P2 = 0.51;
+  // Dead zone: scroll must retreat this far before flipping back to the previous pillar.
+  // Absorbs trackpad micro-bounces; skipped entirely during click-jumps.
+  const HYSTERESIS = 0.01;
 
   // Land just past T1E / T2E so sweep is already complete on arrival
   const PILLAR_TARGETS = [0.05, 0.38, 0.75];
 
   useEffect(() => {
     const v = scrollYProgress.get();
-    setActive(v < P1 ? 0 : v < P2 ? 1 : 2);
-    if (v >= PILLAR_TARGETS[0]) setFinished0(true);
+    const init = v < P1 ? 0 : v < P2 ? 1 : 2;
+    activeRef.current = init;
+    setActive(init);
     if (v >= PILLAR_TARGETS[1]) setFinished1(true);
     if (v >= PILLAR_TARGETS[2]) setFinished2(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    const next = v < P1 ? 0 : v < P2 ? 1 : 2;
-    if (next !== active) setActive(next);
-    if (v >= PILLAR_TARGETS[0]) setFinished0(true);
+    // During a click-jump, active is already set to the target — don't let scroll override it.
+    if (!isJumpingRef.current) {
+      const prev = activeRef.current;
+      let next: number;
+      if (v >= P2) next = 2;
+      else if (prev === 2 && v > P2 - HYSTERESIS) next = 2;
+      else if (v >= P1) next = 1;
+      else if (prev === 1 && v > P1 - HYSTERESIS) next = 1;
+      else next = 0;
+      if (next !== prev) { activeRef.current = next; setActive(next); }
+    }
     if (v >= PILLAR_TARGETS[1]) setFinished1(true);
     if (v >= PILLAR_TARGETS[2]) setFinished2(true);
   });
@@ -453,14 +486,31 @@ function DesktopApproach() {
     const targetScrollY =
       containerTop + PILLAR_TARGETS[index] * (container.offsetHeight - window.innerHeight);
     const lenis = lenisStore.get();
+    activeRef.current = index;
+    setActive(index);
+    // Mark the target pillar's description as ready immediately — don't rely on the
+    // scroll event reaching the exact PILLAR_TARGETS threshold (floating-point fragile).
+    if (index >= 1) setFinished1(true);
+    if (index >= 2) setFinished2(true);
+    isJumpingRef.current = true;
     setIsJumping(true);
     clearTimeout(jumpTimerRef.current);
-    jumpTimerRef.current = setTimeout(() => setIsJumping(false), 350);
     butterflyRef.current?.jumpTo(index);
+
+    const clearJumping = () => {
+      isJumpingRef.current = false;
+      setIsJumping(false);
+    };
+
     if (lenis) {
-      lenis.scrollTo(targetScrollY, { duration: 0.9, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
+      lenis.scrollTo(targetScrollY, {
+        duration: 0.9,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3),
+        onComplete: clearJumping,
+      });
     } else {
       window.scrollTo({ top: targetScrollY, behavior: "smooth" });
+      jumpTimerRef.current = setTimeout(clearJumping, 1000);
     }
   }
 
