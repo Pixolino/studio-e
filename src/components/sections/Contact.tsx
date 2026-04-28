@@ -35,7 +35,7 @@ export default function Contact() {
           <PeriodicGlitch text="/Start a conversation/" inView={inView} />
         </motion.p>
 
-        <h2 className="font-display text-[9vw] font-medium leading-[0.88] tracking-tight text-cream md:text-[7.5vw]">
+        <h2 className="font-display text-5xl font-medium leading-[0.88] tracking-tight text-cream md:text-6xl lg:text-7xl">
           {lines.map((line, i) => (
             <div key={i} className="overflow-hidden">
               <motion.span

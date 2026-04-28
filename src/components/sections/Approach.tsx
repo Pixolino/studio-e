@@ -5,7 +5,6 @@ import {
   motion,
   useInView,
   useScroll,
-  useTransform,
   useMotionValue,
   useMotionValueEvent,
   animate,
@@ -169,8 +168,7 @@ function smoothstep(e0: number, e1: number, x: number) {
 }
 
 function getBlend(s: number): number {
-  // Transitions: 0.12→0.28 (sweep ends at 0.20) and 0.32→0.48 (sweep ends at 0.40)
-  const T1S = 0.12, T1E = 0.28, T2S = 0.32, T2E = 0.48;
+  const T1S = 0.15, T1E = 0.37, T2S = 0.51, T2E = 0.74;
   if (s < T1S) return 0;
   if (s < T1E) return (s - T1S) / (T1E - T1S);
   if (s < T2S) return 1;
@@ -238,7 +236,7 @@ function ButterflyMorph({ scrollYProgress }, ref) {
       overrideBlend.set(current);
       overrideActive.current = true;
       animate(overrideBlend, frame, {
-        duration: 1.45,
+        duration: 0.85,
         ease: [0.22, 1, 0.36, 1],
         onComplete: () => { overrideActive.current = false; },
       });
@@ -415,38 +413,38 @@ function DesktopApproach() {
   const containerInView = useInView(containerRef, { once: true });
 
   const [active, setActive] = useState(0);
-
   const [finished0, setFinished0] = useState(false);
   const [finished1, setFinished1] = useState(false);
   const [finished2, setFinished2] = useState(false);
+  const [isJumping, setIsJumping] = useState(false);
+  const jumpTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // P1/P2 match transition end points (T1E=0.28, T2E=0.48) — active flips when sweep completes
-  const P1 = 0.28;
-  const P2 = 0.48;
+  // P1 = T1E: label flips to Technical Fluidity when butterfly arrives at frame 1
+  // P2 = T2S: label flips to Direct Partnership when butterfly starts leaving frame 1
+  const P1 = 0.37;
+  const P2 = 0.51;
+
+  // Land just past T1E / T2E so sweep is already complete on arrival
+  const PILLAR_TARGETS = [0.05, 0.38, 0.75];
 
   useEffect(() => {
     const v = scrollYProgress.get();
     setActive(v < P1 ? 0 : v < P2 ? 1 : 2);
+    if (v >= PILLAR_TARGETS[0]) setFinished0(true);
+    if (v >= PILLAR_TARGETS[1]) setFinished1(true);
+    if (v >= PILLAR_TARGETS[2]) setFinished2(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     const next = v < P1 ? 0 : v < P2 ? 1 : 2;
     if (next !== active) setActive(next);
+    if (v >= PILLAR_TARGETS[0]) setFinished0(true);
+    if (v >= PILLAR_TARGETS[1]) setFinished1(true);
+    if (v >= PILLAR_TARGETS[2]) setFinished2(true);
   });
 
-  const p0 = useTransform(scrollYProgress, [0,    0.25], [0, 1]);
-  const p1 = useTransform(scrollYProgress, [0.24, 0.46], [0, 1]);
-  const p2 = useTransform(scrollYProgress, [0.44, 0.66], [0, 1]);
-
-  useMotionValueEvent(p0, "change", (v) => setFinished0(v >= 0.12));
-  useMotionValueEvent(p1, "change", (v) => setFinished1(v >= 0.12));
-  useMotionValueEvent(p2, "change", (v) => setFinished2(v >= 0.12));
-
   const descVisible = [finished0, finished1, finished2];
-
-  // Land just past T1E / T2E so sweep is already complete on arrival
-  const PILLAR_TARGETS = [0.05, 0.29, 0.50];
 
   function scrollToPillar(index: number) {
     const container = containerRef.current;
@@ -455,9 +453,12 @@ function DesktopApproach() {
     const targetScrollY =
       containerTop + PILLAR_TARGETS[index] * (container.offsetHeight - window.innerHeight);
     const lenis = lenisStore.get();
+    setIsJumping(true);
+    clearTimeout(jumpTimerRef.current);
+    jumpTimerRef.current = setTimeout(() => setIsJumping(false), 350);
     butterflyRef.current?.jumpTo(index);
     if (lenis) {
-      lenis.scrollTo(targetScrollY, { duration: 1.4, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
+      lenis.scrollTo(targetScrollY, { duration: 0.9, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
     } else {
       window.scrollTo({ top: targetScrollY, behavior: "smooth" });
     }
@@ -465,7 +466,7 @@ function DesktopApproach() {
 
 
   return (
-    <div ref={containerRef} style={{ height: "500vh" }} className="relative">
+    <div ref={containerRef} style={{ height: "320vh" }} className="relative">
       <div className="sticky top-0 flex h-screen items-stretch overflow-hidden">
         <GradientBg />
 
@@ -534,7 +535,7 @@ function DesktopApproach() {
                   </span>
                 </div>
                 <AnimatePresence initial={false}>
-                  {active === i && descVisible[i] && (
+                  {active === i && descVisible[i] && !isJumping && (
                     <motion.div
                       key="desc"
                       initial={{ height: 0, opacity: 0 }}

@@ -55,20 +55,43 @@ To align two ASCII art files so they morph in-place on the same canvas, use **un
 - `transitioning = prog > 0.01 && prog < 0.99` gates glitch chars — prevents glitch showing at rest states.
 
 ### Scroll-Driven Approach Section
-- 500vh container + `sticky top-0 h-screen` inner
-- Pillar boundaries P1/P2 align with transition END points (T1E/T2E) so `active` flips exactly when the sweep completes
+- 320vh container + `sticky top-0 h-screen` inner
+- Pillar boundaries P1/P2 align with T1E/T2S respectively — see ButterflyMorph timing constants
 - `getBoundingClientRect().top + window.scrollY` for correct absolute scroll targets (not `offsetTop`, which is parent-relative)
 - `useState(() => motionValue.get() >= threshold)` to initialize state on mount when MotionValue may already be past the threshold — prevents "animation won't replay" regression after remount
 
+### Scroll-Driven Section Header Animation
+For sections with a two-part headline that slides in from opposite sides on scroll:
+```tsx
+const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "start 0.25"] });
+const xLeft  = useTransform(scrollYProgress, [0, 1], ["-110%", "0%"]);
+const xRight = useTransform(scrollYProgress, [0, 1], ["110%",  "0%"]);
+// In JSX — use style prop, NOT initial/animate:
+<motion.span style={{ x: line.x }}>
+```
+Wrap each line in `overflow-hidden` to clip the off-screen slide. Use `-110%/110%` (not `-100%/100%`) so the translate starts fully outside the clip zone even for long lines. `style={{ x }}` is required — `initial={{ x }}` only fires once and won't track the MotionValue.
+
+### Services Section CTA Button Style
+Violet text + semi-transparent violet border at rest. Olive (`bg-gold`) background + ink text on hover. Arrow `→` in its own `<span>` with `transition-transform group-hover/btn:translate-x-1.5` for widening gap effect. Use `group/btn` (scoped group name) to avoid conflicts with parent `group` on the accordion button row.
+
 ### ButterflyMorph (Approach ASCII animation)
 Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity.txt` → `approach-partnership.txt`) rendered on a canvas using union bounding box so all frames share the same coordinate space.
+
+**Current timing constants (320vh container):**
+- `T1S=0.15, T1E=0.37, T2S=0.51, T2E=0.74`
+- `P1=0.37` (=T1E): label flips to Technical Fluidity when butterfly ARRIVES at frame 1
+- `P2=0.51` (=T2S): label flips to Direct Partnership when butterfly STARTS leaving frame 1
+- `PILLAR_TARGETS=[0.05, 0.38, 0.75]`: scroll jump targets land just past T1E/T2E so butterfly is complete on arrival
+- Override animation `duration: 0.85`, Lenis `duration: 0.9`
 
 **Key patterns:**
 - `getBlend(s)` maps `scrollYProgress` 0→1 to a blend value 0→2 with two transition windows (T1S/T1E, T2S/T2E). Pillar targets land just past T1E/T2E so the image is complete on arrival.
 - `sweepPos = frac * SWEEP_TOP` — sweep wave travels from row 0 to `SWEEP_TOP` (currently `0.638`) as `frac` goes 0→1, so the animation completes at exactly `frac=1` (not earlier). This makes scroll-driven and click-driven timings stay in sync.
 - `SWEEP_TOP` is a spatial cutoff: rows below it (the hand) skip the source frame entirely and show the destination immediately at full opacity — hand never gets swept since it's identical across all frames.
-- Exposed via `forwardRef` + `useImperativeHandle` (`jumpTo(frame)`). Clicking a pillar calls `jumpTo(index)` which animates `overrideBlend` directly to the target frame (duration `1.45s` ≈ Lenis `1.4s`), bypassing scroll so non-adjacent jumps (e.g. pillar 0 → pillar 2) don't flash through the intermediate frame.
+- Exposed via `forwardRef` + `useImperativeHandle` (`jumpTo(frame)`). Clicking a pillar calls `jumpTo(index)` which animates `overrideBlend` directly to the target frame, bypassing scroll so non-adjacent jumps (e.g. pillar 0 → pillar 2) don't flash through the intermediate frame.
 - `overrideActive` ref gates whether draw loop uses override or scroll-driven blend. Cleared in `onComplete` — by then Lenis has arrived and `getBlend(target)` matches the override value, so handoff is seamless.
+- `isJumping` state (cleared after 350ms) gates the description `AnimatePresence` — prevents description from briefly flashing open mid-jump before butterfly finishes.
+- `finished0/1/2` state driven directly from `scrollYProgress >= PILLAR_TARGETS[i]` in `useMotionValueEvent`. Do NOT use `useTransform` + threshold — the transform output can land just below threshold at the target scroll position, causing `finished` to never fire on click.
 - Stable state (not transitioning): full constant alpha, no breathing animation.
 - `SWEEP_TOP` formula: `(cutoff_row - unionMinR) / rowSpan`. Current value covers up to row 73.5 (butterfly bottom in frame 3), leaving the hand rows (86+) untouched.
 

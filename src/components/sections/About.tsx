@@ -28,7 +28,7 @@ export default function About() {
             initial={{ y: "105%" }}
             animate={inView ? { y: 0 } : {}}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-            className="font-display text-[10vw] font-light uppercase leading-[0.88] tracking-tight text-ink md:text-[7.5vw] xl:text-[clamp(4rem,7.5vw,8.5rem)]"
+            className="font-display text-5xl font-light uppercase leading-[0.88] tracking-tight text-ink md:text-6xl lg:text-7xl"
           >
             You&rsquo;ve built<br />
             something real.<br />

@@ -40,7 +40,7 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 
 ## The Approach Section
 
-Three scroll-driven ASCII art pillars in a 500vh sticky container. Desktop layout: left text panel + `ButterflyMorph` canvas + narrow right label strip.
+Three scroll-driven ASCII art pillars in a 320vh sticky container. Desktop layout: left text panel + `ButterflyMorph` canvas + narrow right label strip.
 
 The three txt files are frames of a butterfly landing on a hand. `ButterflyMorph` morphs between them as you scroll via a top-down sweep that stops at row ~73 (just below the butterfly, above the hand — hand is identical across all frames so it never gets swept). Clicking a pillar on the left calls `jumpTo(frame)` which animates directly to the target frame without passing through intermediate frames.
 
@@ -49,6 +49,14 @@ The three txt files are frames of a butterfly landing on a hand. `ButterflyMorph
 - **03 Direct Partnership** — `approach-partnership.txt` (butterfly landed)
 
 Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-60`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
+
+## The Services Section
+
+Accordion layout with inset border lines (top + left, positioned with margin inside the section). Left column (55%) holds the accordion; right column (45%, desktop only) shows static ASCII art of the partnership butterfly.
+
+Header uses scroll-driven animation: first headline line slides in from left, lines 2–3 from right, driven by `useScroll` + `useTransform` on a `style={{ x }}` prop. `overflow-hidden` on each line clips the off-screen position.
+
+CTA buttons: violet text/border at rest → olive background + ink text on hover, with arrow `→` translating right on hover.
 
 Fluid nebula background: 5 animated radial-gradient blobs at `z-0` with `blur(90px)`, staggered via negative `delay` values so motion is always out of phase. Content at `z-10`.
 
