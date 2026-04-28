@@ -74,6 +74,19 @@ Wrap each line in `overflow-hidden` to clip the off-screen slide. Use `-110%/110
 ### Services Section CTA Button Style
 Violet text + semi-transparent violet border at rest. Olive (`bg-gold`) background + ink text on hover. Arrow `→` in its own `<span>` with `transition-transform group-hover/btn:translate-x-1.5` for widening gap effect. Use `group/btn` (scoped group name) to avoid conflicts with parent `group` on the accordion button row.
 
+### Contact Section Grid Layout
+Gold (`bg-gold`) background. Two vertical lines at `left-1/3` and `left-2/3` (absolute, `w-0.5 bg-violet/30`), two horizontal lines (`h-0.5 bg-violet/30`) above and below the form. All four lines are `motion.div`s that scale in from different edges (`transformOrigin: top/bottom/left/right`) on scroll-into-view. Form is `mx-auto md:w-1/3 md:px-10`, centered in the middle column.
+
+Desktop headline uses `md:grid md:grid-cols-3` aligned to the section's full width (no horizontal padding on header container) with `fontSize: clamp(2rem, 4.6vw, 5.5rem)` so "YOUR VISION" fits in 1/3 column. Words placed with explicit `col-start`/`row-start`. Mobile headline is a separate `md:hidden` h2 with stacked layout. Overline lives inside the center column alongside BRING using `flex items-center` + `flex-1 text-center`.
+
+Form fades in (`opacity 0→1`) after all lines finish drawing — delay set to last_line_delay + last_line_duration.
+
+### Footer Design
+Full-height `bg-ink` section with `min-h-[55vh]`. Giant `STUDIO—E` wordmark in `text-gold` at the bottom (`leading-none`, `font-size: clamp(3.5rem, 16.5vw, 22rem)`). Hand ASCII art (`/hand-ascii.png`) positioned `absolute bottom-0 right-0 h-full w-auto` — `h-full w-auto` on the `<img>` (not object-fit) ensures the hand fills the full section height with natural proportions and wrist touches the bottom edge. `filter: invert(1)` + `mix-blend-mode: screen` makes the white PNG background disappear on the dark section.
+
+### About Us Section
+Dark `bg-ink` section with Approach-style nebula `GradientBg` (copy the blob array + component). Same inset border lines as Services (`top-8 left-8` → `top-14 left-14`). Split layout: left 40% image column + right `flex-1` text column, both inside the `ml-10 md:ml-16` content wrapper (so both are right of the left inset line). Portrait image uses `filter: invert(1) + mix-blend-mode: screen` treatment. Body text: `text-cream`. Tagline: `text-gold`.
+
 ### ButterflyMorph (Approach ASCII animation)
 Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity.txt` → `approach-partnership.txt`) rendered on a canvas using union bounding box so all frames share the same coordinate space.
 

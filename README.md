@@ -50,6 +50,18 @@ The three txt files are frames of a butterfly landing on a hand. `ButterflyMorph
 
 Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-60`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
 
+## The About Us Section
+
+Dark `bg-ink` section with the same animated nebula blob background as Approach. Inset border lines (top + left). Split layout: left 40% portrait image column + right text column. Portrait uses `filter: invert(1) + mix-blend-mode: screen` so a white-background PNG disappears against the dark background. Replace `src=""` in `AboutUs.tsx` with your portrait image path in `/public/`.
+
+Content: `/About Us/` overline (olive), `THE STUDIO` headline, three body paragraphs (cream), `INTENTIONAL. STRATEGIC. HUMAN.` tagline (olive).
+
+## The Contact Section
+
+Gold (`bg-gold`) background with an editorial 3-column grid. Two vertical violet lines at `left-1/3` and `left-2/3`, two horizontal violet lines above and below the form — all four animate in from different edges on scroll. Form fades in after all lines complete.
+
+Desktop headline: CSS `grid-cols-3` spanning full section width, viewport-relative font size. Words placed with explicit `col-start`/`row-start`. Overline shares the BRING row via flexbox. Mobile uses a separate stacked layout.
+
 ## The Services Section
 
 Accordion layout with inset border lines (top + left, positioned with margin inside the section). Left column (55%) holds the accordion; right column (45%, desktop only) shows static ASCII art of the partnership butterfly.

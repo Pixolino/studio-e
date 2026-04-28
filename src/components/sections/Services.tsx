@@ -171,15 +171,15 @@ export default function Services() {
   return (
     <section ref={sectionRef} id="services" className="relative overflow-hidden bg-cream-mid">
       {/* Top inset divider — starts at left line, runs to right edge */}
-      <div className="absolute top-8 left-8 right-0 h-px bg-violet/50 z-20 md:top-14 md:left-14" />
+      <div className="absolute top-8 left-8 right-0 h-px bg-violet/50 z-20 md:top-20 md:left-20" />
       {/* Left inset divider — full height of section */}
-      <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-14" />
+      <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-20" />
 
       {/* Content wrapper — clears left line and top line */}
       <div className="ml-10 md:ml-16">
 
         {/* Overline — top right, below top line */}
-        <div className="flex justify-end pr-8 pt-14 md:pr-16 md:pt-20">
+        <div className="flex justify-end pr-8 pt-14 md:pr-16 md:pt-30">
           <motion.p
             ref={ref}
             initial={{ opacity: 0, x: 12 }}
