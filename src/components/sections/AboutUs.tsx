@@ -101,9 +101,9 @@ export default function AboutUs() {
       <GradientBg />
 
       {/* Top inset divider */}
-      <div className="absolute top-8 left-8 right-0 h-px bg-violet/50 z-20 md:top-14 md:left-14" />
+      <div className="absolute top-8 left-8 right-0 h-px bg-violet/50 z-20 md:top-20 md:left-20" />
       {/* Left inset divider */}
-      <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-14" />
+      <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-20" />
 
       {/* Content wrapper — clears inset lines */}
       <div ref={ref} className="relative z-10 ml-10 md:ml-16 flex min-h-screen flex-col md:flex-row">
@@ -126,7 +126,7 @@ export default function AboutUs() {
         </div>
 
         {/* ── Right: text ──────────────────────────────────────── */}
-        <div className="flex flex-col justify-center px-8 py-20 md:flex-1 md:px-16 md:py-28">
+        <div className="flex flex-col justify-center px-8 py-20 md:flex-1 md:px-40 md:py-28">
 
           {/* Overline */}
           <motion.p
