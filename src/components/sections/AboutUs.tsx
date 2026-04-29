@@ -287,7 +287,7 @@ function FoundersReveal({ txtSrc, imgSrc, scrollProgress }: {
           txtSrc={txtSrc}
           imgSrc={imgSrc}
           scrollProgress={scrollProgress}
-          start={0.32}
+          start={0.35}
           end={0.50}
         />
       </div>
