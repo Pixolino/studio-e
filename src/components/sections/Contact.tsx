@@ -26,14 +26,14 @@ export default function Contact() {
       <motion.div
         initial={{ scaleY: 0 }}
         animate={inView ? { scaleY: 1 } : {}}
-        transition={{ duration: 3.25, delay: 0.25, ease }}
+        transition={{ duration: 5, delay: 0.75, ease }}
         style={{ transformOrigin: "top" }}
         className="absolute inset-y-0 left-1/3 hidden w-0.5 bg-violet/30 md:block"
       />
       <motion.div
         initial={{ scaleY: 0 }}
         animate={inView ? { scaleY: 1 } : {}}
-        transition={{ duration: 2.2, delay: 0.2, ease }}
+        transition={{ duration: 5, delay: 0.75, ease }}
         style={{ transformOrigin: "bottom" }}
         className="absolute inset-y-0 left-2/3 hidden w-0.5 bg-violet/30 md:block"
       />
@@ -109,7 +109,7 @@ export default function Contact() {
       <motion.div
         initial={{ scaleX: 0 }}
         animate={inView ? { scaleX: 1 } : {}}
-        transition={{ duration: 1.8, delay: 0.15, ease }}
+        transition={{ duration: 5, delay: 0.75, ease }}
         style={{ transformOrigin: "left" }}
         className="h-0.5 bg-violet/30"
       />
@@ -118,7 +118,7 @@ export default function Contact() {
       <motion.form
         initial={{ opacity: 0 }}
         animate={inView ? { opacity: 1 } : {}}
-        transition={{ duration: 0.6, delay: 2.4 }}
+        transition={{ duration: 0.6, delay: 2.5 }}
         onSubmit={(e) => e.preventDefault()}
         className="py-10 md:py-14"
       >
@@ -193,7 +193,7 @@ export default function Contact() {
       <motion.div
         initial={{ scaleX: 0 }}
         animate={inView ? { scaleX: 1 } : {}}
-        transition={{ duration: 1.8, delay: 0.25, ease }}
+        transition={{ duration: 5, delay: 0.75, ease }}
         style={{ transformOrigin: "right" }}
         className="h-0.5 bg-violet/30"
       />
