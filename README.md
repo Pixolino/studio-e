@@ -54,7 +54,9 @@ Active state uses `activeRef` + `isJumpingRef` refs alongside state to avoid sta
 
 ## The About Us Section
 
-Dark `bg-ink` section with the same animated nebula blob background as Approach. Inset border lines (top + left). Split layout: left 40% portrait image column + right text column. Portrait uses `filter: invert(1) + mix-blend-mode: screen` so a white-background PNG disappears against the dark background. Replace `src=""` in `AboutUs.tsx` with your portrait image path in `/public/`.
+Dark `bg-ink` section with the same animated nebula blob background as Approach. Inset border lines (top + left). Split layout: left 40% portrait column + right text column.
+
+The portrait column uses `FoundersCanvas` — a single `<canvas>` that renders both the ASCII art (`/public/founders-ascii.txt`) and the founders photo (`/public/founders.png`). On scroll, it performs a typewriter-style line-by-line left-to-right wipe: each row of ASCII characters is erased left-to-right while the photo is simultaneously revealed in the cleared cells. The transition is scroll-driven via `useScroll` on the section ref.
 
 Content: `/About Us/` overline (olive), `THE STUDIO` headline, three body paragraphs (cream), `INTENTIONAL. STRATEGIC. HUMAN.` tagline (olive).
 

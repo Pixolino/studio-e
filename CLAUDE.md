@@ -85,7 +85,19 @@ Form fades in (`opacity 0→1`) after all lines finish drawing — delay set to 
 Full-height `bg-ink` section with `min-h-[55vh]`. Giant `STUDIO—E` wordmark in `text-gold` at the bottom (`leading-none`, `font-size: clamp(3.5rem, 16.5vw, 22rem)`). Hand ASCII art (`/hand-ascii.png`) positioned `absolute bottom-0 right-0 h-full w-auto` — `h-full w-auto` on the `<img>` (not object-fit) ensures the hand fills the full section height with natural proportions and wrist touches the bottom edge. `filter: invert(1)` + `mix-blend-mode: screen` makes the white PNG background disappear on the dark section.
 
 ### About Us Section
-Dark `bg-ink` section with Approach-style nebula `GradientBg` (copy the blob array + component). Same inset border lines as Services (`top-8 left-8` → `top-14 left-14`). Split layout: left 40% image column + right `flex-1` text column, both inside the `ml-10 md:ml-16` content wrapper (so both are right of the left inset line). Portrait image uses `filter: invert(1) + mix-blend-mode: screen` treatment. Body text: `text-cream`. Tagline: `text-gold`. Portrait `src=""` is wrapped in `{false && (...)}` to suppress the browser empty-src warning until a real image path is provided.
+Dark `bg-ink` section with Approach-style nebula `GradientBg` (copy the blob array + component). Same inset border lines as Services (`top-8 left-8` → `top-14 left-14`). Split layout: left 40% portrait column + right `flex-1` text column, both inside the `ml-10 md:ml-16` content wrapper (so both are right of the left inset line). Body text: `text-cream`. Tagline: `text-gold`.
+
+Portrait column uses `FoundersCanvas` — a single canvas that renders both the ASCII art (from `/founders-ascii.txt`) and the founders photo (from `/founders.png`) and animates a line-by-line left-to-right typewriter-delete transition between them, scroll-driven. `start`/`end` props on `FoundersCanvas` are the `scrollYProgress` thresholds (from `useScroll` with `offset: ["start end", "end start"]`) at which the wipe begins and completes.
+
+### FoundersCanvas — Combined ASCII + Photo Canvas Wipe
+`FoundersCanvas` in `AboutUs.tsx` renders both layers on one canvas and implements a per-row L→R erase:
+- Loads ASCII from a `.txt` file; builds `pts[]` with `{x, y, ch, a, r, c}` (row + col stored for erasure logic)
+- Loads photo as `new window.Image()` and computes `object-contain` + `object-right-bottom` geometry manually: `scale = Math.min(cw/iw, ch/ih)`, `drawX = cw - drawW`, `drawY = ch - drawH`
+- Each frame: `rowProgress = p * totalRows`; `fullRows = Math.floor(rowProgress)`; `partFrac = rowProgress - fullRows`
+- Photo clip: `ctx.rect(0, rowTop, cw, CH)` for fully erased rows; `ctx.rect(0, rowTop, cursorX, CH)` for the partial row, then `ctx.clip()` + `ctx.drawImage()`
+- ASCII skip: `ri < fullRows` (row done) or `ri === fullRows && (pt.c - minC) < partFrac * spanC` (char passed by cursor)
+- All mutable layout state lives in a single `useRef({...})` object (`S`) so `buildLayout()` and `draw()` share it without stale closures
+- ASCII horizontal nudge: `ox = cw/2 - center*CW + cw*0.09 - 1.5*CW`; vertical: `oy = ch - (maxR+1)*CH + ch*0.01 - CH`
 
 ### Canvas RAF Performance — IntersectionObserver Pause Pattern
 All canvas draw loops (`MagnoliaScroll`, `ApproachAscii`, `ButterflyMorph`, `ServicesAscii`) use this pattern to pause when off-screen:

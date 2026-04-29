@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { siteConfig } from "@/lib/site";
 import { lenisStore } from "@/lib/lenis-store";
 import Logo from "@/components/ui/Logo";
@@ -46,13 +47,13 @@ export default function Navbar() {
         }`}
       >
         {/* Logo */}
-        <a
+        <Link
           href="/"
           data-cursor="pointer"
           className="shrink-0"
         >
           <Logo width={108} className="text-cream transition-colors duration-300 hover:text-gold" />
-        </a>
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden flex-1 items-center justify-center gap-5 px-6 md:flex lg:gap-7 lg:px-10">

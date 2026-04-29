@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -176,11 +177,13 @@ export default function Contact() {
               className="group/btn inline-flex items-center gap-2 rounded-full border border-violet px-7 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-violet transition-all duration-300 hover:border-ink hover:bg-ink hover:text-gold md:text-xs"
             >
               Talk dirty to me
-              <img
+              <Image
                 src="/hand-ascii.png"
                 alt=""
                 aria-hidden
-                className="h-7 w-auto transition-transform duration-300 group-hover/btn:translate-x-1"
+                width={28}
+                height={28}
+                className="w-auto transition-transform duration-300 group-hover/btn:translate-x-1"
                 style={{ filter: "brightness(0)", opacity: 0.6 }}
               />
             </button>

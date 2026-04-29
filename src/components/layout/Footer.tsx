@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import { siteConfig } from "@/lib/site";
 
 export default function Footer() {
@@ -43,10 +44,11 @@ export default function Footer() {
         aria-hidden
         className="pointer-events-none absolute bottom-0 right-0 h-full select-none overflow-hidden"
       >
-        <img
+        <Image
           src="/hand-ascii.png"
           alt=""
-          className="block h-full w-auto"
+          fill
+          className="object-contain object-right-bottom"
           style={{ filter: "invert(1)", mixBlendMode: "screen" }}
         />
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useEffect } from "react";
+import { motion, useInView, useScroll, MotionValue } from "framer-motion";
 import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 import { siteConfig } from "@/lib/site";
 
@@ -91,13 +91,197 @@ function GradientBg() {
   );
 }
 
+/* ─── Canvas: ASCII art + photo, line-by-line L→R wipe ──────── */
+function FoundersCanvas({
+  txtSrc, imgSrc, scrollProgress, start, end,
+}: {
+  txtSrc: string; imgSrc: string;
+  scrollProgress: MotionValue<number>;
+  start: number; end: number;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rafRef    = useRef(0);
+  const S = useRef({
+    pts:       [] as { x: number; y: number; ch: string; a: number; r: number; c: number }[],
+    img:       null as HTMLImageElement | null,
+    imgReady:  false,
+    drawX: 0, drawY: 0, drawW: 0, drawH: 0,
+    fontSize: 10, CH: 10, CW: 5.5,
+    minR: 0, maxR: 0, minC: 0, spanC: 1,
+    ox: 0, oy: 0, cw: 0, ch: 0,
+    ready: false,
+  });
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const cv = canvas, cx = ctx;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const s = S.current;
+    let lines: string[] = [];
+
+    function buildLayout() {
+      if (!lines.length) return;
+      s.cw = cv.offsetWidth; s.ch = cv.offsetHeight;
+      cv.width = s.cw * dpr; cv.height = s.ch * dpr;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      let minC = Infinity, maxC = 0, minR = Infinity, maxR = 0;
+      for (let r = 0; r < lines.length; r++) {
+        for (let c = 0; c < lines[r].length; c++) {
+          const ch = lines[r][c];
+          if (ch !== " " && ch !== "\r") {
+            if (c < minC) minC = c;
+            if (c > maxC) maxC = c;
+            if (r < minR) minR = r;
+            if (r > maxR) maxR = r;
+          }
+        }
+      }
+      if (!isFinite(minC)) return;
+
+      const spanC = maxC - minC + 1;
+      const spanR = maxR - minR + 1;
+      s.fontSize = Math.min(s.cw / (spanC * 0.55), s.ch / spanR, 13) * 0.98;
+      if (s.fontSize < 3) s.fontSize = 3;
+      s.CW = s.fontSize * 0.55;
+      s.CH = s.fontSize;
+      s.ox = s.cw / 2 - ((minC + maxC) / 2) * s.CW + s.cw * 0.09 - 1.5 * s.CW;
+      s.oy = s.ch - (maxR + 1) * s.CH + s.ch * 0.01 - s.CH;
+      s.minR = minR; s.maxR = maxR; s.minC = minC; s.spanC = spanC;
+
+      s.pts = [];
+      for (let r = 0; r < lines.length; r++) {
+        for (let c = 0; c < lines[r].length; c++) {
+          const ch = lines[r][c];
+          if (ch === " " || ch === "\r") continue;
+          s.pts.push({
+            x: s.ox + c * s.CW + s.CW * 0.5,
+            y: s.oy + r * s.CH + s.CH * 0.5,
+            ch, a: 0.5 + Math.random() * 0.4, r, c,
+          });
+        }
+      }
+      updateImageLayout();
+      s.ready = true;
+    }
+
+    function updateImageLayout() {
+      if (!s.img || !s.cw || !s.ch) return;
+      const iw = s.img.naturalWidth, ih = s.img.naturalHeight;
+      const scale = Math.min(s.cw / iw, s.ch / ih);
+      s.drawW = iw * scale; s.drawH = ih * scale;
+      s.drawX = s.cw - s.drawW;  // right-aligned
+      s.drawY = s.ch - s.drawH;  // bottom-aligned
+    }
+
+    let visible = true;
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
+    }, { rootMargin: "200px" });
+    io.observe(cv);
+
+    function draw() {
+      if (!visible) { rafRef.current = 0; return; }
+      rafRef.current = requestAnimationFrame(draw);
+      if (!s.ready) return;
+
+      const raw = scrollProgress.get();
+      const p   = Math.max(0, Math.min(1, (raw - start) / (end - start)));
+
+      const { cw, ch, pts, fontSize, CH, CW, ox, oy, minR, maxR, minC, spanC } = s;
+      const totalRows  = maxR - minR + 1;
+      const rowProg    = p * totalRows;
+      const fullRows   = Math.floor(rowProg);
+      const partFrac   = rowProg - fullRows;
+
+      cx.clearRect(0, 0, cw, ch);
+
+      // ── 1. Photo in the revealed region ─────────────────────
+      if (s.img && s.imgReady && p > 0) {
+        cx.save();
+        cx.beginPath();
+        // Fully erased rows → full-width photo strip
+        for (let i = 0; i < fullRows && i < totalRows; i++) {
+          cx.rect(0, oy + (minR + i) * CH, cw, CH);
+        }
+        // Partial row → photo up to cursor x
+        if (fullRows < totalRows) {
+          const curX = ox + (minC + partFrac * spanC) * CW;
+          cx.rect(0, oy + (minR + fullRows) * CH, curX, CH);
+        }
+        cx.clip();
+        cx.drawImage(s.img, s.drawX, s.drawY, s.drawW, s.drawH);
+        cx.restore();
+      }
+
+      // ── 2. ASCII chars not yet erased ────────────────────────
+      cx.font = `${fontSize}px "Geist Mono", monospace`;
+      cx.textBaseline = "middle";
+      cx.textAlign    = "center";
+      for (const pt of pts) {
+        const ri = pt.r - minR;
+        if (ri < fullRows) continue;
+        if (ri === fullRows && (pt.c - minC) < partFrac * spanC) continue;
+        cx.fillStyle = `rgba(208,209,255,${pt.a})`;
+        cx.fillText(pt.ch, pt.x, pt.y);
+      }
+
+    }
+
+    fetch(txtSrc).then(r => r.text()).then(text => {
+      lines = text.split("\n");
+      buildLayout();
+      rafRef.current = requestAnimationFrame(draw);
+    });
+
+    const imgEl = new window.Image();
+    imgEl.src = imgSrc;
+    imgEl.onload = () => { s.img = imgEl; s.imgReady = true; updateImageLayout(); };
+
+    const ro = new ResizeObserver(buildLayout);
+    ro.observe(cv);
+
+    return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); };
+  }, [txtSrc, imgSrc, scrollProgress, start, end]);
+
+  return <canvas ref={canvasRef} aria-hidden className="absolute inset-0 h-full w-full" />;
+}
+
+/* ─── Scroll reveal wrapper ──────────────────────────────────── */
+function FoundersReveal({ txtSrc, imgSrc, scrollProgress }: {
+  txtSrc: string; imgSrc: string; scrollProgress: MotionValue<number>;
+}) {
+  return (
+    <div className="absolute inset-0">
+      <div className="absolute inset-x-0 bottom-0 h-[90%]">
+        <FoundersCanvas
+          txtSrc={txtSrc}
+          imgSrc={imgSrc}
+          scrollProgress={scrollProgress}
+          start={0.32}
+          end={0.50}
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ─── Section ────────────────────────────────────────────────── */
 export default function AboutUs() {
-  const ref    = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const ref        = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView     = useInView(ref, { once: true, margin: "-80px" });
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
 
   return (
-    <section id="about-us" className="relative overflow-hidden bg-ink">
+    <section ref={sectionRef} id="about-us" className="relative overflow-hidden bg-ink">
       <GradientBg />
 
       {/* Top inset divider */}
@@ -108,21 +292,9 @@ export default function AboutUs() {
       {/* Content wrapper — clears inset lines */}
       <div ref={ref} className="relative z-10 ml-10 md:ml-16 flex min-h-screen flex-col md:flex-row">
 
-        {/* ── Left: portrait — framed between left inset line and separator */}
+        {/* ── Left: founders ASCII portrait (hover to reveal photo) */}
         <div className="relative w-full overflow-hidden md:w-[40%] min-h-[50vw] md:min-h-0">
-          {/*
-            Replace src with your portrait image (light-on-dark or white PNG).
-            filter + mix-blend-mode make the white background disappear on ink.
-          */}
-          {/* Replace src with your portrait image path once available */}
-          {false && (
-            <img
-              src=""
-              alt="Studio—E founders"
-              className="absolute inset-0 h-full w-full object-cover object-top"
-              style={{ filter: "invert(1)", mixBlendMode: "screen", opacity: 0.85 }}
-            />
-          )}
+          <FoundersReveal txtSrc="/founders-ascii.txt" imgSrc="/founders.png" scrollProgress={scrollYProgress} />
         </div>
 
         {/* ── Right: text ──────────────────────────────────────── */}
