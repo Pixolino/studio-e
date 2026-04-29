@@ -79,7 +79,7 @@ function GradientBg() {
         ))}
       </div>
       <div
-        className="md:hidden absolute inset-0"
+        className="lg:hidden absolute inset-0"
         style={{
           background:
             "radial-gradient(ellipse at 40% 30%, rgba(74,61,176,0.28) 0%, rgba(42,26,122,0.18) 50%, transparent 72%)," +
@@ -108,7 +108,9 @@ function FoundersCanvas({
     drawX: 0, drawY: 0, drawW: 0, drawH: 0,
     fontSize: 10, CH: 10, CW: 5.5,
     minR: 0, maxR: 0, minC: 0, spanC: 1,
+    totalCols: 1, totalRows: 1,
     ox: 0, oy: 0, cw: 0, ch: 0,
+    linesReady: false,
     ready: false,
   });
 
@@ -122,14 +124,11 @@ function FoundersCanvas({
     const s = S.current;
     let lines: string[] = [];
 
-    function buildLayout() {
-      if (!lines.length) return;
-      s.cw = cv.offsetWidth; s.ch = cv.offsetHeight;
-      cv.width = s.cw * dpr; cv.height = s.ch * dpr;
-      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      let minC = Infinity, maxC = 0, minR = Infinity, maxR = 0;
+    // Compute ASCII bounds — called once per text load
+    function parseBounds() {
+      let minC = Infinity, maxC = 0, minR = Infinity, maxR = 0, totalCols = 0;
       for (let r = 0; r < lines.length; r++) {
+        totalCols = Math.max(totalCols, lines[r].length);
         for (let c = 0; c < lines[r].length; c++) {
           const ch = lines[r][c];
           if (ch !== " " && ch !== "\r") {
@@ -141,17 +140,44 @@ function FoundersCanvas({
         }
       }
       if (!isFinite(minC)) return;
+      s.minR = minR; s.maxR = maxR; s.minC = minC;
+      s.spanC = maxC - minC + 1;
+      s.totalCols = totalCols;
+      s.totalRows = lines.length;
+      s.linesReady = true;
+    }
 
-      const spanC = maxC - minC + 1;
-      const spanR = maxR - minR + 1;
-      s.fontSize = Math.min(s.cw / (spanC * 0.55), s.ch / spanR, 13) * 0.98;
-      if (s.fontSize < 3) s.fontSize = 3;
+    // Derive font size + position from the photo rect so they always overlay exactly.
+    // Called on every resize and after the image loads.
+    function computePlacement() {
+      if (!s.linesReady || !s.cw || !s.ch) return;
+
+
+      // Photo rect: object-contain
+      let pX = 0, pY = 0, pW = s.cw, pH = s.ch;
+      if (s.img) {
+        const isDesktop = typeof window !== "undefined" && window.innerWidth >= 1024;
+        const scale = Math.min(s.cw / s.img.naturalWidth, s.ch / s.img.naturalHeight);
+        pW = s.img.naturalWidth  * scale;
+        pH = s.img.naturalHeight * scale;
+        // Desktop: right-aligned + small rightward nudge; mobile: right-aligned
+        pX = s.cw - pW + (isDesktop ? s.cw * 0.06 : -s.cw * 0.20);
+        // Desktop: offset down to align with text content; mobile: top-aligned
+        pY = isDesktop ? s.ch * 0.08 : 0;
+        s.drawX = pX; s.drawY = pY; s.drawW = pW; s.drawH = pH;
+      }
+
+      // Scale using full ASCII dimensions so each col/row maps 1:1 to photo pixels
+      s.fontSize = Math.min(pW / (s.totalCols * 0.55), pH / s.totalRows);
+      if (s.fontSize < 2) s.fontSize = 2;
       s.CW = s.fontSize * 0.55;
       s.CH = s.fontSize;
-      s.ox = s.cw / 2 - ((minC + maxC) / 2) * s.CW + s.cw * 0.09 - 1.5 * s.CW;
-      s.oy = s.ch - (maxR + 1) * s.CH + s.ch * 0.01 - s.CH;
-      s.minR = minR; s.maxR = maxR; s.minC = minC; s.spanC = spanC;
 
+      // col 0 = photo left edge, row 0 = photo top edge — correct overlay at every viewport
+      s.ox = pX;
+      s.oy = pY;
+
+      // Rebuild point list
       s.pts = [];
       for (let r = 0; r < lines.length; r++) {
         for (let c = 0; c < lines[r].length; c++) {
@@ -164,17 +190,15 @@ function FoundersCanvas({
           });
         }
       }
-      updateImageLayout();
       s.ready = true;
     }
 
-    function updateImageLayout() {
-      if (!s.img || !s.cw || !s.ch) return;
-      const iw = s.img.naturalWidth, ih = s.img.naturalHeight;
-      const scale = Math.min(s.cw / iw, s.ch / ih);
-      s.drawW = iw * scale; s.drawH = ih * scale;
-      s.drawX = s.cw - s.drawW;  // right-aligned
-      s.drawY = s.ch - s.drawH;  // bottom-aligned
+    function buildLayout() {
+      if (!lines.length) return;
+      s.cw = cv.offsetWidth; s.ch = cv.offsetHeight;
+      cv.width = s.cw * dpr; cv.height = s.ch * dpr;
+      cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      computePlacement();
     }
 
     let visible = true;
@@ -234,13 +258,14 @@ function FoundersCanvas({
 
     fetch(txtSrc).then(r => r.text()).then(text => {
       lines = text.split("\n");
+      parseBounds();
       buildLayout();
       rafRef.current = requestAnimationFrame(draw);
     });
 
     const imgEl = new window.Image();
     imgEl.src = imgSrc;
-    imgEl.onload = () => { s.img = imgEl; s.imgReady = true; updateImageLayout(); };
+    imgEl.onload = () => { s.img = imgEl; s.imgReady = true; computePlacement(); };
 
     const ro = new ResizeObserver(buildLayout);
     ro.observe(cv);
@@ -257,7 +282,7 @@ function FoundersReveal({ txtSrc, imgSrc, scrollProgress }: {
 }) {
   return (
     <div className="absolute inset-0">
-      <div className="absolute inset-x-0 bottom-0 h-[90%]">
+      <div className="absolute inset-0">
         <FoundersCanvas
           txtSrc={txtSrc}
           imgSrc={imgSrc}
@@ -285,20 +310,20 @@ export default function AboutUs() {
       <GradientBg />
 
       {/* Top inset divider */}
-      <div className="absolute top-8 left-8 right-0 h-px bg-violet/50 z-20 md:top-20 md:left-20" />
+      <div className="absolute top-8 left-8 right-0 h-px bg-violet/50 z-20 md:top-14 md:left-14 lg:top-20 lg:left-20" />
       {/* Left inset divider */}
-      <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-20" />
+      <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-14 lg:left-20" />
 
-      {/* Content wrapper — clears inset lines */}
-      <div ref={ref} className="relative z-10 ml-10 md:ml-16 flex min-h-screen flex-col md:flex-row">
+      {/* Content wrapper — block on mobile (float layout), flex-row on desktop */}
+      <div ref={ref} className="relative z-10 ml-10 md:ml-16 lg:ml-16 min-h-screen pt-20 md:pt-28 lg:pt-0 lg:flex lg:flex-row">
 
-        {/* ── Left: founders ASCII portrait (hover to reveal photo) */}
-        <div className="relative w-full overflow-hidden md:w-[40%] min-h-[50vw] md:min-h-0">
+        {/* ── Portrait — floats right on mobile, left column on desktop */}
+        <div className="relative float-right -mt-4 ml-3 w-[40%] h-[46vw] overflow-hidden md:mt-0 lg:ml-0 lg:mt-20 lg:float-none lg:w-[40%] lg:h-auto">
           <FoundersReveal txtSrc="/founders-ascii.txt" imgSrc="/founders.png" scrollProgress={scrollYProgress} />
         </div>
 
-        {/* ── Right: text ──────────────────────────────────────── */}
-        <div className="flex flex-col justify-center px-8 py-20 md:flex-1 md:px-40 md:py-28">
+        {/* ── Text — flows beside float on mobile, right column on desktop */}
+        <div className="block px-4 pb-16 lg:flex lg:flex-col lg:flex-1 lg:justify-center lg:px-40 lg:py-28">
 
           {/* Overline */}
           <motion.p
@@ -322,12 +347,12 @@ export default function AboutUs() {
             </motion.h2>
           </div>
 
-          {/* Body */}
+          {/* Body — clears the portrait float on mobile so it spans full width */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.3 }}
-            className="flex flex-col gap-5 max-w-lg"
+            className="clear-right mt-20 flex flex-col gap-5 max-w-lg lg:mt-0 lg:clear-none"
           >
             <p className="text-sm leading-relaxed text-cream md:text-base">
               Studio&mdash;E is a multi-disciplinary brand studio nearly a decade in the making,
@@ -357,7 +382,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, y: 12 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.55 }}
-            className="mt-12 font-mono text-[10px] uppercase tracking-[0.2em] text-gold md:text-xs"
+            className="clear-right mt-12 font-mono text-[10px] uppercase tracking-[0.2em] text-gold lg:clear-none lg:text-xs"
           >
             Intentional.&nbsp;&nbsp;Strategic.&nbsp;&nbsp;Human.
           </motion.p>

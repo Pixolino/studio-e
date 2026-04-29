@@ -54,9 +54,15 @@ Active state uses `activeRef` + `isJumpingRef` refs alongside state to avoid sta
 
 ## The About Us Section
 
-Dark `bg-ink` section with the same animated nebula blob background as Approach. Inset border lines (top + left). Split layout: left 40% portrait column + right text column.
+Dark `bg-ink` section with animated nebula blob background and inset violet border lines (responsive: `top-8 left-8` mobile, `md:top-14 md:left-14` tablet, `lg:top-20 lg:left-20` desktop).
 
-The portrait column uses `FoundersCanvas` — a single `<canvas>` that renders both the ASCII art (`/public/founders-ascii.txt`) and the founders photo (`/public/founders.png`). On scroll, it performs a typewriter-style line-by-line left-to-right wipe: each row of ASCII characters is erased left-to-right while the photo is simultaneously revealed in the cleared cells. The transition is scroll-driven via `useScroll` on the section ref.
+Three responsive layout tiers (all switch at `lg:` = 1024px):
+- **Mobile/tablet**: CSS float — portrait `float-right w-[40%] h-[46vw]` beside the overline + headline; body + tagline `clear-right` below.
+- **Desktop**: `flex-row` — portrait left column (40%) + text right column (`flex-1`, centered, `px-40 py-28`).
+
+The portrait column uses `FoundersCanvas` — a single `<canvas>` that renders both the ASCII art (`/public/founders-ascii.txt`) and the founders photo (`/public/founders.png`). On scroll, it performs a typewriter-style line-by-line left-to-right wipe: each row of ASCII characters is erased left-to-right while the photo is simultaneously revealed. Scroll-driven via `useScroll` on the section ref (`start=0.32`, `end=0.50`).
+
+Canvas placement: desktop uses `pX = cw - pW + cw*0.06` (right-aligned + nudge) and `pY = ch*0.08` (offset down). Mobile uses `pX = cw - pW - cw*0.20` (leftward) and `pY = 0` (top-aligned beside header). `ox = pX`, `oy = pY` ensures ASCII and photo always overlay exactly at every viewport.
 
 Content: `/About Us/` overline (olive), `THE STUDIO` headline, three body paragraphs (cream), `INTENTIONAL. STRATEGIC. HUMAN.` tagline (olive).
 
