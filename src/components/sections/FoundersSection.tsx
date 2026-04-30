@@ -53,7 +53,7 @@ const blobs = [
 function GradientBg() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-      <div className="absolute inset-0" style={{ filter: "blur(90px)" }}>
+      <div className="absolute inset-0 hidden lg:block" style={{ filter: "blur(90px)" }}>
         {blobs.map((b, i) => (
           <motion.div
             key={i}
