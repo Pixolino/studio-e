@@ -76,7 +76,9 @@ function ApproachAscii({
     if (!ctx) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const isMobile = window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
     let cw = 0, ch = 0, pts: Pt[] = [], fontSize = 13;
+    let lastNVis = -1;
     const c = canvas;
     const cx = ctx;
 
@@ -119,6 +121,9 @@ function ApproachAscii({
       if (revealOrder === "center")   pts = raw.sort((a, b) => a.dist - b.dist);
       else if (revealOrder === "outside") pts = raw.sort((a, b) => b.dist - a.dist);
       else pts = raw.sort((a, b) => a.y - b.y || a.x - b.x);
+
+      // Force a redraw at the new size on next frame
+      lastNVis = -1;
     }
 
     reparse();
@@ -139,6 +144,9 @@ function ApproachAscii({
 
       const prog = progress.get();
       const nVis = Math.min(pts.length, Math.ceil(prog * pts.length + 0.5));
+      // Skip the frame if nothing changed — same content as last paint
+      if (nVis === lastNVis) return;
+      lastNVis = nVis;
 
       cx.clearRect(0, 0, cw, ch);
       cx.font         = `${fontSize}px "Geist Mono", monospace`;
@@ -152,13 +160,16 @@ function ApproachAscii({
         const gg = isAccent ? 180 : 209;
         const bb = isAccent ? 31  : 255;
         const alpha = isAccent ? 0.92 : 0.85;
-        cx.shadowColor = `rgba(${rr},${gg},${bb},0.5)`;
-        cx.shadowBlur  = isAccent ? 6 : 4;
+        // Per-glyph shadowBlur is the single biggest canvas2D cost on mobile — skip it on touch viewports
+        if (!isMobile) {
+          cx.shadowColor = `rgba(${rr},${gg},${bb},0.5)`;
+          cx.shadowBlur  = isAccent ? 6 : 4;
+        }
         cx.fillStyle   = `rgba(${rr},${gg},${bb},${alpha})`;
         cx.fillText(p.ch, p.x, p.y);
       }
 
-      cx.shadowBlur = 0;
+      if (!isMobile) cx.shadowBlur = 0;
     }
 
     rafRef.current = requestAnimationFrame(draw);
