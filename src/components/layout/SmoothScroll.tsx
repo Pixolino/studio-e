@@ -9,6 +9,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    // Skip Lenis on touch / small viewports — native momentum scroll is smoother on mobile,
+    // and Lenis fights iOS Safari's address-bar behavior, causing jank.
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    const isNarrow = window.innerWidth < 1024;
+    if (isTouch || isNarrow) return;
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -18,14 +24,15 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     lenisRef.current = lenis;
     lenisStore.set(lenis);
 
+    let rafId = 0;
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisStore.clear();
     };

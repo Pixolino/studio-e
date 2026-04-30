@@ -43,7 +43,7 @@ export default function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 flex items-center px-8 py-5 transition-all duration-500 md:px-12 lg:px-16 ${
-          hasScrolledPastThreshold || menuOpen ? "bg-ink/90 backdrop-blur-md border-b border-gold/10" : ""
+          hasScrolledPastThreshold || menuOpen ? "bg-ink lg:bg-ink/90 lg:backdrop-blur-md border-b border-gold/10" : ""
         }`}
       >
         {/* Logo */}

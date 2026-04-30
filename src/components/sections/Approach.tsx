@@ -715,8 +715,8 @@ const blobs = [
 function GradientBg() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
-      {/* Animated blobs */}
-      <div className="absolute inset-0" style={{ filter: "blur(90px)" }}>
+      {/* Animated blobs — desktop only; mobile uses the cheaper static fallback below */}
+      <div className="absolute inset-0 hidden md:block" style={{ filter: "blur(90px)" }}>
         {blobs.map((b, i) => (
           <motion.div
             key={i}
