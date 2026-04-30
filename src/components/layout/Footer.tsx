@@ -178,6 +178,8 @@ export default function Footer() {
           <a
             key={s.platform}
             href={s.href}
+            target="_blank"
+            rel="noopener noreferrer"
             data-cursor="pointer"
             className="font-mono text-[10px] uppercase tracking-[0.1em] text-muted/95 transition-colors hover:text-periwinkle md:text-xs"
           >

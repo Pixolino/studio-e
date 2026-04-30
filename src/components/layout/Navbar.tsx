@@ -43,7 +43,7 @@ export default function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 flex items-center px-8 py-5 transition-all duration-500 md:px-12 lg:px-16 ${
-          scrolled || menuOpen ? "bg-ink/95 backdrop-blur-sm border-b border-gold/10" : ""
+          scrolled || menuOpen ? "bg-ink/90 backdrop-blur-md border-b border-gold/10" : ""
         }`}
       >
         {/* Logo */}
@@ -172,6 +172,8 @@ export default function Navbar() {
                   <a
                     key={s.platform}
                     href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     data-cursor="pointer"
                     className="font-mono text-[10px] md:text-xs uppercase tracking-widest text-muted/50 transition-colors hover:text-gold"
                   >

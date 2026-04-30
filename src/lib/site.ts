@@ -14,9 +14,8 @@ export const siteConfig = {
   ],
   cta: { label: "Book a Discovery Call", href: "#contact" },
   social: [
-    { platform: "Instagram", href: "#" },
-    { platform: "LinkedIn", href: "#" },
-    { platform: "X", href: "#" },
+    { platform: "Instagram", href: "https://www.instagram.com/studioe.digital" },
+    { platform: "LinkedIn", href: "https://www.linkedin.com/company/studioe-digital" },
   ],
   founders: [
     {
