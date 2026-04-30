@@ -93,10 +93,10 @@ export default function Hero() {
 
   return (
     // Tall wrapper — gives scroll room so the animation completes before next section appears
-    <div ref={wrapperRef} className="relative h-[150dvh] bg-ink">
+    <div ref={wrapperRef} className="relative h-[150lvh] bg-ink">
       <section
         id="hero"
-        className="sticky top-0 flex h-dvh flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:px-16 md:pt-28 lg:pb-14"
+        className="sticky top-0 flex h-lvh flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:px-16 md:pt-28 lg:pb-14"
         onClick={(e) => {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           if (e.clientX > rect.left + rect.width * 0.56 && !(e.target as Element).closest("a, button")) {
