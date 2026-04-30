@@ -16,21 +16,13 @@ export const metadata: Metadata = {
     siteName: "Studio E",
     locale: "en_US",
     type: "website",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Studio E — Digital Agency",
-      },
-    ],
+    images: [],
   },
   twitter: {
     card: "summary_large_image",
     title: "Studio\u2014E \u2014 Brand Studio",
     description:
       "Studio\u2014E is a multi-disciplinary brand studio for founders who have outgrown \u201cgood enough.\u201d Strategy, identity, and digital infrastructure\u2014delivered as one seamless engagement.",
-    images: ["/og-image.png"],
   },
   metadataBase: new URL("https://studioe.agency"),
 };
