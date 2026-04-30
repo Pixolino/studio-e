@@ -616,7 +616,7 @@ function DesktopApproach() {
           </div>
 
           {/* Right label strip */}
-          <div className="relative flex w-60 shrink-0 flex-col items-center border-l border-violet/40 pt-[18vh]">
+          <div className="relative flex w-[17vw] min-w-[120px] shrink-0 flex-col items-center border-l border-violet/40 pt-[18vh]">
             {/* Number — aligned with /The Approach/ overline */}
             <motion.span
               key={`num-${active}`}

@@ -315,7 +315,7 @@ export default function AboutUs() {
       <div className="absolute inset-y-0 left-8 w-px bg-violet/50 z-20 md:left-14 lg:left-20" />
 
       {/* Content wrapper — block on mobile (float layout), flex-row on desktop */}
-      <div ref={ref} className="relative z-10 ml-10 md:ml-16 lg:ml-16 min-h-screen pt-20 md:pt-28 lg:pt-0 lg:flex lg:flex-row">
+      <div ref={ref} className="relative z-10 ml-10 md:ml-16 lg:ml-16 pt-20 md:pt-28 lg:pt-0 lg:min-h-screen lg:flex lg:flex-row">
 
         {/* ── Portrait — floats right on mobile, left column on desktop */}
         <div className="relative float-right -mt-4 ml-3 w-[40%] h-[46vw] overflow-hidden md:mt-0 lg:ml-0 lg:mt-20 lg:float-none lg:w-[40%] lg:h-auto">
@@ -323,7 +323,7 @@ export default function AboutUs() {
         </div>
 
         {/* ── Text — flows beside float on mobile, right column on desktop */}
-        <div className="block px-4 pb-16 lg:flex lg:flex-col lg:flex-1 lg:justify-center lg:px-40 lg:py-28">
+        <div className="block px-4 pb-14 md:pb-20 lg:flex lg:flex-col lg:flex-1 lg:justify-center lg:px-40 lg:py-28">
 
           {/* Overline */}
           <motion.p
@@ -382,7 +382,7 @@ export default function AboutUs() {
             initial={{ opacity: 0, y: 12 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.55 }}
-            className="clear-right mt-12 font-mono text-[10px] uppercase tracking-[0.2em] text-gold lg:clear-none lg:text-xs"
+            className="clear-right mt-12 font-mono text-[11px] uppercase tracking-[0.2em] text-gold lg:clear-none lg:text-[13px]"
           >
             Intentional.&nbsp;&nbsp;Strategic.&nbsp;&nbsp;Human.
           </motion.p>

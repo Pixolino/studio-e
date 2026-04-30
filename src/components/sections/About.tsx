@@ -22,46 +22,59 @@ export default function About() {
           <PeriodicGlitch text="/The Problem We Solve/" inView={inView} />
         </motion.p>
 
-        {/* Headline */}
-        <div className="overflow-hidden w-full">
-          <motion.h2
-            initial={{ y: "105%" }}
-            animate={inView ? { y: 0 } : {}}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.05 }}
-            className="font-display text-5xl font-light uppercase leading-[0.88] tracking-tight text-ink md:text-6xl lg:text-7xl"
-          >
-            You&rsquo;ve built<br />
-            something real.<br />
-            Your brand<br />
-            should prove it.
-          </motion.h2>
-        </div>
+        {/* Headline — per-line staggered reveal */}
+        <h2 className="font-display text-5xl font-light uppercase leading-[0.88] tracking-tight text-ink md:text-6xl lg:text-7xl">
+          {(
+            [
+              ["You’ve built",   0.05],
+              ["something real.",     0.16],
+              ["Your brand",          0.27],
+              ["should prove it.",    0.38],
+            ] as [string, number][]
+          ).map(([text, delay]) => (
+            <div key={text} className="overflow-hidden">
+              <motion.span
+                className="block"
+                initial={{ y: "105%" }}
+                animate={inView ? { y: 0 } : {}}
+                transition={{ duration: 1, delay, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {text}
+              </motion.span>
+            </div>
+          ))}
+        </h2>
 
-        {/* Body */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.35 }}
-          className="mt-16 flex max-w-xl flex-col gap-6"
-        >
-          <p className="text-sm leading-relaxed text-muted md:text-base">
+        {/* Body — paragraphs staggered individually */}
+        <div className="mt-16 flex max-w-xl flex-col gap-6">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.65, delay: 0.42 }}
+            className="text-sm leading-relaxed text-charcoal md:text-base"
+          >
             You&rsquo;ve done the hard part: built a business that delivers. But your brand still
             looks like version one. The website that served you at launch is now the ceiling on your
             credibility. The visual identity that was &ldquo;good for now&rdquo; is costing you the
             clients you actually want.
-          </p>
-          <p className="text-sm leading-relaxed text-muted md:text-base">
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.65, delay: 0.54 }}
+            className="text-sm leading-relaxed text-charcoal md:text-base"
+          >
             Most agencies will hand you a prettier version of the same problem. A beautiful brand
             with no technical depth. A powerful build with no soul. They&rsquo;ll make you choose.
-          </p>
-        </motion.div>
+          </motion.p>
+        </div>
 
         {/* Tagline */}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.55 }}
-          className="mt-16 font-mono text-[11px] md:text-xs uppercase tracking-[0.2em] text-violet"
+          className="mt-16 font-mono text-[11px] md:text-[13px] uppercase tracking-[0.2em] text-violet"
         >
           We built{" "}
           <strong className="font-bold tracking-[0.2em]">Studio&mdash;E</strong>

@@ -189,7 +189,7 @@ Shared `src/components/ui/PeriodicGlitch.tsx` — fires on first `inView`, then 
 ### Approach Section Layout
 - Left panel: padding removed from container, applied per-row (`px-16 lg:px-24` on buttons) so `border-t` lines run edge-to-edge and touch the vertical separator
 - Single active-only divider: `border-t` conditionally applied only to the active pillar button — one line tracks above the current pillar
-- Right label strip: `w-60`, `pt-[18vh]` clears the fixed navbar and aligns the number with the `/The Approach/` overline; name uses `w-fit mx-auto` with words split into `<span className="block text-right">` for reliable two-line right-aligned centering
+- Right label strip: `w-[17vw] min-w-[120px]` (NOT fixed `w-60`) so it scales with viewport. `pt-[18vh]` clears the fixed navbar and aligns the number with the `/The Approach/` overline; name uses `w-fit mx-auto` with words split into `<span className="block text-right">` for reliable two-line right-aligned centering
 - Fluid nebula background: 5 radial-gradient blobs at `z-0`, content panels at `z-10`. Blobs use negative `delay` values to stagger phase so they never pulse in sync. `filter: blur(90px)` on the container.
 
 ### Approach Section Color Conventions

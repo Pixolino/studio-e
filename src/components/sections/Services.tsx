@@ -102,13 +102,22 @@ function ServiceRow({
   service,
   open,
   onToggle,
+  index,
 }: {
   service: (typeof siteConfig.services)[number];
   open: boolean;
   onToggle: () => void;
+  index: number;
 }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  const rowInView = useInView(rowRef, { once: true, margin: "-40px" });
+
   return (
-    <div
+    <motion.div
+      ref={rowRef}
+      initial={{ opacity: 0, y: 14 }}
+      animate={rowInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.55, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
       id={`service-${service.name.toLowerCase().replace(/\s+/g, "-")}`}
       className="border-t border-violet/30"
     >
@@ -151,7 +160,7 @@ function ServiceRow({
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 
@@ -224,6 +233,7 @@ export default function Services() {
               <ServiceRow
                 key={service.name}
                 service={service}
+                index={i}
                 open={activeIndex === i}
                 onToggle={() => setActiveIndex(activeIndex === i ? null : i)}
               />

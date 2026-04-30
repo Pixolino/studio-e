@@ -76,7 +76,7 @@ export default function Hero() {
   const headlineOpacity  = useTransform(scrollProgress, [0.60, 0.93], [1, 0]);
   const bottomBarOpacity = useTransform(scrollProgress, [0.52, 0.88], [1, 0]);
   const pulseOpacity     = useTransform(scrollProgress, [0, 0.10], [1, 0]);
-  const magnoliaProgress = useTransform(scrollProgress, [0, 0.93], [0, 1]);
+  const magnoliaProgress = useTransform(scrollProgress, [0, 0.50], [0, 1]);
 
   return (
     // Tall wrapper — gives scroll room so the animation completes before next section appears
@@ -91,6 +91,13 @@ export default function Hero() {
           }
         }}
       >
+        {/* Right-half click zone — gives custom cursor the pointer state over the magnolia */}
+        <div
+          aria-hidden
+          data-cursor="pointer"
+          className="absolute top-0 right-0 bottom-0 w-[44%] z-20"
+        />
+
         {/* Magnolia ASCII scroll art */}
         <MagnoliaScroll ref={magnoliaRef} progress={magnoliaProgress} />
 
