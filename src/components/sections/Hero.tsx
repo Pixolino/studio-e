@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
 import MagnoliaScroll, { MagnoliaScrollHandle } from "@/components/ui/HeroMagnoliaScroll";
@@ -77,7 +77,19 @@ export default function Hero() {
   const headlineOpacity  = useTransform(heroScrollProgress, [0.60, 0.93], [1, 0]);
   const bottomBarOpacity = useTransform(heroScrollProgress, [0.52, 0.88], [1, 0]);
   const pulseOpacity     = useTransform(heroScrollProgress, [0, 0.10], [1, 0]);
-  const magnoliaProgress = useTransform(heroScrollProgress, [0, 0.50], [0, 1]);
+  const scrollMagnolia   = useTransform(heroScrollProgress, [0, 0.50], [0, 1]);
+
+  // On mobile, keep the magnolia frozen at the bud; click can still toggle to bloom.
+  const staticMagnolia   = useMotionValue(0);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px), (pointer: coarse)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  const magnoliaProgress = isMobile ? staticMagnolia : scrollMagnolia;
 
   return (
     // Tall wrapper — gives scroll room so the animation completes before next section appears
