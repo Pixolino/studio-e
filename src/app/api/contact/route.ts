@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { google } from "googleapis";
 
-// Update this when the sending domain is verified in Resend
 const FROM_EMAIL = "Studio—E <noreply@studioe.digital>";
 const TO_EMAILS  = ["ilay@studioe.digital", "grace@studioe.digital"];
 
@@ -78,37 +76,21 @@ async function sendEmail(p: ContactPayload, timestamp: string) {
   });
 }
 
-async function appendToSheet(p: ContactPayload, timestamp: string) {
-  const raw = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
-  if (!raw || !process.env.GOOGLE_SHEETS_ID) return;
+async function postToSheet(p: ContactPayload) {
+  const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+  if (!url) return;
 
-  const key = JSON.parse(raw);
-  // Private key newlines may be double-escaped when stored as a single-line env var
-  key.private_key = key.private_key.replace(/\\n/g, "\n");
-
-  const auth = new google.auth.JWT({
-    email:  key.client_email,
-    key:    key.private_key,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-
-  const sheets = google.sheets({ version: "v4", auth });
-  await sheets.spreadsheets.values.append({
-    spreadsheetId:   process.env.GOOGLE_SHEETS_ID,
-    range:           "Sheet1!A:H",
-    valueInputOption: "USER_ENTERED",
-    requestBody: {
-      values: [[
-        timestamp,
-        p.name,
-        p.email,
-        p.services.join(", "),
-        p.budget,
-        p.referral || "",
-        p.message  || "",
-        "New",
-      ]],
-    },
+  await fetch(url, {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name:     p.name,
+      email:    p.email,
+      services: p.services.join(", "),
+      budget:   p.budget,
+      source:   p.referral || "",
+      message:  p.message  || "",
+    }),
   });
 }
 
@@ -135,7 +117,7 @@ export async function POST(request: NextRequest) {
 
   const [emailResult, sheetsResult] = await Promise.allSettled([
     sendEmail(payload, timestamp),
-    appendToSheet(payload, timestamp),
+    postToSheet(payload),
   ]);
 
   if (emailResult.status === "rejected") {
@@ -148,7 +130,7 @@ export async function POST(request: NextRequest) {
 
   // Sheets failure is non-fatal: email already sent, log and continue
   if (sheetsResult.status === "rejected") {
-    console.error("Google Sheets error:", sheetsResult.reason);
+    console.error("Apps Script error:", sheetsResult.reason);
   }
 
   return NextResponse.json({ success: true });
