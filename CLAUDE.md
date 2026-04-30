@@ -185,7 +185,23 @@ Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity
 - `SWEEP_TOP` formula: `(cutoff_row - unionMinR) / rowSpan`. Current value covers up to row 73.5 (butterfly bottom in frame 3), leaving the hand rows (86+) untouched.
 
 ### Hero Responsive Height
-Use `h-dvh` on the sticky section (fills full viewport on all screen sizes — avoids white gap below hero and content cut-off on mobile). Add `bg-ink` to the wrapper div so the scroll-range area behind the sticky section is never bare. Use `mt-[6vh] xl:mt-auto` on the headline block. Avoid `min-h-dvh` (allows overflow) and `justify-between` (spreads elements too far on short viewports).
+Use `h-lvh` on the sticky section and `h-[150lvh]` on the wrapper (NOT `dvh`). `dvh` updates when iOS Safari's chrome shows/hides on scroll-direction change, which makes `wrapperRef.offsetHeight` change mid-scroll — and since `heroScrollProgress = scrollY / offsetHeight`, every scroll-driven animation (headline opacity, magnolia morph) suddenly jumps to a new value. `lvh` is fixed to the chrome-hidden viewport so chrome toggle doesn't trigger re-layout. Add `bg-ink` to the wrapper div so the scroll-range area behind the sticky section is never bare. Use `mt-[6vh] xl:mt-auto` on the headline block. Avoid `min-h-dvh` (allows overflow) and `justify-between` (spreads elements too far on short viewports).
+
+**Magnolia canvas sized in `svh`** — the canvas itself uses `top-0 h-svh` (NOT `inset-y-0 h-full`). Even when the section is `lvh`, sticky `top-0` makes the section's top edge follow the visual viewport, so an `h-full` canvas with art centered at `canvas-height / 2` shifts the art on screen when chrome toggles. `h-svh` is the smallest viewport size and never changes, so the magnolia stays at the same on-screen y always. On desktop `svh === lvh === 100vh`, no visual diff.
+
+### Mobile performance — what to gate to desktop only
+Touch viewports (and slower devices in general) struggle with several effects that look great on desktop. Before adding heavy GPU work in a section, check whether to gate it.
+
+- **Lenis smooth scroll** — disabled when `(pointer: coarse)` or `innerWidth < 1024` ([SmoothScroll.tsx](src/components/layout/SmoothScroll.tsx)). Native iOS momentum scroll is smoother than Lenis on phones; Lenis also fights the address-bar collapse, producing visible jank.
+- **Animated nebula blobs** (Approach + Founders `GradientBg`) — wrap the animated layer in `hidden md:block` (or `lg:block`); a cheaper static radial-gradient fallback covers mobile. 5 motion.divs × `filter: blur(90px)` × infinite-repeat keyframes is enough to thrash mobile compositor memory and crash Safari.
+- **Navbar `backdrop-blur`** — `bg-ink lg:bg-ink/90 lg:backdrop-blur-md`. Backdrop-blur on a fixed element re-blurs the page underneath every scroll frame, one of the highest mobile perf costs.
+- **Canvas `shadowBlur` per glyph** (ApproachAscii) — drop on mobile via `if (!isMobile) cx.shadowBlur = ...`. Per-text-fill shadow is the dominant cost in canvas2D ASCII rendering. Also bail out of the RAF tick when `nVis === lastNVis` so the canvas only redraws on actual progress change.
+- **In-component declarations** — never declare a component inside a render body (e.g. `const Img = ...` inside `ImageCollage`). Each render gives it a new identity, causing children to unmount/remount every frame. With `useInView` re-renders driving `motion.article`, that becomes an infinite mount loop. Hoist to module scope.
+
+### Touch-friendliness gotchas
+- **Hero right-half click zone** ([Hero.tsx](src/components/sections/Hero.tsx)) — `absolute ... w-[44%] z-20` for cursor pointer state + tap-to-bloom. Must be `hidden md:block`, otherwise it overlays the bottom-bar links (`See our work`, `Get in touch`) on mobile and blocks taps. Touch users get bud→bloom from scroll automatically.
+- **Logo "scroll to top"** — a `<Link href="/">` on the home page is a no-op (Next.js sees same route). Add an explicit `onClick` that calls `lenisStore.get()?.scrollTo(0, ...)` or falls back to `window.scrollTo({ top: 0, behavior: "smooth" })`. Also close the mobile menu in the same handler.
+- **Framer Motion can't animate `"transparent"` or CSS variable strings** — in `motion.button` `animate` props, use explicit `rgba(...)` values. `"transparent"` and `"var(--se-ink)"` produce console warnings + visual glitches on first paint.
 
 ### Type Scale
 - **Section overlines** (`/Label/`, `font-mono uppercase tracking-[0.25em]`): `text-sm` (14px). Always all-caps via CSS, always wrapped in `/forward slashes/`.

@@ -92,11 +92,12 @@ export default function Hero() {
           }
         }}
       >
-        {/* Right-half click zone — gives custom cursor the pointer state over the magnolia */}
+        {/* Right-half click zone — desktop only: cursor pointer state + tap-to-bloom over the magnolia.
+            On mobile this would cover the bottom-bar links (See our work, Get in touch), so hide it. */}
         <div
           aria-hidden
           data-cursor="pointer"
-          className="absolute top-0 right-0 bottom-0 w-[44%] z-20"
+          className="absolute top-0 right-0 bottom-0 w-[44%] z-20 hidden md:block"
         />
 
         {/* Magnolia ASCII scroll art */}
@@ -153,7 +154,7 @@ export default function Hero() {
             <a
               href="#work"
               data-cursor="pointer"
-              className="font-mono text-[11px] md:text-xs uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors duration-300 hover:text-periwinkle"
+              className="whitespace-nowrap font-mono text-[11px] md:text-xs uppercase tracking-[0.08em] text-muted underline decoration-gold underline-offset-4 transition-colors duration-300 hover:text-periwinkle"
             >
               <DecodeText text="See our work" />
             </a>

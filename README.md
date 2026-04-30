@@ -97,14 +97,21 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Hero Section
 
-The hero is a scroll-locked experience: a `150dvh` wrapper with `sticky top-0` section inside. A single `scrollProgress` MotionValue (0→1, reaching 1 when the next section is halfway up the viewport) drives all effects in sync:
+The hero is a scroll-locked experience: a `150lvh` wrapper with `sticky top-0` section (`h-lvh`) inside. A single `scrollProgress` MotionValue (0→1, reaching 1 when the next section is halfway up the viewport) drives all effects in sync. `lvh` (NOT `dvh`) is critical — `dvh` would re-layout the wrapper on iOS Safari chrome toggle, which fires whenever the user changes scroll direction, causing every scroll-driven animation to jump.
 
 - **Left**: headline line-reveals on load; headline + bottom bar fade/lift in the final third of scroll
-- **Right**: `MagnoliaScroll` canvas — ASCII art magnolia bud glitch-sweeps into a bloom as you scroll. Clicking anywhere on the right side of the hero toggles bud↔bloom with the same sweep effect. Art files at `public/ascii-bud.txt` and `public/ascii-bloom.txt`.
+- **Right**: `MagnoliaScroll` canvas — ASCII art magnolia bud glitch-sweeps into a bloom as you scroll. Clicking anywhere on the right side of the hero (desktop only) toggles bud↔bloom with the same sweep effect. Art files at `public/ascii-bud.txt` and `public/ascii-bloom.txt`. The canvas itself is sized `top-0 h-svh` so the magnolia's on-screen position never shifts when chrome toggles.
 
 `MagnoliaScroll` (`src/components/ui/HeroMagnoliaScroll.tsx`) — canvas component that parses two ASCII art files, aligns them via union bounding-box so identical `(row, col)` coordinates map to the same canvas pixel. Scroll drives a top-to-bottom glitch-sweep via a Framer Motion `MotionValue`. Click interaction is exposed via `forwardRef` + `useImperativeHandle` (`triggerClick()`), animated with Framer Motion `animate()` on a MotionValue so the bloom state persists after the animation ends. Bloom→bud sweeps bottom-to-top naturally from the same math.
 
 Hero text and animations complete when the Marquee is ~90% up the viewport (`maxScroll = el.offsetHeight`, fade ranges end at 0.93).
+
+## Mobile performance
+
+- Lenis smooth scroll is disabled on touch / `< 1024px` viewports — native iOS momentum scrolling is smoother and doesn't fight the address-bar collapse.
+- Animated nebula blob layers in Approach and Founders `GradientBg` are gated to `md:`/`lg:`; mobile sees only the cheaper static radial-gradient fallback.
+- Navbar `backdrop-blur` is desktop-only; mobile uses opaque `bg-ink`.
+- ApproachAscii canvas drops `shadowBlur` per glyph on mobile and skips RAF frames when the visible-glyph count is unchanged.
 
 ## Key Files
 
