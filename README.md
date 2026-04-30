@@ -36,7 +36,7 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 | Studio | `src/components/sections/Studio.tsx` | Founder cards, count-up stats |
 | Work | `src/components/sections/Work.tsx` | Hover-overlay cards |
 | Contact | `src/components/sections/Contact.tsx` | |
-| Footer | `src/components/layout/Footer.tsx` | |
+| Footer | `src/components/layout/Footer.tsx` | ASCII art canvas anchored to em-dash, scroll parallax rise animation, responsive meta row |
 
 ## The Approach Section
 

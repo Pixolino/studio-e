@@ -82,7 +82,19 @@ Desktop headline uses `md:grid md:grid-cols-3` aligned to the section's full wid
 Form fades in (`opacity 0→1`) after all lines finish drawing — delay set to last_line_delay + last_line_duration.
 
 ### Footer Design
-Full-height `bg-ink` section with `min-h-[55vh]`. Giant `STUDIO—E` wordmark in `text-gold` at the bottom (`leading-none`, `font-size: clamp(3.5rem, 16.5vw, 22rem)`). Hand ASCII art (`/hand-ascii.png`) positioned `absolute bottom-0 right-0 h-full w-auto` — `h-full w-auto` on the `<img>` (not object-fit) ensures the hand fills the full section height with natural proportions and wrist touches the bottom edge. `filter: invert(1)` + `mix-blend-mode: screen` makes the white PNG background disappear on the dark section.
+`bg-ink` section. No `min-h` — height is driven by content (meta row + spacer `h-40 md:h-72` + wordmark) so the canvas height scales with viewport width and the ASCII art stays responsive. Giant `STUDIO—E` wordmark at `[font-size:19.5vw]` fills exactly 100vw.
+
+**ASCII art canvas** (`/public/footer-ascii.txt`) rendered via `FooterAscii` component on a `<canvas>`. Positioned in `w-[70%] absolute top-0 right-0 h-full` container, scroll-animated upward via `useTransform(scrollYProgress, [0, 0.5], ["30%", "0%"])` on entry.
+
+**Em-dash anchor** — a `<span ref={dashRef}>—</span>` wraps the dash in the wordmark. `build()` calls `cv.getBoundingClientRect()` and `dashRef.current.getBoundingClientRect()` fresh on every resize to compute `dashX` (dash center relative to canvas left edge). Art is centered horizontally on that point: `ox = dashX - ((minC + maxC) / 2 + 0.5) * CW`. This keeps the art pinned behind the dash at all viewport sizes. Do NOT use `min-h` on the footer — it decouples canvas height from viewport width and breaks the responsive scaling.
+
+**Vertical sizing**: `fs = (h / rows) * 1.1` makes art ~110% of canvas height (10% bottom clip). `oy = h * 0.02 - minR * CH` pins art top to 2% from canvas top. Do NOT shift `oy` by a row count — `N * CH` can easily exceed the top padding and cause the top rows to render at negative y (clipped by `overflow-hidden`).
+
+**Meta row responsive layout** — three elements: copyright (always left, in meta row flex), "South Florida" (in-flow below copyright below 1000px, `min-[1000px]:absolute min-[1000px]:left-1/2 min-[1000px]:-translate-x-1/2` centered above), socials (in-flow below South Florida below 700px, `min-[700px]:absolute` centered on dash above). `text-center` on South Florida is gated to `min-[1000px]:text-center` — without it, the stacked texts left-align correctly.
+
+**Inline `left` on `relative` gotcha** — `left` DOES affect `position: relative` elements (it offsets from normal position). When socials switch from `absolute` to `relative` below 700px, the `left: dashCenterX` inline style would push them right. Gate it with a JS state: `const [socialsWide, setSocialsWide] = useState(false)` updated in a `ResizeObserver`, then `style={socialsWide ? { left: dashCenterX } : undefined}`.
+
+**Measurement**: `useLayoutEffect` (not `useEffect`) fires before paint — no flash. A single `ResizeObserver` on the footer covers both `dashCenterX` and `socialsWide` updates.
 
 ### About Us Section
 Dark `bg-ink` section with Approach-style nebula `GradientBg`. Inset border lines: mobile/tablet `top-8 left-8`, tablet-md `md:top-14 md:left-14`, desktop `lg:top-20 lg:left-20`.
