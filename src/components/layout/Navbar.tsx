@@ -51,6 +51,13 @@ export default function Navbar() {
           href="/"
           data-cursor="pointer"
           className="shrink-0"
+          onClick={(e) => {
+            e.preventDefault();
+            closeMobileMenu();
+            const lenis = lenisStore.get();
+            if (lenis) lenis.scrollTo(0, { duration: 0.9, easing: (t: number) => 1 - Math.pow(1 - t, 3) });
+            else window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         >
           <Logo width={108} className="text-cream transition-colors duration-300 hover:text-gold" />
         </Link>
