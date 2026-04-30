@@ -74,6 +74,9 @@ Wrap each line in `overflow-hidden` to clip the off-screen slide. Use `-110%/110
 ### Services Section CTA Button Style
 Violet text + semi-transparent violet border at rest. Olive (`bg-gold`) background + ink text on hover. Arrow `→` in its own `<span>` with `transition-transform group-hover/btn:translate-x-1.5` for widening gap effect. Use `group/btn` (scoped group name) to avoid conflicts with parent `group` on the accordion button row.
 
+### Contact Section Custom Cursor
+The Contact section (`id="contact"`) uses `data-cursor="hand"` on its root `<section>`. `CustomCursor` detects this via `element.closest("[data-cursor='hand']")` and swaps the dot+ring for a PNG image follower (`/public/cursor-hand.png`, rendered at 54px wide). The dot+ring fade out on entry, the hand fades in. `translateX: "-30%" translateY: "-10%"` offsets the image so the fingertip sits near the hotspot rather than the image corner.
+
 ### Contact Section Grid Layout
 Gold (`bg-gold`) background. Two vertical lines at `left-1/3` and `left-2/3` (absolute, `w-0.5 bg-violet/30`), two horizontal lines (`h-0.5 bg-violet/30`) above and below the form. All four lines are `motion.div`s that scale in from different edges (`transformOrigin: top/bottom/left/right`) on scroll-into-view. Form is `mx-auto md:w-1/3 md:px-10`, centered in the middle column.
 

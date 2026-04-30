@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import Image from "next/image";
 import PeriodicGlitch from "@/components/ui/PeriodicGlitch";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -21,6 +20,7 @@ export default function Contact() {
     <section
       ref={ref}
       id="contact"
+      data-cursor="hand"
       className="relative overflow-hidden bg-gold"
     >
       {/* ── Vertical grid lines — slide in from top / bottom ─────── */}
@@ -174,18 +174,10 @@ export default function Contact() {
             <button
               type="submit"
               data-cursor="pointer"
-              className="group/btn inline-flex items-center gap-2 rounded-full border border-violet px-7 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-violet transition-all duration-300 hover:border-ink hover:bg-ink hover:text-gold md:text-xs"
+              className="group/btn inline-flex items-center gap-3 rounded-full border border-violet px-7 py-3 font-mono text-[10px] uppercase tracking-[0.15em] text-violet transition-all duration-300 hover:border-ink hover:bg-ink hover:text-gold md:text-xs"
             >
-              Talk dirty to me
-              <Image
-                src="/hand-ascii.png"
-                alt=""
-                aria-hidden
-                width={28}
-                height={28}
-                className="w-auto transition-transform duration-300 group-hover/btn:translate-x-1"
-                style={{ filter: "brightness(0)", opacity: 0.6 }}
-              />
+              Send It
+              <span className="inline-block transition-transform duration-300 group-hover/btn:rotate-45">↗</span>
             </button>
           </div>
 

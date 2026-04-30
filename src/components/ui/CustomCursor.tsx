@@ -6,6 +6,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 export default function CustomCursor() {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [handZone, setHandZone] = useState(false);
 
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
@@ -15,7 +16,6 @@ export default function CustomCursor() {
   const y = useSpring(cursorY, springConfig);
 
   useEffect(() => {
-    // Hide on touch devices
     const isTouch = window.matchMedia("(pointer: coarse)").matches;
     if (isTouch) return;
 
@@ -27,23 +27,21 @@ export default function CustomCursor() {
 
     const handleOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target.closest("a, button, [data-cursor='pointer'], input, textarea, select, label[for]")
-      ) {
+      setHandZone(!!target.closest("[data-cursor='hand']"));
+      if (target.closest("a, button, [data-cursor='pointer'], input, textarea, select, label[for]")) {
         setHovered(true);
       }
     };
 
     const handleOut = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
-        target.closest("a, button, [data-cursor='pointer'], input, textarea, select, label[for]")
-      ) {
+      if (!target.closest("[data-cursor='hand']")) setHandZone(false);
+      if (target.closest("a, button, [data-cursor='pointer'], input, textarea, select, label[for]")) {
         setHovered(false);
       }
     };
 
-    const handleLeave = () => setVisible(false);
+    const handleLeave = () => { setVisible(false); setHandZone(false); };
     const handleEnter = () => setVisible(true);
 
     window.addEventListener("mousemove", moveCursor);
@@ -61,14 +59,13 @@ export default function CustomCursor() {
     };
   }, [cursorX, cursorY, visible]);
 
-  // Don't render on server or touch devices
   if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
     return null;
   }
 
   return (
     <>
-      {/* Dot */}
+      {/* Default cursor — dot */}
       <motion.div
         className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full bg-gold"
         style={{
@@ -78,11 +75,12 @@ export default function CustomCursor() {
           y,
           translateX: "-50%",
           translateY: "-50%",
-          opacity: visible ? 1 : 0,
         }}
+        animate={{ opacity: visible && !handZone ? 1 : 0 }}
+        transition={{ duration: 0.15 }}
       />
 
-      {/* Ring */}
+      {/* Default cursor — ring */}
       <motion.div
         className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full border-[1.5px] border-gold"
         style={{
@@ -92,14 +90,30 @@ export default function CustomCursor() {
           y,
           translateX: "-50%",
           translateY: "-50%",
-          opacity: visible ? 1 : 0,
         }}
         animate={{
+          opacity: visible && !handZone ? 1 : 0,
           scale: hovered ? 1.5 : 1,
           borderColor: hovered ? "var(--se-periwinkle)" : "var(--se-gold)",
         }}
         transition={{ duration: 0.2, ease: "easeOut" }}
       />
+
+      {/* Hand cursor — PNG follower for Contact section */}
+      <motion.div
+        className="pointer-events-none fixed top-0 left-0 z-[9999]"
+        style={{ x, y, translateX: "-30%", translateY: "-10%" }}
+        animate={{ opacity: visible && handZone ? 1 : 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/cursor-hand.png"
+          alt=""
+          width={54}
+          style={{ pointerEvents: "none", userSelect: "none" }}
+        />
+      </motion.div>
     </>
   );
 }
