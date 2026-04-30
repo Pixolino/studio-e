@@ -380,10 +380,10 @@ function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; inde
   const ref    = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-60px" });
 
-  // Scroll-driven reveal: starts when card title (~card top) hits 65% viewport, completes at 15%
+  // Scroll-driven reveal: starts when card enters at 85% viewport, completes at 40% (mobile — earlier than desktop)
   const { scrollYProgress: progress } = useScroll({
     target: ref,
-    offset: ["start 0.65", "start 0.15"],
+    offset: ["start 0.85", "start 0.40"],
   });
 
   return (

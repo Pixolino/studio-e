@@ -86,9 +86,11 @@ Violet text + semi-transparent violet border at rest. Olive (`bg-gold`) backgrou
 The Contact section (`id="contact"`) uses `data-cursor="hand"` on its root `<section>`. `CustomCursor` detects this via `element.closest("[data-cursor='hand']")` and swaps the dot+ring for a PNG image follower (`/public/cursor-hand.png`, rendered at 54px wide). The dot+ring fade out on entry, the hand fades in. `translateX: "-30%" translateY: "-10%"` offsets the image so the fingertip sits near the hotspot rather than the image corner.
 
 ### Contact Section Grid Layout
-Gold (`bg-gold`) background. Two vertical lines at `left-1/3` and `left-2/3` (absolute, `w-0.5 bg-violet/30`), two horizontal lines (`h-0.5 bg-violet/30`) above and below the form. All four lines are `motion.div`s that scale in from different edges (`transformOrigin: top/bottom/left/right`) on scroll-into-view. Form is `mx-auto md:w-1/3 md:px-10`, centered in the middle column.
+Gold (`bg-gold`) background. Two vertical lines at tablet `left-1/4`/`left-3/4`, desktop `lg:left-1/3`/`lg:left-2/3` (absolute, `w-0.5 bg-violet/30`), two horizontal lines (`h-0.5 bg-violet/30`) above and below the form. All four lines are `motion.div`s that scale in from different edges (`transformOrigin: top/bottom/left/right`) on scroll-into-view. Form is `mx-auto md:w-1/2 md:px-10 lg:w-1/3` — half-width on tablet, third-width on desktop, centered.
 
-Desktop headline uses `md:grid md:grid-cols-3` aligned to the section's full width (no horizontal padding on header container) with `fontSize: clamp(2rem, 4.6vw, 5.5rem)` so "YOUR VISION" fits in 1/3 column. Words placed with explicit `col-start`/`row-start`. Mobile headline is a separate `md:hidden` h2 with stacked layout. Overline lives inside the center column alongside BRING using `flex items-center` + `flex-1 text-center`.
+Tablet/desktop headline uses a single `<h2>` with `md:grid md:grid-cols-4 md:text-[6vw] lg:grid-cols-3 lg:text-[clamp(2rem,4.6vw,5.5rem)]`. Cells are placed with `col-start-N` plus `md:col-end-N lg:col-end-N` (NOT `col-span`). Words placed with explicit `col-start`/`row-start`. Mobile headline is a separate `md:hidden` h2 with stacked layout (`pt-12` to clear the absolute-positioned `/Get in Touch/` overline; `whitespace-nowrap pl-[12%]` on the YOUR VISION line so it stays on one line at small viewports). Overline lives inside the BRING cell using `flex items-center` + `flex-1 text-center`.
+
+**Tailwind v4 `col-span` gotcha** — `col-span-N` generates the `grid-column: span N / span N` shorthand which OVERRIDES `grid-column-start` set by `col-start-2`. So `col-start-2 md:col-span-2` at the md breakpoint loses its start position and auto-places. Use `col-end-N` instead — it sets only `grid-column-end` and leaves `col-start` intact. This bug only manifests when there's no other cell forcing offsets (e.g. row 1's BRING auto-placed correctly because LET'S occupied col 1; rows 2/3's YOUR VISION and TO ended up in cols 1-2 instead of 2-3).
 
 Form fades in (`opacity 0→1`) after all lines finish drawing — delay set to last_line_delay + last_line_duration.
 
@@ -183,7 +185,7 @@ Three-frame scroll-driven morph (`approach-precision.txt` → `approach-fluidity
 - `SWEEP_TOP` formula: `(cutoff_row - unionMinR) / rowSpan`. Current value covers up to row 73.5 (butterfly bottom in frame 3), leaving the hand rows (86+) untouched.
 
 ### Hero Responsive Height
-Use `h-[72dvh] md:h-[80dvh] lg:h-[85dvh] xl:h-dvh` with `mt-[6vh] xl:mt-auto` on the headline block. Avoid `min-h-dvh` (allows overflow) and `justify-between` (spreads elements too far on short viewports).
+Use `h-dvh` on the sticky section (fills full viewport on all screen sizes — avoids white gap below hero and content cut-off on mobile). Add `bg-ink` to the wrapper div so the scroll-range area behind the sticky section is never bare. Use `mt-[6vh] xl:mt-auto` on the headline block. Avoid `min-h-dvh` (allows overflow) and `justify-between` (spreads elements too far on short viewports).
 
 ### Type Scale
 - **Section overlines** (`/Label/`, `font-mono uppercase tracking-[0.25em]`): `text-sm` (14px). Always all-caps via CSS, always wrapped in `/forward slashes/`.

@@ -163,14 +163,14 @@ export default function Contact() {
         animate={inView ? { scaleY: 1 } : {}}
         transition={{ duration: 5, delay: 0.75, ease }}
         style={{ transformOrigin: "top" }}
-        className="absolute inset-y-0 left-1/3 hidden w-0.5 bg-violet/30 md:block"
+        className="absolute inset-y-0 left-1/4 hidden w-0.5 bg-violet/30 md:block lg:left-1/3"
       />
       <motion.div
         initial={{ scaleY: 0 }}
         animate={inView ? { scaleY: 1 } : {}}
         transition={{ duration: 5, delay: 0.75, ease }}
         style={{ transformOrigin: "bottom" }}
-        className="absolute inset-y-0 left-2/3 hidden w-0.5 bg-violet/30 md:block"
+        className="absolute inset-y-0 left-3/4 hidden w-0.5 bg-violet/30 md:block lg:left-2/3"
       />
 
       {/* ── Header ───────────────────────────────────────────────── */}
@@ -186,11 +186,11 @@ export default function Contact() {
         </motion.p>
 
         {/* Mobile headline */}
-        <h2 className="px-8 font-display text-5xl font-medium uppercase leading-[0.88] tracking-tight text-ink md:hidden">
+        <h2 className="px-8 pt-12 font-display text-5xl font-medium uppercase leading-[0.88] tracking-tight text-ink md:hidden">
           <div className="overflow-hidden">
             <motion.span className="block" {...reveal(0.05)}>LET&rsquo;S BRING</motion.span>
           </div>
-          <div className="overflow-hidden pl-[22%]">
+          <div className="overflow-hidden whitespace-nowrap pl-[12%]">
             <motion.span className="block" {...reveal(0.15)}>YOUR VISION</motion.span>
           </div>
           <div className="overflow-hidden text-right">
@@ -198,15 +198,12 @@ export default function Contact() {
           </div>
         </h2>
 
-        {/* Desktop headline — 3-column grid aligned to vertical lines */}
-        <h2
-          className="hidden font-display font-medium uppercase leading-[0.9] tracking-tight text-ink md:grid md:grid-cols-3 md:gap-y-[0.30em]"
-          style={{ fontSize: "clamp(2rem, 4.6vw, 5.5rem)" }}
-        >
+        {/* Desktop / tablet headline — grid aligned to vertical lines (4-col tablet, 3-col desktop) */}
+        <h2 className="hidden font-display font-medium uppercase leading-[0.9] tracking-tight text-ink md:grid md:grid-cols-4 md:gap-y-[0.30em] md:text-[6vw] lg:grid-cols-3 lg:text-[clamp(2rem,4.6vw,5.5rem)]">
           <div className="col-start-1 row-start-1 overflow-hidden pr-[0.28em] text-right">
             <motion.span className="block" {...reveal(0.05)}>LET&rsquo;S</motion.span>
           </div>
-          <div className="col-start-2 row-start-1 flex items-center pl-[0.28em]">
+          <div className="col-start-2 row-start-1 flex items-center pl-[0.28em] md:col-end-4 lg:col-end-3">
             <div className="overflow-hidden shrink-0">
               <motion.span className="block" {...reveal(0.15)}>BRING</motion.span>
             </div>
@@ -219,13 +216,13 @@ export default function Contact() {
               <PeriodicGlitch text="/Get in Touch/" inView={inView} />
             </motion.p>
           </div>
-          <div className="col-start-2 row-start-2 overflow-hidden text-center">
+          <div className="col-start-2 row-start-2 overflow-hidden text-center md:col-end-4 lg:col-end-3">
             <motion.span className="block" {...reveal(0.25)}>YOUR VISION</motion.span>
           </div>
-          <div className="col-start-2 row-start-3 overflow-hidden pr-[0.28em] text-right">
+          <div className="col-start-2 row-start-3 overflow-hidden pr-[0.28em] text-right md:col-end-4 lg:col-end-3">
             <motion.span className="block" {...reveal(0.35)}>TO</motion.span>
           </div>
-          <div className="col-start-3 row-start-3 overflow-hidden pl-[0.28em]">
+          <div className="row-start-3 overflow-hidden pl-[0.28em] md:col-start-4 lg:col-start-3">
             <motion.span className="block" {...reveal(0.4)}>LIFE.</motion.span>
           </div>
         </h2>
@@ -257,7 +254,7 @@ export default function Contact() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.5, ease }}
-              className="mx-auto flex w-full flex-col gap-6 px-8 py-8 md:w-1/3 md:px-10"
+              className="mx-auto flex w-full flex-col gap-6 px-8 py-8 md:w-1/2 md:px-10 lg:w-1/3"
             >
               <p className={labelClass}>/Received/</p>
               <h3 className="font-display text-4xl font-medium uppercase leading-[0.92] tracking-tight text-ink md:text-5xl">
@@ -286,7 +283,7 @@ export default function Contact() {
               onSubmit={handleSubmit}
               noValidate
             >
-              <div className="mx-auto flex w-full flex-col gap-9 px-8 md:w-1/3 md:px-10">
+              <div className="mx-auto flex w-full flex-col gap-9 px-8 md:w-1/2 md:px-10 lg:w-1/3">
 
                 {/* NAME */}
                 <div className="flex flex-col gap-2">

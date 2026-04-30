@@ -69,9 +69,9 @@ Content: `/About Us/` overline (olive), `THE STUDIO` headline, three body paragr
 
 ## The Contact Section
 
-Gold (`bg-gold`) background with an editorial 3-column grid. Two vertical violet lines at `left-1/3` and `left-2/3`, two horizontal violet lines above and below the form — all four animate in from different edges on scroll. Form fades in after all lines complete.
+Gold (`bg-gold`) background with an editorial grid. Two vertical violet lines at tablet `left-1/4`/`left-3/4`, desktop `lg:left-1/3`/`lg:left-2/3`; two horizontal violet lines above and below the form — all four animate in from different edges on scroll. Form is `mx-auto md:w-1/2 lg:w-1/3`, centered between the lines. Form fades in after all lines complete.
 
-Desktop headline: CSS `grid-cols-3` spanning full section width, viewport-relative font size. Words placed with explicit `col-start`/`row-start`. Overline shares the BRING row via flexbox. Mobile uses a separate stacked layout.
+Tablet/desktop headline: a single `<h2>` with `md:grid-cols-4` (tablet) and `lg:grid-cols-3` (desktop), viewport-relative font size. Cells placed with `col-start-N` + `col-end-N` (NOT `col-span`, which generates the `grid-column` shorthand and overrides start). Overline shares the BRING row via flexbox. Mobile uses a separate stacked layout with `pt-12` clearing the absolute-positioned overline and `whitespace-nowrap` on YOUR VISION.
 
 Form fields: Name, Email, Services (multi-select pills), Budget Range (single-select pills), How'd you find us? (single-select pills, optional), Tell us more (textarea). All options and the success headline live in `siteConfig.contactForm` in `site.ts`.
 

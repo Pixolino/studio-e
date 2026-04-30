@@ -203,9 +203,15 @@ function FoundersCanvas({
       computePlacement();
     }
 
+    const isMobile     = window.innerWidth < 1024;
+    const FADE_DELAY   = 400;   // wait a beat after entry before starting
+    const FADE_DUR     = 1600;  // crossfade duration in ms
+    let fadeStart      = 0;     // timestamp set on first intersection (mobile only)
+
     let visible = true;
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
+      if (visible && isMobile && fadeStart === 0) fadeStart = performance.now();
       if (visible && rafRef.current === 0) rafRef.current = requestAnimationFrame(draw);
     }, { rootMargin: "200px" });
     io.observe(cv);
@@ -215,16 +221,50 @@ function FoundersCanvas({
       rafRef.current = requestAnimationFrame(draw);
       if (!s.ready) return;
 
+      const { cw, ch, pts, fontSize, CH, CW, ox, oy, minR, maxR, minC, spanC } = s;
+
+      cx.clearRect(0, 0, cw, ch);
+
+      // ── Mobile: time-based crossfade triggered on first intersection ──
+      if (isMobile) {
+        const elapsed = fadeStart === 0 ? 0 : performance.now() - fadeStart - FADE_DELAY;
+        const p = Math.max(0, Math.min(1, elapsed / FADE_DUR));
+
+        // Photo fades in
+        if (s.img && s.imgReady && p > 0) {
+          cx.save();
+          cx.globalAlpha = p;
+          cx.drawImage(s.img, s.drawX, s.drawY, s.drawW, s.drawH);
+          cx.restore();
+        }
+
+        // ASCII fades out
+        if (p < 1) {
+          cx.save();
+          cx.globalAlpha = 1 - p;
+          cx.font = `${fontSize}px "Geist Mono", monospace`;
+          cx.textBaseline = "middle";
+          cx.textAlign    = "center";
+          for (const pt of pts) {
+            cx.fillStyle = `rgba(208,209,255,${pt.a})`;
+            cx.fillText(pt.ch, pt.x, pt.y);
+          }
+          cx.restore();
+        }
+
+        // Stop the loop once fully faded
+        if (p >= 1) { rafRef.current = 0; return; }
+        return;
+      }
+
+      // ── Desktop: scroll-driven row-by-row L→R wipe ──
       const raw = scrollProgress.get();
       const p   = Math.max(0, Math.min(1, (raw - start) / (end - start)));
 
-      const { cw, ch, pts, fontSize, CH, CW, ox, oy, minR, maxR, minC, spanC } = s;
       const totalRows  = maxR - minR + 1;
       const rowProg    = p * totalRows;
       const fullRows   = Math.floor(rowProg);
       const partFrac   = rowProg - fullRows;
-
-      cx.clearRect(0, 0, cw, ch);
 
       // ── 1. Photo in the revealed region ─────────────────────
       if (s.img && s.imgReady && p > 0) {
@@ -267,7 +307,7 @@ function FoundersCanvas({
 
     const imgEl = new window.Image();
     imgEl.src = imgSrc;
-    imgEl.onload = () => { s.img = imgEl; s.imgReady = true; computePlacement(); };
+    imgEl.onload = () => { s.img = imgEl; s.imgReady = true; buildLayout(); };
 
     const ro = new ResizeObserver(buildLayout);
     ro.observe(cv);
@@ -319,9 +359,21 @@ export default function AboutUs() {
       {/* Content wrapper — block on mobile (float layout), flex-row on desktop */}
       <div ref={ref} className="relative z-10 ml-10 md:ml-16 lg:ml-16 pt-20 md:pt-28 lg:pt-0 lg:min-h-screen lg:flex lg:flex-row">
 
-        {/* ── Portrait — floats right on mobile, left column on desktop */}
+        {/* ── Portrait — floats right on mobile/tablet, left column on desktop */}
         <div className="relative float-right -mt-4 ml-3 w-[40%] h-[46vw] overflow-hidden md:mt-0 lg:ml-0 lg:mt-20 lg:float-none lg:w-[40%] lg:h-auto">
-          <FoundersReveal txtSrc="/founders-ascii.txt" imgSrc="/founders.png" scrollProgress={scrollYProgress} />
+          {/* Mobile/tablet: static image, fades in on section entry */}
+          <motion.img
+            src="/founders.png"
+            alt="Studio—E founders"
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ duration: 5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute inset-0 h-full w-full object-contain object-right lg:hidden"
+          />
+          {/* Desktop: ASCII → photo wipe */}
+          <div className="hidden lg:block absolute inset-0">
+            <FoundersReveal txtSrc="/founders-ascii.txt" imgSrc="/founders.png" scrollProgress={scrollYProgress} />
+          </div>
         </div>
 
         {/* ── Text — flows beside float on mobile, right column on desktop */}

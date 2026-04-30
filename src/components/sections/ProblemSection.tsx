@@ -23,7 +23,7 @@ export default function About() {
         </motion.p>
 
         {/* Headline — per-line staggered reveal */}
-        <h2 className="font-display text-5xl font-light uppercase leading-[0.88] tracking-tight text-ink md:text-6xl lg:text-7xl">
+        <h2 className="font-display text-4xl font-light uppercase leading-[0.88] tracking-tight text-ink md:text-5xl lg:text-6xl xl:text-7xl">
           {(
             [
               ["You’ve built",   0.05],
