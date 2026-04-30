@@ -11,6 +11,7 @@
 | Periwinkle | `#D0D1FF` | Soft accent, tags, surfaces |
 | Olive      | `#B2B41F` | CTA & accent                |
 | Violet     | `#422DA2` | Eyebrow / label text        |
+| Crimson    | `#B91C1C` | Form validation errors only |
 
 ## Color Roles
 
@@ -20,6 +21,7 @@
 - **Violet `#422DA2`** — Small labels and eyebrow text on light backgrounds only.
 - **Periwinkle `#D0D1FF`** — Subtle highlights, tags, tonal surfaces. Never use for text.
 - **Charcoal `#3A3A37`** — Body text on light backgrounds. Secondary UI elements.
+- **Crimson `#B91C1C`** — Form validation error messages only. Visible on both gold and parchment backgrounds. Not a brand color — functional use only.
 
 ## Dark Mode
 
@@ -47,3 +49,5 @@
 | Parchment + Violet       | Eyebrow / label text, light only|
 | Ink + Olive              | Accent on dark bg               |
 | Parchment + Charcoal     | Body copy on light bg           |
+| Gold + Crimson           | Validation errors on Contact form |
+| Parchment + Crimson      | Validation errors on light bg forms |

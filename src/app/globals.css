@@ -40,6 +40,7 @@
   --color-gold: #B2B41F;
   --color-violet: #422DA2;
   --color-muted: #888888;
+  --color-error: #B91C1C;
   --color-border: rgba(21, 21, 20, 0.12);
   --color-border-strong: rgba(21, 21, 20, 0.22);
 
@@ -99,6 +100,7 @@
   --se-gold: #B2B41F;
   --se-violet: #422DA2;
   --se-muted: #888888;
+  --se-error: #B91C1C;
   --se-border: rgba(21, 21, 20, 0.12);
   --se-border-strong: rgba(21, 21, 20, 0.22);
 }

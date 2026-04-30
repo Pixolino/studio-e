@@ -22,6 +22,7 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 | `--se-gold` | `#B2B41F` | CTA & accent (Olive) |
 | `--se-violet` | `#422DA2` | Eyebrow / label text (light bg only) |
 | `--se-muted` | `#888888` | Body / supporting text |
+| `--se-error` | `#B91C1C` | Form validation errors (functional, not brand) |
 
 ## Sections
 

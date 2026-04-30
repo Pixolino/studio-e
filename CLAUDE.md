@@ -33,6 +33,7 @@ The canonical color reference is COLORS.md. When updating colors:
 - CSS custom properties mirror them in `:root` as `--se-*`
 - Canvas-drawn elements (AsciiGlitch, HeroGrid, Approach SVGs) use hardcoded `rgba()` — update manually when palette changes
 - Current gold/olive = `rgba(178, 180, 31, ...)` (#B2B41F)
+- Error/validation = `#B91C1C` (Crimson) — functional only, token `--se-error` / `text-error`. Used exclusively for form validation messages.
 
 ## Logo
 SVG wordmark at `public/logo.svg`. Inline React component at `src/components/ui/Logo.tsx` using `currentColor`. Default render: 108px wide in Navbar.

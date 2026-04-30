@@ -57,4 +57,15 @@ export const siteConfig = {
       cta: "Inquire About Growth",
     },
   ],
+  contactForm: {
+    serviceOptions: [
+      "Branding",
+      "Web Design & Dev",
+      "Graphic Design",
+      "Print Design",
+      "Strategy",
+    ],
+    budgetOptions: ["Under $2K", "$2–5K", "$5–10K", "$10–25K", "$25K+", "Not Sure Yet"],
+    referralOptions: ["Referral", "Social Media", "Google", "Other"],
+  },
 } as const;
