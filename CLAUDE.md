@@ -1,5 +1,12 @@
 @AGENTS.md
 
+## Skills
+
+The primary frontend design reference for this project is:
+`.claude/skills/frontend-design/SKILL.md`
+
+This skill overrides the generic `frontend-design` skill for all work on this codebase. It covers the full design system: color, typography, motion hierarchy, canvas patterns, naming conventions, and Studio—E-specific do/don't rules. Read it before building any new component, section, or UI element.
+
 ## Brand & Messaging
 Always follow the tone, voice, and messaging guidelines in BRAND.md before writing any copy.
 Always follow the color system in COLORS.md for all UI and frontend work.
@@ -118,7 +125,7 @@ Portrait column uses `FoundersCanvas` — a single canvas rendering ASCII art + 
 - Each frame: `rowProgress = p * totalRows`; `fullRows = Math.floor(rowProgress)`; `partFrac = rowProgress - fullRows`
 - Photo clip: `ctx.rect(0, oy + (minR+i)*CH, cw, CH)` for full rows; partial row up to cursor x; `ctx.clip()` + `ctx.drawImage()`
 - ASCII skip: `ri < fullRows` (row done) or `ri === fullRows && (pt.c - minC) < partFrac * spanC`
-- All mutable layout state lives in a single `useRef({...})` object (`S`) — `buildLayout()` and `draw()` share it without stale closures
+- All mutable layout state lives in a single `useRef({...})` object (`canvasState`) — `buildLayout()` and `draw()` share it without stale closures
 
 ### Canvas RAF Performance — IntersectionObserver Pause Pattern
 All canvas draw loops (`MagnoliaScroll`, `ApproachAscii`, `ButterflyMorph`, `ServicesAscii`) use this pattern to pause when off-screen:

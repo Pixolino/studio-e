@@ -11,7 +11,7 @@ export interface MagnoliaScrollHandle {
   triggerClick: () => void;
 }
 
-const PERIWINKLE: [number, number, number] = [208, 209, 255];
+const PERIWINKLE_RGB: [number, number, number] = [208, 209, 255];
 const CHAR_W_RATIO   = 0.55;
 const SWEEP_BAND     = 0.07;
 const GLITCH_BAND    = 0.04;
@@ -65,7 +65,7 @@ interface RenderPt {
 }
 
 interface RenderCache {
-  budRpts:   RenderPt[];
+  budRenderPoints:   RenderPt[];
   bloomRpts: RenderPt[];
   fontSize:  number;
   cw: number; ch: number;
@@ -100,9 +100,10 @@ function buildCache(bud: ParsedArt, bloom: ParsedArt, cw: number, ch: number): R
     }));
   }
 
-  return { budRpts: toRpts(bud), bloomRpts: toRpts(bloom), fontSize, cw, ch };
+  return { budRenderPoints: toRpts(bud), bloomRpts: toRpts(bloom), fontSize, cw, ch };
 }
 
+/** Renders ASCII bud→bloom morph on canvas, driven by a scroll MotionValue or click toggle. */
 const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
   function MagnoliaScroll({ progress }, ref) {
     const canvasRef    = useRef<HTMLCanvasElement>(null);
@@ -173,7 +174,7 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
           cacheRef.current = buildCache(budRef.current, bloomRef.current, cw, ch);
         }
 
-        const { budRpts, bloomRpts, fontSize } = cacheRef.current;
+        const { budRenderPoints, bloomRpts, fontSize } = cacheRef.current;
 
         // Click animation (via Framer Motion MotionValue) overrides scroll when active or locked at bloom
         const cp = clickProg.get();
@@ -187,7 +188,7 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
           prog = scrollProg;
         }
 
-        // Only show glitch while actively transitioning — not at rest states
+        // Only show glitch while transitioning; GLITCH_BAND narrows it to a thin strip at the sweep front.
         const transitioning = prog > 0.01 && prog < 0.99;
 
         cx.clearRect(0, 0, cw, ch);
@@ -195,11 +196,11 @@ const MagnoliaScroll = forwardRef<MagnoliaScrollHandle, MagnoliaScrollProps>(
         cx.textBaseline = "middle";
         cx.textAlign    = "center";
 
-        const [R, G, B] = PERIWINKLE;
+        const [R, G, B] = PERIWINKLE_RGB;
         const gi = Math.floor(ts / GLITCH_MS);
 
         // ── Bud: fades out as wave sweeps top→bottom ─────────────────────
-        for (const p of budRpts) {
+        for (const p of budRenderPoints) {
           const dist = p.sweepFrac - prog;
           if (dist < -SWEEP_BAND) continue;
 

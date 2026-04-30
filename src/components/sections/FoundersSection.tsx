@@ -49,6 +49,7 @@ const blobs = [
   },
 ];
 
+/** Animated nebula of blurred radial-gradient blobs; reused from Approach section. */
 function GradientBg() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
@@ -92,6 +93,7 @@ function GradientBg() {
 }
 
 /* ─── Canvas: ASCII art + photo, line-by-line L→R wipe ──────── */
+/** ASCII art canvas that wipes to the founders photo row-by-row as the section scrolls into view. */
 function FoundersCanvas({
   txtSrc, imgSrc, scrollProgress, start, end,
 }: {
@@ -101,7 +103,7 @@ function FoundersCanvas({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef    = useRef(0);
-  const S = useRef({
+  const canvasState = useRef({
     pts:       [] as { x: number; y: number; ch: string; a: number; r: number; c: number }[],
     img:       null as HTMLImageElement | null,
     imgReady:  false,
@@ -121,7 +123,7 @@ function FoundersCanvas({
     if (!ctx) return;
     const cv = canvas, cx = ctx;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const s = S.current;
+    const s = canvasState.current;
     let lines: string[] = [];
 
     // Compute ASCII bounds — called once per text load

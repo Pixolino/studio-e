@@ -30,7 +30,7 @@ Award-worthy homepage for Studio—E, a multi-disciplinary brand studio based in
 | Navbar | `src/components/layout/Navbar.tsx` | Fixed, scrolled state, mobile overlay |
 | Hero | `src/components/sections/Hero.tsx` | Scroll-locked (150dvh wrapper), line reveals, MagnoliaScroll ASCII art transition |
 | Marquee | `src/components/sections/Marquee.tsx` | CSS auto-scroll strip |
-| About | `src/components/sections/About.tsx` | |
+| Problem / About | `src/components/sections/ProblemSection.tsx` | |
 | Approach | `src/components/sections/Approach.tsx` | 500vh scroll-driven, 3 animated pillars |
 | Services | `src/components/sections/Services.tsx` | |
 | Studio | `src/components/sections/Studio.tsx` | Founder cards, count-up stats |
@@ -48,9 +48,9 @@ The three txt files are frames of a butterfly landing on a hand. `ButterflyMorph
 - **02 Technical Fluidity** — `approach-fluidity.txt` (butterfly approaching)
 - **03 Direct Partnership** — `approach-partnership.txt` (butterfly landed)
 
-Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-60`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
+Left panel: single active-only `border-violet/40` divider tracks above the current pillar. Pillar titles in olive, numbers + dash in periwinkle. Right strip (`w-[17vw] min-w-[120px]`): active pillar number (periwinkle) aligned with the overline via `pt-[18vh]`; active pillar name (periwinkle) pinned to bottom, words split per-line and centered via `mx-auto w-fit`.
 
-Active state uses `activeRef` + `isJumpingRef` refs alongside state to avoid stale-closure bugs. Click-jumps set `active` immediately, freeze scroll-driven updates via `isJumpingRef`, and release via Lenis `onComplete`. Small hysteresis (0.01) on natural scroll absorbs trackpad micro-bounces at pillar thresholds.
+Active state uses `activeRef` + `isJumpingRef` refs alongside state to avoid stale-closure bugs. Click-jumps set `active` immediately, freeze scroll-driven updates via `isJumpingRef`, and release via Lenis `onComplete`. Small hysteresis (0.01) on natural scroll absorbs trackpad micro-bounces at pillar thresholds. Pillar ready state tracked as `pillar0Ready/pillar1Ready/pillar2Ready`.
 
 ## The About Us Section
 
@@ -97,7 +97,7 @@ The hero is a scroll-locked experience: a `150dvh` wrapper with `sticky top-0` s
 - **Left**: headline line-reveals on load; headline + bottom bar fade/lift in the final third of scroll
 - **Right**: `MagnoliaScroll` canvas — ASCII art magnolia bud glitch-sweeps into a bloom as you scroll. Clicking anywhere on the right side of the hero toggles bud↔bloom with the same sweep effect. Art files at `public/ascii-bud.txt` and `public/ascii-bloom.txt`.
 
-`MagnoliaScroll` (`src/components/ui/MagnoliaScroll.tsx`) — canvas component that parses two ASCII art files, aligns them via union bounding-box so identical `(row, col)` coordinates map to the same canvas pixel. Scroll drives a top-to-bottom glitch-sweep via a Framer Motion `MotionValue`. Click interaction is exposed via `forwardRef` + `useImperativeHandle` (`triggerClick()`), animated with Framer Motion `animate()` on a MotionValue so the bloom state persists after the animation ends. Bloom→bud sweeps bottom-to-top naturally from the same math.
+`MagnoliaScroll` (`src/components/ui/HeroMagnoliaScroll.tsx`) — canvas component that parses two ASCII art files, aligns them via union bounding-box so identical `(row, col)` coordinates map to the same canvas pixel. Scroll drives a top-to-bottom glitch-sweep via a Framer Motion `MotionValue`. Click interaction is exposed via `forwardRef` + `useImperativeHandle` (`triggerClick()`), animated with Framer Motion `animate()` on a MotionValue so the bloom state persists after the animation ends. Bloom→bud sweeps bottom-to-top naturally from the same math.
 
 Hero text and animations complete when the Marquee is ~90% up the viewport (`maxScroll = el.offsetHeight`, fade ranges end at 0.93).
 

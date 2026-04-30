@@ -169,7 +169,7 @@ export default function Services() {
   const ref         = useRef<HTMLDivElement>(null);
   const sectionRef  = useRef<HTMLElement>(null);
   const inView      = useInView(ref, { once: true, margin: "-80px" });
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [expandedServiceIndex, setExpandedServiceIndex] = useState<number | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -234,8 +234,8 @@ export default function Services() {
                 key={service.name}
                 service={service}
                 index={i}
-                open={activeIndex === i}
-                onToggle={() => setActiveIndex(activeIndex === i ? null : i)}
+                open={expandedServiceIndex === i}
+                onToggle={() => setExpandedServiceIndex(expandedServiceIndex === i ? null : i)}
               />
             ))}
             <div className="border-t border-violet/30" />

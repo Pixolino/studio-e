@@ -11,6 +11,7 @@ const items = [
 // Duplicate 4× for a seamless 50% translateX loop
 const track = [...items, ...items, ...items, ...items];
 
+/** Horizontally scrolling ticker linking to service section anchors; pauses on hover. */
 export default function Marquee() {
   return (
     <div className="group overflow-hidden border-y border-violet bg-violet py-5 select-none">

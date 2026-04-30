@@ -3,10 +3,11 @@
 import { useRef, useState, useCallback } from "react";
 import { motion, useMotionValue, useMotionValueEvent, useScroll, useTransform } from "framer-motion";
 import { siteConfig } from "@/lib/site";
-import MagnoliaScroll, { MagnoliaScrollHandle } from "@/components/ui/MagnoliaScroll";
+import MagnoliaScroll, { MagnoliaScrollHandle } from "@/components/ui/HeroMagnoliaScroll";
 
-const DECODE_CHARS = "01<>{}[]|/\\!#@%*+=~^?";
+const GLITCH_ANIMATION_CHARS = "01<>{}[]|/\\!#@%*+=~^?";
 
+/** Scramble-decodes text on hover (25 ms interval, 1.2 chars/tick). */
 function DecodeText({ text }: { text: string }) {
   const [display, setDisplay] = useState(text);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -19,7 +20,7 @@ function DecodeText({ text }: { text: string }) {
         text.split("").map((ch, i) => {
           if (ch === " ") return " ";
           if (i < iteration) return ch;
-          return DECODE_CHARS[Math.floor(Math.random() * DECODE_CHARS.length)];
+          return GLITCH_ANIMATION_CHARS[Math.floor(Math.random() * GLITCH_ANIMATION_CHARS.length)];
         }).join("")
       );
       iteration += 1.2;
@@ -61,22 +62,22 @@ export default function Hero() {
 
   // Single source of truth: 0→1 over the wrapper's scrollable range
   const { scrollY } = useScroll();
-  const scrollProgress = useMotionValue(0);
+  const heroScrollProgress = useMotionValue(0);
 
   useMotionValueEvent(scrollY, "change", (y) => {
     const el = wrapperRef.current;
     if (!el) return;
     // Progress reaches 1 when the next section is halfway up the viewport
     const maxScroll = Math.max(1, el.offsetHeight);
-    scrollProgress.set(Math.max(0, Math.min(1, y / maxScroll)));
+    heroScrollProgress.set(Math.max(0, Math.min(1, y / maxScroll)));
   });
 
-  // Text fades in the final third of scroll; magnolia + text complete just before next section
-  const headlineY        = useTransform(scrollProgress, [0.55, 0.93], [0, -70]);
-  const headlineOpacity  = useTransform(scrollProgress, [0.60, 0.93], [1, 0]);
-  const bottomBarOpacity = useTransform(scrollProgress, [0.52, 0.88], [1, 0]);
-  const pulseOpacity     = useTransform(scrollProgress, [0, 0.10], [1, 0]);
-  const magnoliaProgress = useTransform(scrollProgress, [0, 0.50], [0, 1]);
+  // Ranges end at ~0.93 so all elements finish just as the next section's top reaches the viewport.
+  const headlineY        = useTransform(heroScrollProgress, [0.55, 0.93], [0, -70]);
+  const headlineOpacity  = useTransform(heroScrollProgress, [0.60, 0.93], [1, 0]);
+  const bottomBarOpacity = useTransform(heroScrollProgress, [0.52, 0.88], [1, 0]);
+  const pulseOpacity     = useTransform(heroScrollProgress, [0, 0.10], [1, 0]);
+  const magnoliaProgress = useTransform(heroScrollProgress, [0, 0.50], [0, 1]);
 
   return (
     // Tall wrapper — gives scroll room so the animation completes before next section appears

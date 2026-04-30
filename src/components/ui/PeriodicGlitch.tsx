@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 
 const GLITCH_CHARS = "01<>{}[]|/\\!#@%*+=~^?;:";
 
+/** Scramble-decodes text on first inView, then repeats every 6 s. */
 export default function PeriodicGlitch({ text, inView }: { text: string; inView: boolean }) {
   const [display, setDisplay] = useState(text);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);

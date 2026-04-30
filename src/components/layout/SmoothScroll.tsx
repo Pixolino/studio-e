@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Lenis from "lenis";
 import { lenisStore } from "@/lib/lenis-store";
 
+/** Wraps the app in Lenis smooth scroll and publishes the instance to lenisStore. */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null);
 

@@ -11,6 +11,7 @@ const NAV_DELAY  = 80;
 
 const SCROLL_EASING = (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t));
 
+/** Intercepts same-page anchor clicks to route through Lenis instead of the native browser jump. */
 export default function AnchorInterceptor() {
   useEffect(() => {
     function handleClick(e: MouseEvent) {

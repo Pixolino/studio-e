@@ -52,6 +52,7 @@ interface ApproachAsciiProps {
 // Chars that render in gold; everything else renders in periwinkle
 const ACCENT = new Set(["◆", "◇", "◈", "◉", "◯", "○", "●", "×", "✦", "✧", "+", "*"]);
 
+/** Renders a single pillar's ASCII file on canvas, revealing chars by a 0→1 MotionValue. */
 function ApproachAscii({
   src,
   progress,
@@ -59,16 +60,16 @@ function ApproachAscii({
 }: ApproachAsciiProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef    = useRef(0);
-  const [artLines, setArtLines] = useState<string[]>([]);
+  const [asciiArtLines, setAsciiArtLines] = useState<string[]>([]);
 
   useEffect(() => {
     fetch(src)
       .then((r) => r.text())
-      .then((text) => setArtLines(text.split("\n").filter((l) => l.length > 0)));
+      .then((text) => setAsciiArtLines(text.split("\n").filter((l) => l.length > 0)));
   }, [src]);
 
   useEffect(() => {
-    if (!artLines.length) return;
+    if (!asciiArtLines.length) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -88,9 +89,9 @@ function ApproachAscii({
 
       // Use actual content bounding box so spaces don't shrink the font
       let minC = Infinity, maxC = -Infinity, minR = Infinity, maxR = -Infinity;
-      for (let r = 0; r < artLines.length; r++)
-        for (let ci = 0; ci < artLines[r].length; ci++)
-          if (artLines[r][ci] !== " " && artLines[r][ci] !== "\r") {
+      for (let r = 0; r < asciiArtLines.length; r++)
+        for (let ci = 0; ci < asciiArtLines[r].length; ci++)
+          if (asciiArtLines[r][ci] !== " " && asciiArtLines[r][ci] !== "\r") {
             if (ci < minC) minC = ci; if (ci > maxC) maxC = ci;
             if (r  < minR) minR = r;  if (r  > maxR) maxR = r;
           }
@@ -105,9 +106,9 @@ function ApproachAscii({
       fontSize = fs;
 
       const raw: Pt[] = [];
-      for (let r = 0; r < artLines.length; r++) {
-        for (let ci = 0; ci < artLines[r].length; ci++) {
-          const char = artLines[r][ci];
+      for (let r = 0; r < asciiArtLines.length; r++) {
+        for (let ci = 0; ci < asciiArtLines[r].length; ci++) {
+          const char = asciiArtLines[r][ci];
           if (char === " " || char === "\r") continue;
           const x = ox + ci * CW + CW / 2;
           const y = oy + r  * CH + CH / 2;
@@ -162,7 +163,7 @@ function ApproachAscii({
 
     rafRef.current = requestAnimationFrame(draw);
     return () => { cancelAnimationFrame(rafRef.current); ro.disconnect(); io.disconnect(); };
-  }, [artLines, progress, revealOrder]);
+  }, [asciiArtLines, progress, revealOrder]);
 
   return <canvas ref={canvasRef} aria-hidden className="h-full w-full" />;
 }
@@ -227,6 +228,7 @@ function buildMorphFrames(
   return { frames, fontSize };
 }
 
+/** Three-frame ASCII morph driven by scroll; exposes jumpTo() via ref for click navigation. */
 const ButterflyMorph = forwardRef<ButterflyMorphHandle, { scrollYProgress: MotionValue<number> }>(
 function ButterflyMorph({ scrollYProgress }, ref) {
   const canvasRef      = useRef<HTMLCanvasElement>(null);
@@ -417,6 +419,7 @@ function MobilePillarCard({ pillar, index }: { pillar: (typeof pillars)[0]; inde
 }
 
 /* ─── Desktop: sticky scroll ────────────────────────────────── */
+/** Sticky scroll container: manages pillar active state, click-jumps, and threshold hysteresis. */
 function DesktopApproach() {
   const containerRef  = useRef<HTMLDivElement>(null);
   const butterflyRef  = useRef<ButterflyMorphHandle>(null);
@@ -429,11 +432,11 @@ function DesktopApproach() {
   const containerInView = useInView(containerRef, { once: true });
 
   const [active, setActive] = useState(0);
-  // finished0 is always true — pillar 0 (AP) is the default state; butterfly frame 0 is always ready.
+  // pillar0Ready is always true — pillar 0 (AP) is the default state; butterfly frame 0 is always ready.
   // This ensures the description shows immediately when arriving via nav link (v=0).
-  const [finished0] = useState(true);
-  const [finished1, setFinished1] = useState(false);
-  const [finished2, setFinished2] = useState(false);
+  const [pillar0Ready] = useState(true);
+  const [pillar1Ready, setPillar1Ready] = useState(false);
+  const [pillar2Ready, setPillar2Ready] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
   const jumpTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Refs stay current across renders — no stale-closure issues in the event handler.
@@ -456,8 +459,8 @@ function DesktopApproach() {
     const init = v < P1 ? 0 : v < P2 ? 1 : 2;
     activeRef.current = init;
     setActive(init);
-    if (v >= PILLAR_TARGETS[1]) setFinished1(true);
-    if (v >= PILLAR_TARGETS[2]) setFinished2(true);
+    if (v >= PILLAR_TARGETS[1]) setPillar1Ready(true);
+    if (v >= PILLAR_TARGETS[2]) setPillar2Ready(true);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -473,11 +476,11 @@ function DesktopApproach() {
       else next = 0;
       if (next !== prev) { activeRef.current = next; setActive(next); }
     }
-    if (v >= PILLAR_TARGETS[1]) setFinished1(true);
-    if (v >= PILLAR_TARGETS[2]) setFinished2(true);
+    if (v >= PILLAR_TARGETS[1]) setPillar1Ready(true);
+    if (v >= PILLAR_TARGETS[2]) setPillar2Ready(true);
   });
 
-  const descVisible = [finished0, finished1, finished2];
+  const descVisible = [pillar0Ready, pillar1Ready, pillar2Ready];
 
   function scrollToPillar(index: number) {
     const container = containerRef.current;
@@ -490,8 +493,8 @@ function DesktopApproach() {
     setActive(index);
     // Mark the target pillar's description as ready immediately — don't rely on the
     // scroll event reaching the exact PILLAR_TARGETS threshold (floating-point fragile).
-    if (index >= 1) setFinished1(true);
-    if (index >= 2) setFinished2(true);
+    if (index >= 1) setPillar1Ready(true);
+    if (index >= 2) setPillar2Ready(true);
     isJumpingRef.current = true;
     setIsJumping(true);
     clearTimeout(jumpTimerRef.current);
@@ -708,6 +711,7 @@ const blobs = [
   },
 ];
 
+/** Animated nebula of blurred radial-gradient blobs that drift slowly across the section. */
 function GradientBg() {
   return (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>

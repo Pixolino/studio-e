@@ -8,11 +8,11 @@ import { lenisStore } from "@/lib/lenis-store";
 import Logo from "@/components/ui/Logo";
 
 export default function Navbar() {
-  const [scrolled,  setScrolled]  = useState(false);
+  const [hasScrolledPastThreshold,  setScrolledPastThreshold]  = useState(false);
   const [menuOpen,  setMenuOpen]  = useState(false);
   const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 60));
+  useMotionValueEvent(scrollY, "change", (v) => setScrolledPastThreshold(v > 60));
 
   // Pause / resume Lenis while menu is open
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function Navbar() {
     return () => document.removeEventListener("keydown", handler);
   }, [menuOpen]);
 
-  const closeMenu = () => setMenuOpen(false);
+  const closeMobileMenu = () => setMenuOpen(false);
 
   return (
     <>
@@ -43,7 +43,7 @@ export default function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 flex items-center px-8 py-5 transition-all duration-500 md:px-12 lg:px-16 ${
-          scrolled || menuOpen ? "bg-ink/90 backdrop-blur-md border-b border-gold/10" : ""
+          hasScrolledPastThreshold || menuOpen ? "bg-ink/90 backdrop-blur-md border-b border-gold/10" : ""
         }`}
       >
         {/* Logo */}
@@ -127,7 +127,7 @@ export default function Navbar() {
                 <div key={item.label} className="overflow-hidden border-b border-gold/10">
                   <motion.a
                     href={item.href}
-                    onClick={closeMenu}
+                    onClick={closeMobileMenu}
                     data-cursor="pointer"
                     initial={{ y: "105%" }}
                     animate={{ y: 0 }}
@@ -159,7 +159,7 @@ export default function Navbar() {
             >
               <a
                 href={siteConfig.cta.href}
-                onClick={closeMenu}
+                onClick={closeMobileMenu}
                 data-cursor="pointer"
                 className="group inline-flex items-center gap-3 self-start rounded-full bg-gold px-7 py-3.5 font-mono text-[11px] md:text-xs font-medium uppercase tracking-[0.1em] text-ink transition-colors hover:bg-periwinkle"
               >
