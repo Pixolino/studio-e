@@ -73,6 +73,10 @@ Gold (`bg-gold`) background with an editorial 3-column grid. Two vertical violet
 
 Desktop headline: CSS `grid-cols-3` spanning full section width, viewport-relative font size. Words placed with explicit `col-start`/`row-start`. Overline shares the BRING row via flexbox. Mobile uses a separate stacked layout.
 
+Form fields: Name, Email, Services (multi-select pills), Budget Range (single-select pills), How'd you find us? (single-select pills, optional), Tell us more (textarea). All options and the success headline live in `siteConfig.contactForm` in `site.ts`.
+
+On submit, `POST /api/contact` runs two tasks in parallel: sends a formatted HTML email via Resend to both founders, and appends a row to Google Sheets via a Google Apps Script webhook (`GOOGLE_SHEETS_WEBHOOK_URL`). Email failure returns 500; Sheets failure is non-fatal. Success swaps the form for a confirmation message via `AnimatePresence`.
+
 ## The Services Section
 
 Accordion layout with inset border lines (top + left, positioned with margin inside the section). Left column (55%) holds the accordion; right column (45%, desktop only) shows static ASCII art of the partnership butterfly.

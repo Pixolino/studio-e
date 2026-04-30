@@ -81,9 +81,9 @@ async function postToSheet(p: ContactPayload) {
   if (!url) return;
 
   await fetch(url, {
-    method:  "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
+    method:   "POST",
+    headers:  { "Content-Type": "text/plain" },
+    body:     JSON.stringify({
       name:     p.name,
       email:    p.email,
       services: p.services.join(", "),
@@ -91,6 +91,7 @@ async function postToSheet(p: ContactPayload) {
       source:   p.referral || "",
       message:  p.message  || "",
     }),
+    redirect: "follow",
   });
 }
 

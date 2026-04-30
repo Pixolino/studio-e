@@ -67,5 +67,6 @@ export const siteConfig = {
     ],
     budgetOptions: ["Under $2K", "$2–5K", "$5–10K", "$10–25K", "$25K+", "Not Sure Yet"],
     referralOptions: ["Referral", "Social Media", "Google", "Other"],
+    successHeadline: "We'll be in touch shortly.",
   },
 } as const;

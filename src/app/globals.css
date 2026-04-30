@@ -144,6 +144,22 @@ html.lenis body {
   color: var(--se-ink);
 }
 
+/* Contact section — gold bg means we need inverted selection + autofill */
+#contact ::selection {
+  background-color: var(--se-ink);
+  color: var(--se-gold);
+}
+
+#contact input:-webkit-autofill,
+#contact input:-webkit-autofill:hover,
+#contact input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--se-gold) inset;
+  -webkit-text-fill-color: var(--se-ink);
+  caret-color: var(--se-ink);
+  border-color: rgba(21, 21, 20, 0.35) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 /* ============================================================
    Scrollbar
    ============================================================ */

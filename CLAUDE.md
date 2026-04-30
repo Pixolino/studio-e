@@ -92,6 +92,17 @@ Desktop headline uses `md:grid md:grid-cols-3` aligned to the section's full wid
 
 Form fades in (`opacity 0→1`) after all lines finish drawing — delay set to last_line_delay + last_line_duration.
 
+### Contact Form Submission
+API route at `src/app/api/contact/route.ts`. Runs two tasks in parallel via `Promise.allSettled`: (1) Resend email to both founders, (2) POST to Google Apps Script webhook. Sheets failure is non-fatal — email already delivered.
+
+**Apps Script `Content-Type` gotcha**: must use `"text/plain"`, not `"application/json"`. Apps Script blocks CORS preflight requests triggered by `application/json`, causing silent failure. `text/plain` is a simple request (no preflight). The body is still `JSON.stringify({...})` — Apps Script reads it with `JSON.parse(e.postData.contents)`.
+
+**Apps Script redirect**: Apps Script returns a 302 on POST. Use `redirect: "follow"` on the fetch — Node.js follows it automatically and the script executes correctly.
+
+**Autofill + selection on gold background** (`globals.css`): browsers inject white autofill background overriding `bg-transparent`. Fix: `#contact input:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px var(--se-gold) inset; border-color: rgba(21,21,20,0.35) !important; transition: background-color 5000s }`. Global `::selection` (gold bg + ink text) is invisible on the gold Contact section — override with `#contact ::selection { background-color: var(--se-ink); color: var(--se-gold); }`.
+
+**Copy in `site.ts`**: all form options and the success headline (`successHeadline`) live under `siteConfig.contactForm`. Never hardcode them in the component.
+
 ### Footer Design
 `bg-ink` section. No `min-h` — height is driven by content (meta row + spacer `h-40 md:h-72` + wordmark) so the canvas height scales with viewport width and the ASCII art stays responsive. Giant `STUDIO—E` wordmark at `[font-size:19.5vw]` fills exactly 100vw.
 

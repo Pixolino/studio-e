@@ -114,7 +114,7 @@ export default function Contact() {
     budget:   attempted && !budget,
   };
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.BaseSyntheticEvent) {
     e.preventDefault();
     setAttempted(true);
     setSubmitError(null);
@@ -261,7 +261,7 @@ export default function Contact() {
             >
               <p className={labelClass}>/Received/</p>
               <h3 className="font-display text-4xl font-medium uppercase leading-[0.92] tracking-tight text-ink md:text-5xl">
-                We&rsquo;ll be in touch within 24 hours.
+                {siteConfig.contactForm.successHeadline}
               </h3>
               <p className="font-mono text-[11px] uppercase tracking-[0.15em] text-ink/60 md:text-xs">
                 In the meantime, take a look at our work.
