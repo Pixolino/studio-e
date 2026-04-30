@@ -90,32 +90,34 @@ function ImageGrid({ images }: { images: WorkProject["images"] }) {
   );
 }
 
+function CollageImage({ img, sizes }: { img: WorkImage; sizes: string }) {
+  if (!img?.src) return null;
+  return (
+    <Image
+      src={img.src}
+      alt={img.alt}
+      width={img.w ?? 1600}
+      height={img.h ?? 900}
+      sizes={sizes}
+      style={{ width: "100%", height: "auto", display: "block" }}
+    />
+  );
+}
+
 /* ── Asymmetric collage — flex rows, equal gap, natural proportions */
 function ImageCollage({ images }: { images: WorkProject["images"] }) {
   // flex value = aspect ratio so both images in a row share the same height
   const ratio = (i: number) => (images[i].w && images[i].h ? images[i].w! / images[i].h! : 1.5);
 
-  const Img = ({ i, sizes }: { i: number; sizes: string }) =>
-    images[i]?.src ? (
-      <Image
-        src={images[i].src}
-        alt={images[i].alt}
-        width={images[i].w ?? 1600}
-        height={images[i].h ?? 900}
-        sizes={sizes}
-        style={{ width: "100%", height: "auto", display: "block" }}
-      />
-    ) : null;
-
   return (
     <div className="flex flex-1 flex-col gap-2.5 lg:max-w-[51%]">
       <div className="flex gap-2.5">
-        <div style={{ flex: ratio(0) }} className="min-w-0"><Img i={0} sizes="35vw" /></div>
-        <div style={{ flex: ratio(1) }} className="min-w-0"><Img i={1} sizes="20vw" /></div>
+        <div style={{ flex: ratio(0) }} className="min-w-0"><CollageImage img={images[0]} sizes="35vw" /></div>
+        <div style={{ flex: ratio(1) }} className="min-w-0"><CollageImage img={images[1]} sizes="20vw" /></div>
       </div>
       <div className="flex gap-2.5">
-        <div style={{ flex: ratio(2) }} className="min-w-0"><Img i={2} sizes="30vw" /></div>
-        <div style={{ flex: ratio(3) }} className="min-w-0"><Img i={3} sizes="25vw" /></div>
+        <div style={{ flex: ratio(2) }} className="min-w-0"><CollageImage img={images[2]} sizes="30vw" /></div>
+        <div style={{ flex: ratio(3) }} className="min-w-0"><CollageImage img={images[3]} sizes="25vw" /></div>
       </div>
     </div>
   );

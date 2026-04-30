@@ -84,7 +84,7 @@ export default function Hero() {
     <div ref={wrapperRef} className="relative h-[150dvh] bg-ink">
       <section
         id="hero"
-        className="sticky top-0 flex h-[80dvh] flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:px-16 md:pt-28 lg:h-[85dvh] lg:pb-14 xl:h-dvh"
+        className="sticky top-0 flex h-dvh flex-col overflow-hidden bg-ink grain-overlay px-8 pb-10 pt-20 md:px-16 md:pt-28 lg:pb-14"
         onClick={(e) => {
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           if (e.clientX > rect.left + rect.width * 0.56 && !(e.target as Element).closest("a, button")) {

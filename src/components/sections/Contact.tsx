@@ -33,13 +33,13 @@ function PillGroup({
             onClick={() => onToggle(opt)}
             data-cursor="pointer"
             animate={{
-              backgroundColor: active ? "var(--se-ink)" : "transparent",
+              backgroundColor: active ? "rgba(21,21,20,1)" : "rgba(21,21,20,0)",
               borderColor: error && !active
                 ? "rgba(21,21,20,0.7)"
                 : active
-                  ? "var(--se-ink)"
+                  ? "rgba(21,21,20,1)"
                   : "rgba(21,21,20,0.45)",
-              color: active ? "var(--se-gold)" : "rgba(21,21,20,0.85)",
+              color: active ? "rgba(178,180,31,1)" : "rgba(21,21,20,0.85)",
             }}
             transition={{ duration: 0.18 }}
             className="inline-flex min-h-[44px] items-center gap-2 border px-4 py-2 font-mono text-[10px] uppercase tracking-[0.15em] md:text-xs"
